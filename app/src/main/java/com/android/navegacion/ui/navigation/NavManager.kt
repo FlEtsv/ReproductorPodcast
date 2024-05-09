@@ -35,9 +35,10 @@ fun NavManager(){
 
             HomeView(navController,id, pass)
         }
-        composable("Detail"){
-
-            DetailView(navController)
+        composable("Detail/{idCard}", arguments = listOf(
+            navArgument("idCard"){ type = NavType.StringType})){
+            val idCard = it.arguments?.getString("idCard") ?: "Null"
+            DetailView(navController,idCard)
         }
     }
 }

@@ -19,7 +19,7 @@ fun TitleBar (name: String){
 fun ActionButton() {
     FloatingActionButton(
         onClick = { /*TODO*/ },
-        backgroundColor = Color.Red,
+        backgroundColor = Color.Gray,
         contentColor = Color.White
     ) {
         Icon(imageVector = Icons.Default.Add, contentDescription ="Agregar" )

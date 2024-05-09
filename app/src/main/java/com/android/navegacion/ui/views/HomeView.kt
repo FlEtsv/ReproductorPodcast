@@ -1,4 +1,4 @@
-// Importaciones necesarias de Android y Jetpack Compose
+
 import android.annotation.SuppressLint
 import android.content.res.Configuration
 import androidx.compose.foundation.Image
@@ -21,18 +21,26 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.input.pointer.motionEventSpy
 import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
+import androidx.navigation.compose.rememberNavController
+import com.android.navegacion.Greeting
 import com.android.navegacion.R
 import com.android.navegacion.components.*
 import com.universae.reproductor.domain.entities.tema.Tema
 import com.universae.reproductor.domaintest.PreviewTemas
 import com.universae.reproductor.ui.theme.ReproductorTheme
 import com.universae.reproductor.ui.theme.ralewayFamily
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 
 /**
  * Vista principal de la aplicación, configurada para mostrar una barra superior, un botón flotante y un contenido dinámico.
@@ -44,12 +52,15 @@ import com.universae.reproductor.ui.theme.ralewayFamily
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun HomeView(navController: NavController, id: String, pass: String?) {
+    var hayCola = true
+    val podcasts1 = listOf("1","2","3","4","5","6","7")
+    val podcasts2 = listOf("1","2","3","4","5","6","7","8","9","10")
     // Estructura básica con barra superior y botón flotante
     Scaffold(
         topBar = {
             CenterAlignedTopAppBar(
                 title = { TitleBar(name = "Home View de $id") },
-                colors = TopAppBarDefaults.centerAlignedTopAppBarColors(containerColor = Color.Red)
+                colors = TopAppBarDefaults.centerAlignedTopAppBarColors(containerColor = Color.DarkGray)
             )
         },
         floatingActionButton = { ActionButton() }
@@ -62,96 +73,153 @@ fun HomeView(navController: NavController, id: String, pass: String?) {
             verticalArrangement = Arrangement.Top,
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
-            item { PodcastsRow() }
-            item { Spacer(modifier = Modifier.height(16.dp)) }
+            if (hayCola) {
+                item {Spacer(modifier = Modifier.height(20.dp)) }
+                item { TituloIzquierda(texto = " Quieres continuar escuchando...",) }
+                item {Spacer(modifier = Modifier.height(20.dp)) }
+                item { FilaTituloCola() }
+                item { Spacer(modifier = Modifier.height(30.dp)) }
+            }else{
+                item {Spacer(modifier = Modifier.height(20.dp)) }
+                item { TituloIzquierda(texto = "Bienvenido $id nos escanta volver a verte!") }
+                item {Spacer(modifier = Modifier.height(30.dp))}
+                item {FilaTituloNoCola() }
+                item { Spacer(modifier = Modifier.height(30.dp)) }
+                }
+
+            item {
+                    TituloMedianoCentralLeft(texto = "Asignaturas...") }
+
+
+            item { Spacer(modifier = Modifier.height(5.dp)) }
+            item { PodcastsRow(podcasts1, navController = navController) }
+            item { Spacer(modifier = Modifier.height(40.dp)) }
+            item {
+                // ya es una row
+                    TituloMedianoCentralLeft(texto = "Temas...")
+                }
+
+            item { Spacer(modifier = Modifier.height(5.dp)) }
+            item { PodcastsRow(podcasts2, navController = navController) }
+            /*
+            funcion para generar las lineas
             items(PreviewTemas) { tema ->
                 TarjetaTema(tema)
             }
+
+             */
         }
     }
 }
 
 /**
- * Muestra una fila Lazy de temas de podcasts.
+ * Muestra una Card pequeña alineada a la izquierda con texto a su derecha, ambos centrados en el Row.
  */
 @Composable
-fun PodcastsRow() {
-    LazyRow(
-        modifier = Modifier
-            .height(120.dp)
-            .background(Color(0xFF596FB3))
-            .padding(top = 10.dp),
-        horizontalArrangement = Arrangement.spacedBy(8.dp),
-        contentPadding = PaddingValues(horizontal = 16.dp)
-    ) {
-        items(listOf("Podcast 1", "Podcast 2", "Podcast 3", "Podcast 4")) { podcast ->
-            PodcastTopicCard(topic = podcast)
-        }
-    }
-}
-
-/**
- * Muestra una tarjeta para un tema de podcast específico.
- * @param topic Tema del podcast a mostrar.
- */
-@Composable
-fun PodcastTopicCard(topic: String) {
-    Card(
-        modifier = Modifier
-            .width(200.dp)
-            .height(100.dp),
-        elevation = CardDefaults.cardElevation(
-            defaultElevation = 4.dp
-        )
-    ) {
-        Column(
-            modifier = Modifier.padding(8.dp),
-            verticalArrangement = Arrangement.Center,
-            horizontalAlignment = Alignment.CenterHorizontally
-        ) {
-            Text(text = topic, style = MaterialTheme.typography.bodyLarge)
-        }
-    }
-}
-
-/**
- * Muestra una tarjeta con detalles sobre un tema musical.
- * @param tema Objeto Tema que contiene la información a mostrar.
- */
-@Composable
-fun TarjetaTema(tema: Tema) {
-    var maxLines by rememberSaveable { mutableIntStateOf(2) }
-    Card(
+fun FilaTituloCola() {
+    Row(
         modifier = Modifier
             .fillMaxWidth()
-            .padding(8.dp)
+            .padding(16.dp),
+        verticalAlignment = Alignment.CenterVertically,
+        horizontalArrangement = Arrangement.Center // Centra los elementos dentro del Row
     ) {
-        Row(
-            modifier = Modifier.padding(12.dp),
-            verticalAlignment = Alignment.CenterVertically
+        // Card pequeña a la izquierda
+        Card(
+            modifier = Modifier
+                .width(100.dp)
+                .height(100.dp)
+                .weight(1f), // Usa weight para permitir que el elemento ocupe un espacio proporcional en el Row
+            elevation = CardDefaults.cardElevation(4.dp)
         ) {
-            Image(
-                painter = painterResource(id = R.mipmap.escudo),
-                contentDescription = "UNIVERSAE logo",
-                modifier = Modifier.size(80.dp)
-            )
-            Column(
-                modifier = Modifier
-                    .weight(1f)
-                    .padding(horizontal = 8.dp)
-            ) {
+            Box(contentAlignment = Alignment.Center) {
                 Text(
-                    text = tema.nombreTema,
-                    style = MaterialTheme.typography.bodyLarge,
-                    color = MaterialTheme.colorScheme.primary
-                )
-                Text(
-                    text = tema.descripcionTema,
-                    style = MaterialTheme.typography.bodySmall,
-                    maxLines = maxLines,
-                    overflow = TextOverflow.Ellipsis
+                    text = "Card",
+                    style = MaterialTheme.typography.bodyMedium
                 )
             }
         }
+        Spacer(modifier = Modifier.width(16.dp)) // Espaciador para crear un padding mínimo entre la Card y el texto
+        // Columna para el texto a la derecha de la Card
+        Column(
+            modifier = Modifier.weight(1f), // Igual peso que la Card para centrar los elementos dentro del Row
+            verticalArrangement = Arrangement.Center,
+            horizontalAlignment = Alignment.Start // Alinea el texto al inicio (izquierda de su columna)
+        ) {
+            TituloGrande("Asignatura: X")
+            TituloMediano("Tema: X")
+            TituloMediano("Titulo: X")
+        }
+    }
+}
+/**
+* Muestra una Card pequeña alineada a la izquierda con texto a su derecha, ambos centrados en el Row.
+*/
+@Composable
+fun FilaTituloNoCola() {
+    Row(
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(16.dp),
+        verticalAlignment = Alignment.CenterVertically,
+        horizontalArrangement = Arrangement.Center // Centra los elementos dentro del Row
+    ) {
+        // Card pequeña a la izquierda
+        Card(
+            modifier = Modifier
+                .width(100.dp)
+                .height(100.dp)
+                .weight(1f), // Usa weight para permitir que el elemento ocupe un espacio proporcional en el Row
+            elevation = CardDefaults.cardElevation(4.dp)
+        ) {
+            Box(contentAlignment = Alignment.Center) {
+                Text(
+                    text = "Card",
+                    style = MaterialTheme.typography.bodyMedium
+                )
+            }
+        }
+        Spacer(modifier = Modifier.width(16.dp)) // Espaciador para crear un padding mínimo entre la Card y el texto
+        // Columna para el texto a la derecha de la Card
+        Column(
+            modifier = Modifier.weight(1f), // Igual peso que la Card para centrar los elementos dentro del Row
+            verticalArrangement = Arrangement.Center,
+            horizontalAlignment = Alignment.Start // Alinea el texto al inicio (izquierda de su columna)
+        ) {
+            Text("Grado: X", style = MaterialTheme.typography.bodyLarge)
+            Text("Título: X", style = MaterialTheme.typography.bodyMedium)
+            Row {
+                
+                val progress = remember { mutableStateOf(0.0f) }
+                Column {
+                    Text(text = "Progreso", style = MaterialTheme.typography.bodySmall)
+                }
+                Column {
+
+                    // Manejo adecuado de la corutina dentro de la composable
+                    LaunchedEffect(Unit) {
+                        withContext(Dispatchers.Default) {
+                            for (i in 1..100) {
+                                delay(100) // Simula un trabajo que toma tiempo 1 segundo
+                                progress.value = i / 100f
+                            }
+                        }
+                    }
+
+                    DynamicCircularProgressBar(progress = progress)
+                    
+                }
+            }
+
+        }
+    }
+}
+@Preview(showBackground = true)
+@Composable
+fun GreetingPreview() {
+    ReproductorTheme {
+         val id : String = "1"
+        val pass : String = "1234"
+        HomeView(navController = rememberNavController(), id =id  , pass = pass )
     }
 }
