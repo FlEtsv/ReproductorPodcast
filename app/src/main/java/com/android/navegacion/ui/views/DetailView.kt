@@ -3,6 +3,7 @@ package com.android.navegacion.views
 import android.annotation.SuppressLint
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.gestures.detectTapGestures
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.BoxWithConstraints
@@ -89,16 +90,16 @@ fun ContentDetailView(navController: NavController, idCard: String){
                 IslandRowTittle(idCard = idCard, height = islandHeight)
             }
             item {
-                MostrarTemas(PreviewTemas, idCard)
+                MostrarTemas(PreviewTemas,navController)
             }
         }
     }
 }
 @Composable
-fun MostrarTemas(temas: List<Tema>, idCard: String) {
+fun MostrarTemas(temas: List<Tema>,navController: NavController) {
 
         temas.forEach { tema ->
-            TarjetaTema(tema = tema, modifier = Modifier, idCard )
+            TarjetaTema(tema = tema, modifier = Modifier, navController = navController)
         }
     }
 
@@ -109,7 +110,7 @@ fun MostrarTemas(temas: List<Tema>, idCard: String) {
  * @param modifier Modificador para personalizar la apariencia de la tarjeta
  */
 @Composable
-fun TarjetaTema(tema: Tema, modifier: Modifier = Modifier, idCard: String) {
+fun TarjetaTema(tema: Tema, modifier: Modifier = Modifier, navController: NavController) {
     // Estado mutable para controlar el número de líneas del texto
     var maxLines by rememberSaveable { mutableIntStateOf(2) }
     // Diseño de fila para la tarjeta del tema
@@ -118,7 +119,8 @@ fun TarjetaTema(tema: Tema, modifier: Modifier = Modifier, idCard: String) {
             .fillMaxWidth()
             .padding(8.dp)
             .clip(RoundedCornerShape(8.dp)) // Aquí se establece el radio de las esquinas redondeadas
-            .background(MaterialTheme.colorScheme.onTertiary), // Aquí se establece el color de fondo
+            .background(MaterialTheme.colorScheme.onTertiary) // Aquí se establece el color de fondo
+            .clickable(onClick = { navController.navigate("Podcast/${tema.nombreTema}") }),
         verticalAlignment = Alignment.CenterVertically
     ) {
         // Imagen del logo

@@ -1,6 +1,7 @@
 package com.android.navegacion.navigation
 
 import HomeView
+import ReproductorPodcast
 import androidx.compose.runtime.Composable
 import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
@@ -39,6 +40,11 @@ fun NavManager(){
             navArgument("idCard"){ type = NavType.StringType})){
             val idCard = it.arguments?.getString("idCard") ?: "Null"
             DetailView(navController,idCard)
+        }
+        composable("Podcast/{tituloTema}", arguments = listOf(
+            navArgument("tituloTema"){type = NavType.StringType},)){
+            val tituloTema = it.arguments?.getString("tituloTema") ?: "Null"
+            ReproductorPodcast(navController, tituloTema)
         }
     }
 }

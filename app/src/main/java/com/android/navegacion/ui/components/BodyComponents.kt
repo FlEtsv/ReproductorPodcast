@@ -18,6 +18,7 @@ import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.CircularProgressIndicator
+import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -27,12 +28,15 @@ import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
+import com.android.navegacion.R
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
@@ -204,4 +208,69 @@ fun DynamicCircularProgressBar(progress: MutableState<Float>) {
         strokeWidth = 8.dp,
     )
 }
+@Composable
+fun iconCast(): ImageVector {
+    val imageVector = ImageVector.vectorResource(id = R.drawable.cast)
+    Icon(
+        imageVector = imageVector,
+        contentDescription = "Descripción del icono"
+    )
+    return imageVector
+}
+@Composable
+fun iconPause(): ImageVector {
+    val imageVector = ImageVector.vectorResource(id = R.drawable.pause)
+    Icon(
+        imageVector = imageVector,
+        contentDescription = "Descripción del icono"
+    )
+    return imageVector
+}
+@Composable
+fun iconPlay(): ImageVector {
+    val imageVector = ImageVector.vectorResource(id = R.drawable.play)
+    Icon(
+        imageVector = imageVector,
+        contentDescription = "Descripción del icono"
+    )
+    return imageVector
+}
+@Composable
+fun iconArroyBack(): ImageVector {
+    val imageVector = ImageVector.vectorResource(id = R.drawable.arroyback)
+    Icon(
+        imageVector = imageVector,
+        contentDescription = "Descripción del icono"
+    )
+    return imageVector
+}
+
+@Composable
+fun iconFastReward(): ImageVector {
+    val imageVector = ImageVector.vectorResource(id = R.drawable.fastrewind)
+    Icon(
+        imageVector = imageVector,
+        contentDescription = "Descripción del icono"
+    )
+    return imageVector
+}
+@Composable
+fun iconFastForward(): ImageVector {
+    val imageVector = ImageVector.vectorResource(id = R.drawable.fastfoward)
+    Icon(
+        imageVector = imageVector,
+        contentDescription = "Descripción del icono"
+    )
+    return imageVector
+}
+@Composable
+fun iconArroyForward(): ImageVector {
+    val imageVector = ImageVector.vectorResource(id = R.drawable.arrowforward)
+    Icon(
+        imageVector = imageVector,
+        contentDescription = "Descripción del icono"
+    )
+    return imageVector
+}
+
 
