@@ -34,6 +34,7 @@ import com.android.navegacion.R
 import com.android.navegacion.components.*
 import com.universae.reproductor.domain.entities.tema.Tema
 import com.universae.reproductor.domaintest.PreviewTemas
+import com.universae.reproductor.ui.theme.AzulDark
 import com.universae.reproductor.ui.theme.ReproductorTheme
 import com.universae.reproductor.ui.theme.ralewayFamily
 import kotlinx.coroutines.CoroutineScope
@@ -60,7 +61,7 @@ fun HomeView(navController: NavController, id: String, pass: String?) {
         topBar = {
             CenterAlignedTopAppBar(
                 title = { TitleBar(name = "Home View de $id") },
-                colors = TopAppBarDefaults.centerAlignedTopAppBarColors(containerColor = Color.DarkGray)
+                colors = TopAppBarDefaults.centerAlignedTopAppBarColors(containerColor = AzulDark)
             )
         },
         floatingActionButton = { ActionButton() }
