@@ -42,6 +42,7 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
+import androidx.compose.material3.MaterialTheme
 
 /**
  * Vista principal de la aplicación, configurada para mostrar una barra superior, un botón flotante y un contenido dinámico.
@@ -58,12 +59,6 @@ fun HomeView(navController: NavController, id: String, pass: String?) {
     val podcasts2 = listOf("1","2","3","4","5","6","7","8","9","10")
     // Estructura básica con barra superior y botón flotante
     Scaffold(
-        topBar = {
-            CenterAlignedTopAppBar(
-                title = { TitleBar(name = "Home View de $id") },
-                colors = TopAppBarDefaults.centerAlignedTopAppBarColors(containerColor = AzulDark)
-            )
-        },
         floatingActionButton = { ActionButton() }
     ) { innerPadding ->
         // Columna Lazy que se ajusta al padding proporcionado por el Scaffold
@@ -76,7 +71,7 @@ fun HomeView(navController: NavController, id: String, pass: String?) {
         ) {
             if (hayCola) {
                 item {Spacer(modifier = Modifier.height(20.dp)) }
-                item { TituloIzquierda(texto = " Quieres continuar escuchando...",) }
+                item { TituloIzquierda(texto = "$id, ¿Quieres continuar escuchando...?",) }
                 item {Spacer(modifier = Modifier.height(20.dp)) }
                 item { FilaTituloCola() }
                 item { Spacer(modifier = Modifier.height(30.dp)) }
