@@ -92,7 +92,7 @@ fun ReproductorPodcast(navController: NavController, tituloTema : String) {
             onRetroceder = { /* TODO: Retroceder */ },
             onAvanzar = { /* TODO: Avanzar */ },
             onAvanzarRapido = { },
-            onBajarVelocidad  = {}
+            onBajarVelocidad  = { }
         )
         Spacer(modifier = Modifier.height(16.dp))
 
