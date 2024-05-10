@@ -60,6 +60,9 @@ dependencies {
     implementation("androidx.activity:activity-compose:1.4.0")
     implementation(libs.androidx.activity)
 
+    // add JDBC driver for MySQL
+    implementation("mysql:mysql-connector-java:5.1.49")
+
     // Opcional: si decides usar Material 3
     implementation(libs.material3)
 
