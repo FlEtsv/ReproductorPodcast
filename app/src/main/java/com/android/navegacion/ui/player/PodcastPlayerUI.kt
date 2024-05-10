@@ -28,6 +28,8 @@ import com.android.navegacion.components.iconFastForward
 import com.android.navegacion.components.iconFastReward
 import com.android.navegacion.components.iconPause
 import com.android.navegacion.components.iconPlay
+import com.universae.reproductor.ui.theme.AzulClaro
+import com.universae.reproductor.ui.theme.AzulOscuro
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.withContext
@@ -56,7 +58,7 @@ fun ReproductorPodcast(navController: NavController, tituloTema : String) {
                 onClick = { navController.popBackStack() },
                 modifier = Modifier.padding(8.dp) // Ajusta el espaciado según sea necesario
             ) {
-                Icon(Icons.Default.ArrowBack, contentDescription = "Back") // Ajusta el contenido de descripción según sea necesario
+                Icon(Icons.Default.ArrowBack, contentDescription = "Back", tint = Color.White) // Ajusta el contenido de descripción según sea necesario
             }
         }
 
@@ -68,12 +70,13 @@ fun ReproductorPodcast(navController: NavController, tituloTema : String) {
             BotonCompartir()
         }
     }
-
+        Spacer(modifier = Modifier.height(100.dp))
         PortadaPodcast()
         Spacer(modifier = Modifier.height(16.dp))
         Text(
             text = tituloTema,
-            style = MaterialTheme.typography.h6
+            style = MaterialTheme.typography.h6,
+            color = Color.White
         )
         Spacer(modifier = Modifier.height(16.dp))
         LaunchedEffect(Unit) {
@@ -105,13 +108,14 @@ fun PortadaPodcast() {
         modifier = Modifier
             .size(200.dp)
             .clip(CircleShape)
-            .background(Color.LightGray),
+            .background(AzulOscuro),
         contentAlignment = Alignment.Center
     ) {
         Icon(
             imageVector = Icons.Filled.Menu,
             contentDescription = "Portada del Podcast",
-            modifier = Modifier.size(150.dp)
+            modifier = Modifier.size(150.dp),
+            tint = AzulClaro
         )
 
     }
@@ -133,33 +137,38 @@ fun ControlesReproduccion(
         IconButton(onClick = { onBajarVelocidad}) {
             Icon(
                 imageVector = iconFastReward(),
-                contentDescription = "Avanzar"
+                contentDescription = "Avanzar",
+                tint = Color.White
             )
         }
         IconButton(onClick = onRetroceder) {
             Icon(
                 imageVector = iconArroyBack(),
-                contentDescription = "Retroceder"
+                contentDescription = "Retroceder",
+                tint = Color.White
             )
         }
         Spacer(modifier = Modifier.width(16.dp))
         IconButton(onClick = onReproduccionPausaToggle) {
             Icon(
                 imageVector = if (reproduciendo) iconPause() else iconPlay(),
-                contentDescription = if (reproduciendo) "Pausa" else "Reproducir"
+                contentDescription = if (reproduciendo) "Pausa" else "Reproducir",
+                tint = Color.White
             )
         }
         Spacer(modifier = Modifier.width(16.dp))
         IconButton(onClick = onAvanzar) {
             Icon(
                 imageVector = iconArroyForward(),
-                contentDescription = "Avanzar"
+                contentDescription = "Avanzar",
+                tint = Color.White
             )
         }
         IconButton(onClick = onAvanzarRapido) {
             Icon(
                 imageVector = iconFastForward(),
-                contentDescription = "Avanzar"
+                contentDescription = "Avanzar",
+                tint = Color.White
             )
         }
     }
@@ -172,7 +181,8 @@ fun BotonCompartir() {
     ) {
         Icon(
             imageVector = iconCast(),
-            contentDescription = "Compartir"
+            contentDescription = "Compartir",
+            tint = Color.White
         )
     }
 }
@@ -185,8 +195,8 @@ fun ProgressBarRow(progress: MutableState<Float>) {  // 'progress' debería ser 
             LinearProgressIndicator(
                 progress = { progress.value },
                 modifier = Modifier.fillMaxWidth(),
-                color = MaterialTheme.colors.primary,
-                trackColor = MaterialTheme.colors.surface,
+                color = AzulOscuro,
+                trackColor = AzulClaro
             )
         }
     )

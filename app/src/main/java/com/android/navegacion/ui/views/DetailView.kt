@@ -1,24 +1,28 @@
 package com.android.navegacion.views
 
 import android.annotation.SuppressLint
+import com.universae.reproductor.ui.theme.AzulOscuro
+import android.content.res.Resources.Theme
 import androidx.compose.foundation.Image
-import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.gestures.detectTapGestures
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.BoxWithConstraints
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.statusBarsPadding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.Icon
+import androidx.compose.material.IconButton
 import androidx.compose.material.Scaffold
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBack
@@ -52,6 +56,7 @@ import com.android.navegacion.components.MainIconButton
 import com.android.navegacion.components.TitleBar
 import com.universae.reproductor.domain.entities.tema.Tema
 import com.universae.reproductor.domaintest.PreviewTemas
+import com.universae.reproductor.ui.theme.AzulDark
 import com.universae.reproductor.ui.theme.ReproductorTheme
 import com.universae.reproductor.ui.theme.ralewayFamily
 import androidx.compose.foundation.layout.Box as Box1
@@ -60,22 +65,33 @@ import androidx.compose.foundation.layout.Box as Box1
 @SuppressLint("UnusedMaterialScaffoldPaddingParameter")
 @Composable
 fun DetailView(navController: NavController,idCard : String){
-    Scaffold (
-        topBar = {
-            TopAppBar(
-                title = { TitleBar(name = "")},
-                colors = TopAppBarDefaults.mediumTopAppBarColors(
-                    containerColor = Color.Blue
-                ),
-                navigationIcon = {
-                    MainIconButton(icon = Icons.Default.ArrowBack) {
-                        navController.popBackStack()
-                    }
-                }
-            )
-        }
-    ){
+    Column {
+        BarraSuperior(navController)
         ContentDetailView(navController,idCard)
+    }
+}
+
+@Composable
+fun BarraSuperior(navController: NavController){
+    Row(
+        modifier = Modifier
+            .fillMaxWidth()
+            .background(AzulDark)
+            .statusBarsPadding(), // Agrega un relleno en la parte superior igual a la altura de la barra de estado
+        horizontalArrangement = Arrangement.SpaceBetween
+    ) {
+        Column(
+            modifier = Modifier.weight(1f), // Ocupa la mitad del ancho disponible
+            horizontalAlignment = Alignment.Start,
+            verticalArrangement = Arrangement.Center
+        ) {
+            IconButton(
+                onClick = { navController.popBackStack() },
+                modifier = Modifier.padding(8.dp) // Ajusta el espaciado según sea necesario
+            ) {
+                Icon(Icons.Default.ArrowBack, contentDescription = "Back", tint = Color.White) // Ajusta el contenido de descripción según sea necesario
+            }
+        }
     }
 }
 @Composable
@@ -85,7 +101,9 @@ fun ContentDetailView(navController: NavController, idCard: String){
         val screenHeight = maxHeight
         val islandHeight = screenHeight * 0.25f  // Calcular el 25% de la altura
 
-        LazyColumn(modifier = Modifier.fillMaxSize()) {
+        LazyColumn(modifier = Modifier
+            .fillMaxSize()
+            .background(MaterialTheme.colorScheme.background)) {
             item {
                 IslandRowTittle(idCard = idCard, height = islandHeight)
             }
@@ -119,7 +137,7 @@ fun TarjetaTema(tema: Tema, modifier: Modifier = Modifier, navController: NavCon
             .fillMaxWidth()
             .padding(8.dp)
             .clip(RoundedCornerShape(8.dp)) // Aquí se establece el radio de las esquinas redondeadas
-            .background(MaterialTheme.colorScheme.onTertiary) // Aquí se establece el color de fondo
+            .background(AzulOscuro) // Aquí se establece el color de fondo
             .clickable(onClick = { navController.navigate("Podcast/${tema.nombreTema}") }),
         verticalAlignment = Alignment.CenterVertically
     ) {
@@ -192,7 +210,7 @@ fun IslandRowTittle(idCard: String, height : Dp) {
             .padding(10.dp)  // Aumentar el padding para dar la impresión de más espacio alrededor
             .shadow(16.dp, RoundedCornerShape(12.dp))  // Aumentar la sombra  mayor profundidad
             .clip(RoundedCornerShape(12.dp))  // Suavizar más las esquinas
-            .background(Color(0xFF0077CC))  // Fondo azul
+            .background(MaterialTheme.colorScheme.secondary)  // Fondo azul
             .padding(4.dp)  // Padding interno para separar el contenido del borde
     ) {
         Row(
@@ -205,7 +223,7 @@ fun IslandRowTittle(idCard: String, height : Dp) {
             Text(
                 text = "Título de asignatura: $idCard",
                 style = MaterialTheme.typography.titleMedium,
-                color = Color.White
+                color = MaterialTheme.colorScheme.primary
             )
         }
     }
