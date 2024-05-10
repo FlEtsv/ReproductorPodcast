@@ -20,6 +20,7 @@ import androidx.navigation.compose.rememberNavController
 import androidx.compose.material3.LinearProgressIndicator
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.MutableState
+import com.android.navegacion.components.MainIconButton
 import com.android.navegacion.components.iconArroyBack
 import com.android.navegacion.components.iconArroyForward
 import com.android.navegacion.components.iconCast
@@ -42,13 +43,31 @@ fun ReproductorPodcast(navController: NavController, tituloTema : String) {
             .padding(16.dp)
             .padding(top = 30.dp),
         horizontalAlignment = Alignment.CenterHorizontally
+    ) {Row(
+        modifier = Modifier.fillMaxWidth(),
+        horizontalArrangement = Arrangement.SpaceBetween
     ) {
-        Row(modifier = Modifier.fillMaxWidth(),
-            horizontalArrangement = Arrangement.End,
-            verticalAlignment = Alignment.CenterVertically
+        Column(
+            modifier = Modifier.weight(1f), // Ocupa la mitad del ancho disponible
+            horizontalAlignment = Alignment.Start,
+            verticalArrangement = Arrangement.Center
+        ) {
+            IconButton(
+                onClick = { navController.popBackStack() },
+                modifier = Modifier.padding(8.dp) // Ajusta el espaciado según sea necesario
+            ) {
+                Icon(Icons.Default.ArrowBack, contentDescription = "Back") // Ajusta el contenido de descripción según sea necesario
+            }
+        }
+
+        Column(
+            modifier = Modifier.weight(1f), // Ocupa la otra mitad del ancho disponible
+            horizontalAlignment = Alignment.End,
+            verticalArrangement = Arrangement.Center
         ) {
             BotonCompartir()
         }
+    }
 
         PortadaPodcast()
         Spacer(modifier = Modifier.height(16.dp))
