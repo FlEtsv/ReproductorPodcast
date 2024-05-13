@@ -1,4 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
+<!--suppress AndroidDomInspection -->
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools">
 
@@ -27,15 +28,18 @@
         </activity>
 
         <service
-            android:name=".AndoidAuto.Controller.MyMediaBrowserService"
+            android:name="com.android.navegacion.ui.player.MyMusicService"
             android:exported="true">
             <intent-filter>
-                <action android:name="androidx.media3.session.MediaLibraryService" />
+                <action android:name="android.media.browse.MediaBrowserService" />
             </intent-filter>
             <meta-data
                 android:name="com.google.android.gms.car.application"
                 android:resource="@xml/automotive_app_desc" />
         </service>
+
+
+
 
     </application>
 

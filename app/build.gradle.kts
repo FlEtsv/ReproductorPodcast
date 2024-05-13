@@ -50,9 +50,8 @@ android {
 }
 
 dependencies {
-    implementation("androidx.media3:media3-session:1.1.0")
-    implementation("androidx.media3:media3-common:1.1.0")
-    implementation("androidx.media3:media3-exoplayer:1.0.0")
+    implementation("androidx.car.app:app:1.0.0")
+    implementation ("androidx.media:media:1.4.3")
     // Dependencias para Jetpack Compose
     implementation("androidx.compose.ui:ui:1.0.5")
     implementation("androidx.compose.material:material:1.0.5")
