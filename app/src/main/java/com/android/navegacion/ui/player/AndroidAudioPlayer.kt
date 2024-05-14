@@ -1,42 +1,72 @@
-package com.universae.reproductor.ui.player
+package com.android.navegacion.ui.player
 
 import android.content.Context
-import android.media.AudioAttributes
-import android.media.MediaPlayer
+import androidx.media3.common.MediaItem
+import androidx.media3.exoplayer.ExoPlayer
 import com.universae.reproductor.domain.usecases.AudioPlayerUseCases
 import com.universae.reproductor.domain.entities.tema.Tema
 
 class AndroidAudioPlayer(private val context: Context) : AudioPlayerUseCases {
-    private var mediaPlayer: MediaPlayer? = null
-    // TODO: guardar el tema actual para poder continuar la reproducción
-    // TODO: comprobar si el tema a reproducir tiene punto de parada y continuar desde ahí
+    // Variable para almacenar la instancia de ExoPlayer
+    private var exoPlayer: ExoPlayer? = null
 
+    // Método para reproducir un tema
     override fun play(tema: Tema) {
-        stop() // para cualquier audio que se esté reproduciendo
-        mediaPlayer = MediaPlayer().apply {
-            setAudioAttributes(
-                AudioAttributes.Builder()
-                    .setContentType(AudioAttributes.CONTENT_TYPE_MUSIC)
-                    .build()
-            )
-            setDataSource(tema.audioUrl)
-            prepareAsync() // asincrono, se ejecuta en segundo plano
-            setOnPreparedListener { // se ejecuta cuando el audio está listo para reproducirse
-                start()
-            }
+        // Detiene cualquier audio que se esté reproduciendo
+        stop()
+        // Crea un MediaItem a partir de la URL del audio del tema
+        val mediaItem = MediaItem.fromUri(tema.audioUrl)
+        // Inicializa ExoPlayer
+        exoPlayer = ExoPlayer.Builder(context).build().apply {
+            // Establece el MediaItem a reproducir
+            setMediaItem(mediaItem)
+            // Prepara el reproductor
+            prepare()
+            // Inicia la reproducción
+            play()
         }
     }
 
+    // Método para detener la reproducción
     override fun stop() {
-        mediaPlayer?.release()
-        mediaPlayer = null
+        // Si ExoPlayer no es nulo, detiene y libera la instancia
+        exoPlayer?.let {
+            it.stop()
+            it.release()
+        }
+        // Establece ExoPlayer a nulo
+        exoPlayer = null
     }
 
+    // Método para pausar la reproducción
     override fun pausa() {
-        mediaPlayer?.pause()
+        // Si ExoPlayer no es nulo, pausa la reproducción
+        exoPlayer?.pause()
     }
 
+    // Método para continuar la reproducción
     override fun continuar() {
-        mediaPlayer?.start()
+        // Si ExoPlayer no es nulo, reanuda la reproducción
+        exoPlayer?.play()
+    }
+
+    // Método para reproducir una muestra de MP3
+    fun playSample() {
+        // Detiene cualquier audio que se esté reproduciendo
+        exoPlayer?.release()
+        exoPlayer = null
+
+        // Crea un MediaItem que representa la muestra de MP3
+        val mediaItem = MediaItem.fromUri("https://file-examples.com/storage/fe92070d83663e82d92ecf7/2017/11/file_example_MP3_700KB.mp3")
+
+        // Inicializa ExoPlayer
+        exoPlayer = ExoPlayer.Builder(context).build().apply {
+            // Establece el MediaItem a reproducir
+            setMediaItem(mediaItem)
+            // Prepara el reproductor
+            prepare()
+            // Inicia la reproducción
+            play()
+        }
     }
 }
