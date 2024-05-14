@@ -67,6 +67,9 @@ object Sesion {
     }
 
     //TODO("implementar mostrar progreso de la asignatura y del grado")
-    //TODO("implementar la funcion cerrarSesion")
+
+    fun cerrarSesion() {
+        //TODO("implementar la funcion cerrarSesion")
+    }
 
 }

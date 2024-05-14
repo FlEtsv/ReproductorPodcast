@@ -37,6 +37,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import com.android.navegacion.R
+import com.universae.reproductor.domain.entities.asignatura.Asignatura
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
@@ -65,7 +66,7 @@ fun MainButton(name : String, backColor : Color, color : Color, onClick:() -> Un
  * @param podcasts Lista de nombres de podcasts para mostrar.
  */
 @Composable
-fun PodcastsRow(podcasts: List<String>, navController: NavController) {
+fun PodcastsRow(podcasts: List<Asignatura>, navController: NavController) {
     LazyRow(
         modifier = Modifier
             .height(120.dp)
@@ -74,8 +75,8 @@ fun PodcastsRow(podcasts: List<String>, navController: NavController) {
         contentPadding = PaddingValues(horizontal = 16.dp)
     ) {
         items(podcasts) { podcast ->
-            var idCard : String = podcast
-            PodcastTopicCard(topic = podcast, { navController.navigate("Detail/${idCard}") })
+            var idCard : String = podcast.asignaturaId.id.toString()
+            PodcastTopicCard(topic = podcast.nombreAsignatura, { navController.navigate("Detail/${idCard}") })
         }
     }
 }

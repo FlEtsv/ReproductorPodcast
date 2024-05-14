@@ -5,6 +5,7 @@ import com.universae.reproductor.domain.entities.alumno.Alumno
 
 interface AlumnoUseCase {
     fun getAlumno(nombreUsuario: String, clave: String): Alumno?
+    fun gatAlumnoById(id: Int): Alumno?
 }
 
 object AlumnoUseCaseImpl : AlumnoUseCase {
@@ -13,4 +14,7 @@ object AlumnoUseCaseImpl : AlumnoUseCase {
         return if (Sesion.sesionIniciada) Sesion.alumno else null
     }
 
+    override fun gatAlumnoById(id: Int): Alumno? {
+        return if (Sesion.sesionIniciada && Sesion.alumno.alumnoId.id == id) Sesion.alumno else null
+    }
 }

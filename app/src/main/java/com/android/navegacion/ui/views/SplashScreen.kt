@@ -21,6 +21,7 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
@@ -28,18 +29,53 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import com.android.navegacion.R
+import com.android.navegacion.data.remote.AlumnoRepositoryImpl
+import com.android.navegacion.domain.usecases.SesionUseCase
+import com.universae.reproductor.domain.entities.alumno.Alumno
+import com.universae.reproductor.domain.usecases.AlumnoUseCaseImpl
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.TimeoutCancellationException
 import kotlinx.coroutines.delay
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
+import kotlinx.coroutines.withTimeout
 
 @Composable
 fun SplashScreen(navController: NavController, id : String, pass : String) {
-    // Simula una carga
+    val coroutineScope = rememberCoroutineScope()
 
     LaunchedEffect(key1 = true) {
-        delay(3000)
-        navController.navigate("Home/${id}/${pass}") {
-            popUpTo("Login") { inclusive = true }
+        coroutineScope.launch {
+            // TODO("Mirar si quitar error por un cambio en navegacion si tarda demasiado en conectar, ej: volver a pantalla login")
+            var conexionDataCorrecta: Boolean = false
+            try {
+                withTimeout(10000) { // Timeout of 10 seconds
+                    withContext(Dispatchers.IO) {
+                        while (!DataFech(usuario = id, password = pass)) {
+                            delay(1000)
+                        }
+                    }
+                }
+                conexionDataCorrecta = true
+            } catch (e: TimeoutCancellationException) {
+                // Manejar la excepción de tiempo de espera aquí
+                println("La operación de la base de datos excedió el tiempo límite después de 10 segundos.")
+            }
+            var alumno: Alumno? = null
+            if (conexionDataCorrecta) {
+                alumno = AlumnoUseCaseImpl.getAlumno(id, pass)
+            }
+            if (alumno != null) {
+                val id: Int = alumno.alumnoId.id
+                navController.navigate("Home/$id") {
+                    popUpTo("Login") { inclusive = true }
+                }
+            } else {
+                navController.navigate("Login") {
+                    popUpTo("SplashScreen") { inclusive = true }
+                }
+            }
         }
-
     }
     Column(modifier = Modifier.fillMaxSize(),
     verticalArrangement = Arrangement.Center,
@@ -67,4 +103,11 @@ fun SplashScreen(navController: NavController, id : String, pass : String) {
             trackColor = MaterialTheme.colorScheme.primary,
         )
     }
+}
+
+fun DataFech(usuario: String, password: String): Boolean {
+    return SesionUseCase.iniciarSesion(
+        nombreUsuario = usuario,
+        clave = password
+    )
 }

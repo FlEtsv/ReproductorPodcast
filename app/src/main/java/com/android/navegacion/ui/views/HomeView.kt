@@ -1,48 +1,22 @@
 
 import android.annotation.SuppressLint
-import android.content.res.Configuration
-import androidx.compose.foundation.Image
-import androidx.compose.foundation.background
-import androidx.compose.foundation.gestures.detectTapGestures
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.LazyRow
-import androidx.compose.foundation.lazy.grid.GridCells
-import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
-import androidx.compose.foundation.lazy.items
-import androidx.compose.foundation.shape.CircleShape
-import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.PlayArrow
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
-import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.clip
-import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.input.pointer.motionEventSpy
-import androidx.compose.ui.input.pointer.pointerInput
-import androidx.compose.ui.res.painterResource
-import androidx.compose.ui.text.style.TextOverflow
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
-import androidx.navigation.compose.rememberNavController
-import com.android.navegacion.Greeting
-import com.android.navegacion.R
 import com.android.navegacion.components.*
-import com.universae.reproductor.domain.entities.tema.Tema
-import com.universae.reproductor.domaintest.PreviewTemas
-import com.universae.reproductor.ui.theme.AzulDark
-import com.universae.reproductor.ui.theme.ReproductorTheme
-import com.universae.reproductor.ui.theme.ralewayFamily
-import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
-import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import androidx.compose.material3.MaterialTheme
+import com.universae.reproductor.domain.entities.alumno.Alumno
+import com.universae.reproductor.domain.entities.asignatura.Asignatura
+import com.universae.reproductor.domain.usecases.AlumnoUseCaseImpl
+import com.universae.reproductor.domain.usecases.AsignaturaUseCasesImpl
 
 /**
  * Vista principal de la aplicación, configurada para mostrar una barra superior, un botón flotante y un contenido dinámico.
@@ -53,9 +27,14 @@ import androidx.compose.material3.MaterialTheme
 @SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun HomeView(navController: NavController, id: String, pass: String?) {
+fun HomeView(navController: NavController, alumnoId: Int) {
+    val alumno: Alumno = AlumnoUseCaseImpl.gatAlumnoById(alumnoId)!! // Si llegamos a esta view es porque el alumno existe y siempre retorna un alumno
+    // TODO("comprobar si hay cola de reproducción")
     var hayCola = true
-    val podcasts1 = listOf("1","2","3","4","5","6","7")
+    // TODO("Obtener listas")
+    val listaAsignaturasNoCompletadas: List<Asignatura> = alumno.gradosId.flatMap { gradoId ->
+        AsignaturaUseCasesImpl.asignaturasNoCompletadas(gradoId)
+    }
     val podcasts2 = listOf("1","2","3","4","5","6","7","8","9","10")
     // Estructura básica con barra superior y botón flotante
     Scaffold(
@@ -71,13 +50,13 @@ fun HomeView(navController: NavController, id: String, pass: String?) {
         ) {
             if (hayCola) {
                 item {Spacer(modifier = Modifier.height(20.dp)) }
-                item { TituloIzquierda(texto = "$id, ¿Quieres continuar escuchando...?",) }
+                item { TituloIzquierda(texto = "${alumno.nombreUsuario}, ¿Quieres continuar escuchando...?",) }
                 item {Spacer(modifier = Modifier.height(20.dp)) }
                 item { FilaTituloCola() }
                 item { Spacer(modifier = Modifier.height(30.dp)) }
             }else{
                 item {Spacer(modifier = Modifier.height(20.dp)) }
-                item { TituloIzquierda(texto = "Bienvenido $id nos escanta volver a verte!") }
+                item { TituloIzquierda(texto = "Bienvenido ${alumno.nombreUsuario} nos escanta volver a verte!") }
                 item {Spacer(modifier = Modifier.height(30.dp))}
                 item {FilaTituloNoCola() }
                 item { Spacer(modifier = Modifier.height(30.dp)) }
@@ -88,7 +67,7 @@ fun HomeView(navController: NavController, id: String, pass: String?) {
 
 
             item { Spacer(modifier = Modifier.height(5.dp)) }
-            item { PodcastsRow(podcasts1, navController = navController) }
+            item { PodcastsRow(listaAsignaturasNoCompletadas, navController = navController) }
             item { Spacer(modifier = Modifier.height(40.dp)) }
             item {
                 // ya es una row
@@ -208,14 +187,5 @@ fun FilaTituloNoCola() {
             }
 
         }
-    }
-}
-@Preview(showBackground = true)
-@Composable
-fun GreetingPreview() {
-    ReproductorTheme {
-         val id : String = "1"
-        val pass : String = "1234"
-        HomeView(navController = rememberNavController(), id =id  , pass = pass )
     }
 }

@@ -27,14 +27,11 @@ fun NavManager(){
             val pass = it.arguments?.getString("pass") ?: "Empty"
             SplashScreen(navController,id, pass)
         }
-        composable("Home/{id}/{Pass}", arguments = listOf(
-            navArgument("id"){ type = NavType.StringType},
-            navArgument("Pass"){ type = NavType.StringType}
+        composable("Home/{id}", arguments = listOf(
+            navArgument("id"){ type = NavType.IntType}
         )){
-            val id = it.arguments?.getString("id") ?: "Null"
-            val pass = it.arguments?.getString("Pass") ?: "Empty"
-
-            HomeView(navController,id, pass)
+            val id = it.arguments?.getInt("id") ?: -1
+            HomeView(navController,id)
         }
         composable("Detail/{idCard}", arguments = listOf(
             navArgument("idCard"){ type = NavType.StringType})){
