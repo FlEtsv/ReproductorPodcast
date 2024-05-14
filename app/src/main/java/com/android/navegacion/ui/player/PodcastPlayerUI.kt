@@ -32,6 +32,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.media3.common.Player
 import androidx.media3.session.MediaController
 import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
@@ -58,7 +59,18 @@ fun ReproductorPodcast(navController: NavController, tituloTema: String) {
     // crea instancia audioPlayer
     val context = LocalContext.current
     val audioPlayer = remember { AndroidAudioPlayer(context) }
-    val controller = remember { MediaController.Builder(context, audioPlayer.session.token).buildAsync() }
+    val controller =
+        remember { MediaController.Builder(context, audioPlayer.session.token).buildAsync() }
+
+    // Replace with your actual Tema instance
+    //TODO("Reemplazar con tu instancia real de Tema")
+    val tema = Tema(
+        temaId = TemaId(1),
+        nombreTema = "nombreTema",
+        descripcionTema = "descripciontema",
+        duracionAudio = 120.toDuration(DurationUnit.SECONDS),
+        audioUrl = "https://file-examples.com/storage/fe92070d83663e82d92ecf7/2017/11/file_example_MP3_700KB.mp3"
+    )
 
     Column(
         modifier = Modifier
@@ -116,32 +128,23 @@ fun ReproductorPodcast(navController: NavController, tituloTema: String) {
         ControlesReproduccion(
             reproduciendo = reproduciendo,
             onReproduccionPausaToggle = {
-                val player = audioPlayer.getPlayer()
-                println("onReproduccionPausaToggle called")
                 if (reproduciendo) {
-                    println("Pausing player")
                     controller.get().pause()
-                    println("Player state after pause: ${player?.playbackState}")
                 } else {
-                    // Replace with your actual Tema instance
-                    //TODO("Reemplazar con tu instancia real de Tema")
-                    val tema = Tema(
-                        temaId = TemaId(1),
-                        nombreTema = "nombreTema",
-                        descripcionTema = "descripciontema",
-                        duracionAudio = 120.toDuration(DurationUnit.SECONDS),
-                        audioUrl = "https://file-examples.com/storage/fe92070d83663e82d92ecf7/2017/11/file_example_MP3_700KB.mp3"
-                    )
-                    audioPlayer.play(tema)
-                    println("Playing player")
-                    println("Player state after play: ${player?.playbackState}")
+                    if (controller.get().playbackState == Player.STATE_READY && controller.get().playWhenReady.not()) {
+                        audioPlayer.continuar()
+                    } else {
+                        audioPlayer.reproducir(tema)
+                    }
                 }
                 reproduciendo = !reproduciendo
             },
             onRetroceder = { /* TODO: Retroceder */ },
             onAvanzar = { /* TODO: Avanzar */ },
             onAvanzarRapido = { },
-            onBajarVelocidad = {}
+            onBajarVelocidad = {
+                //
+            }
         )
         Spacer(modifier = Modifier.height(16.dp))
 
@@ -162,7 +165,6 @@ fun PortadaPodcast() {
             contentDescription = "Portada del Podcast",
             modifier = Modifier.size(150.dp)
         )
-
     }
 }
 
