@@ -50,28 +50,28 @@ android {
 }
 
 dependencies {
-    implementation("com.google.android.exoplayer:exoplayer:2.14.2")
-    implementation("androidx.car.app:app:1.0.0")
-    implementation ("androidx.media:media:1.4.3")
-    // Dependencias para Jetpack Compose
-    implementation("androidx.compose.ui:ui:1.0.5")
-    implementation("androidx.compose.material:material:1.0.5")
-    implementation("androidx.compose.ui:ui-tooling-preview:1.0.5")
-    // Consolidar las versiones de Core KTX
+    implementation("androidx.navigation:navigation-compose:2.7.7")
     implementation("androidx.core:core-ktx:1.13.1")
-    implementation(libs.transport.api)
-
-    // Navegación y Compose
-    val nav_version = "2.7.7"
-    implementation("androidx.navigation:navigation-compose:$nav_version")
     implementation("androidx.compose.ui:ui:1.6.7")
-    implementation("androidx.compose.material:material:1.6.7")
     implementation("androidx.compose.ui:ui-tooling-preview:1.6.7")
     implementation("androidx.lifecycle:lifecycle-runtime-ktx:2.7.0")
     implementation("androidx.activity:activity-compose:1.9.0")
+    implementation("androidx.activity:activity:1.9.0")
+
+    // media3 para reproducir audio
+    val media3_version = "1.3.1"
+    // For media playback using ExoPlayer
+    implementation("androidx.media3:media3-exoplayer:$media3_version")
+    // For exposing and controlling media sessions
+    implementation("androidx.media3:media3-session:$media3_version")
+
+    // add JDBC driver for MySQL
     implementation("mysql:mysql-connector-java:5.1.49")
-    implementation(libs.material3)
-    implementation("androidx.compose.material3:material3:1.2.1")  // Actualizar a la última versión disponible
+
+    // Opcional: si decides usar Material 3
+    implementation("androidx.compose.material3:material3:1.2.1")
+
+    // Herramientas de desarrollo y pruebas
     debugImplementation("androidx.compose.ui:ui-tooling:1.6.7")
     androidTestImplementation("androidx.compose.ui:ui-test-junit4:1.6.7")
     androidTestImplementation("androidx.test.ext:junit:1.1.5")

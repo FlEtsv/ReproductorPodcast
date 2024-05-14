@@ -4,8 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools">
 
     <uses-permission android:name="android.permission.INTERNET" />
-    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE"/>
-
+    <uses-permission android:name="android.permission.FOREGROUND_SERVICE" />
 
     <application
         android:allowBackup="true"
@@ -29,19 +28,32 @@
             </intent-filter>
         </activity>
 
+        <!--
+            Este es un servicio que se declara en el manifiesto.
+            El nombre del servicio es MyMediaSessionService y se encuentra en el paquete .ui.player.
+            El atributo exported se establece en true, lo que significa que otros componentes (no solo los del mismo
+            paquete de la aplicación) pueden iniciar el servicio.
+        -->
         <service
-            android:name=".MyMusicService"
+            android:name=".ui.player.MyMediaSessionService"
             android:exported="true">
+            <!--
+                Este es un filtro de intención que especifica el tipo de intenciones que el servicio puede recibir.
+                En este caso, el servicio puede recibir intenciones con la acción androidx.media3.session.MediaSessionService.
+            -->
             <intent-filter>
-                <action android:name="android.media.browse.MediaBrowserService" />
+                <action android:name="androidx.media3.session.MediaSessionService"/>
             </intent-filter>
-            <meta-data
-                android:name="com.google.android.gms.car.application"
-                android:resource="@xml/automotive_app_desc" />
         </service>
 
-
-
+        <!--
+            Esta es una etiqueta de metadatos que se utiliza para proporcionar datos adicionales a la aplicación.
+            En este caso, se proporciona una descripción de la aplicación para Google Play Services para automóviles.
+            El recurso @xml/automotive_app_desc debe ser un archivo XML que contiene la descripción de la aplicación.
+        -->
+        <meta-data
+            android:name="com.google.android.gms.car.application"
+            android:resource="@xml/automotive_app_desc" />
 
     </application>
 

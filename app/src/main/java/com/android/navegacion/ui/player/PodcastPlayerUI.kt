@@ -16,17 +16,18 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.CircleShape
-import androidx.compose.material.Icon
-import androidx.compose.material.IconButton
-import androidx.compose.material.MaterialTheme
-import androidx.compose.material.Text
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.ArrowBack
+import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.filled.Menu
+import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
 import androidx.compose.material3.LinearProgressIndicator
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.DisposableEffect
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -39,6 +40,8 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.media3.common.Player
+import androidx.media3.session.MediaController
 import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
 import com.android.navegacion.components.iconArroyBack
@@ -48,13 +51,34 @@ import com.android.navegacion.components.iconFastForward
 import com.android.navegacion.components.iconFastReward
 import com.android.navegacion.components.iconPause
 import com.android.navegacion.components.iconPlay
-import com.universae.reproductor.ui.theme.AzulClaro
-import com.universae.reproductor.ui.theme.AzulOscuro
+import com.android.navegacion.ui.player.AndroidAudioPlayer
+import com.universae.reproductor.domain.entities.tema.Tema
+import com.universae.reproductor.domain.entities.tema.TemaId
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.withContext
+import kotlin.time.DurationUnit
+import kotlin.time.toDuration
 
 @Composable
-fun ReproductorPodcast(navController: NavController, tituloTema : String) {
+fun ReproductorPodcast(navController: NavController, tituloTema: String) {
+    var reproduciendo by remember { mutableStateOf(false) }
+    val progress = remember { mutableStateOf(0.0f) }
+    // crea instancia audioPlayer
     val context = LocalContext.current
-    val progress = remember { mutableStateOf(0f) }
+    val audioPlayer = remember { AndroidAudioPlayer(context) }
+    val controller =
+        remember { MediaController.Builder(context, audioPlayer.session.token).buildAsync() }
+
+    // Replace with your actual Tema instance
+    //TODO("Reemplazar con tu instancia real de Tema")
+    val tema = Tema(
+        temaId = TemaId(1),
+        nombreTema = "nombreTema",
+        descripcionTema = "descripciontema",
+        duracionAudio = 120.toDuration(DurationUnit.SECONDS),
+        audioUrl = "https://file-examples.com/storage/fe92070d83663e82d92ecf7/2017/11/file_example_MP3_700KB.mp3"
+    )
 
     var mediaController by remember { mutableStateOf<MediaControllerCompat?>(null) }
 
@@ -106,7 +130,10 @@ fun ReproductorPodcast(navController: NavController, tituloTema : String) {
                     onClick = { navController.popBackStack() },
                     modifier = Modifier.padding(8.dp) // Ajusta el espaciado según sea necesario
                 ) {
-                    Icon(Icons.Default.ArrowBack, contentDescription = "Back", tint = Color.White) // Ajusta el contenido de descripción según sea necesario
+                    Icon(
+                        Icons.AutoMirrored.Filled.ArrowBack,
+                        contentDescription = "Back"
+                    ) // Ajusta el contenido de descripción según sea necesario
                 }
             }
 
@@ -118,20 +145,38 @@ fun ReproductorPodcast(navController: NavController, tituloTema : String) {
                 BotonCompartir()
             }
         }
-
         Spacer(modifier = Modifier.height(100.dp))
         PortadaPodcast()
         Spacer(modifier = Modifier.height(16.dp))
         Text(
             text = tituloTema,
-            style = MaterialTheme.typography.h6,
-            color = Color.White
+            style = MaterialTheme.typography.bodyLarge
         )
         Spacer(modifier = Modifier.height(16.dp))
         ProgressBarRow(progress = progress)
         Spacer(modifier = Modifier.height(16.dp))
-        ControlesReproduccion(mediaController = mediaController, reproduciendo = true) {
-
+        ControlesReproduccion(
+            reproduciendo = reproduciendo,
+            onReproduccionPausaToggle = {
+                if (reproduciendo) {
+                    controller.get().pause()
+                } else {
+                    if (controller.get().playbackState == Player.STATE_READY && controller.get().playWhenReady.not()) {
+                        audioPlayer.continuar()
+                    } else {
+                        audioPlayer.reproducir(tema)
+                    }
+                }
+                reproduciendo = !reproduciendo
+            },
+            onRetroceder = { /* TODO: Retroceder */ },
+            onAvanzar = { /* TODO: Avanzar */ },
+            onAvanzarRapido = { },
+            onBajarVelocidad = {
+                //
+            }
+        )
+        Spacer(modifier = Modifier.height(16.dp))
         }
         Spacer(modifier = Modifier.height(16.dp))
     }
@@ -159,16 +204,17 @@ fun PortadaPodcast() {
 fun ControlesReproduccion(
     mediaController: MediaControllerCompat?,
     reproduciendo: Boolean,
-    onReproduccionPausaToggle: () -> Unit
+    onReproduccionPausaToggle: () -> Unit,
+    onRetroceder: () -> Unit,
+    onAvanzar: () -> Unit,
+    onAvanzarRapido: () -> Unit,
+    onBajarVelocidad: () -> Unit
 ) {
     Row(
         horizontalArrangement = Arrangement.Center,
         verticalAlignment = Alignment.CenterVertically
     ) {
-        // Botón para retroceder 5 segundos en la pista actual
-        IconButton(onClick = {
-            mediaController?.transportControls?.rewind()  // Implementar lógicamente en el servicio para retroceder 5 segundos
-        }) {
+        IconButton(onClick = { onBajarVelocidad }) {
             Icon(
                 imageVector = iconFastReward(),
                 contentDescription = "Retroceder rápidamente",
@@ -249,8 +295,8 @@ fun ProgressBarRow(progress: MutableState<Float>) {  // 'progress' debería ser 
             LinearProgressIndicator(
                 progress = progress.value,
                 modifier = Modifier.fillMaxWidth(),
-                color = AzulOscuro,
-                trackColor = AzulClaro
+                color = MaterialTheme.colorScheme.primary,
+                trackColor = MaterialTheme.colorScheme.onPrimary.copy(alpha = 0.5f),
             )
         }
     )
@@ -280,6 +326,6 @@ class ControllerCallback : MediaControllerCompat.Callback() {
 @Preview(showBackground = true)
 @Composable
 fun PreviewPodcast() {
-    var idTitulo : String = "titulo del Podcast"
+    var idTitulo: String = "titulo del Podcast"
     ReproductorPodcast(navController = rememberNavController(), idTitulo)
 }
