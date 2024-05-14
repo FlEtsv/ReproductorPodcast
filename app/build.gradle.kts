@@ -62,6 +62,8 @@ dependencies {
     val media3_version = "1.3.1"
     // For media playback using ExoPlayer
     implementation("androidx.media3:media3-exoplayer:$media3_version")
+    // For exposing and controlling media sessions
+    implementation("androidx.media3:media3-session:$media3_version")
 
     // add JDBC driver for MySQL
     implementation("mysql:mysql-connector-java:5.1.49")

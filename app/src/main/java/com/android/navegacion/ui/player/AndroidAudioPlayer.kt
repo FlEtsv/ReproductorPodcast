@@ -1,72 +1,123 @@
 package com.android.navegacion.ui.player
 
 import android.content.Context
+import android.media.AudioFocusRequest
+import android.media.AudioManager
+import android.os.Build
+import androidx.annotation.OptIn
+import android.media.AudioAttributes as MediaAndroidAudioAttributes
+import androidx.media3.common.AudioAttributes
+import androidx.media3.common.C
 import androidx.media3.common.MediaItem
+import androidx.media3.common.PlaybackException
+import androidx.media3.common.Player
+import androidx.media3.common.util.UnstableApi
+import androidx.media3.exoplayer.ExoPlaybackException
 import androidx.media3.exoplayer.ExoPlayer
+import androidx.media3.session.MediaController
+import androidx.media3.session.MediaSession
 import com.universae.reproductor.domain.usecases.AudioPlayerUseCases
 import com.universae.reproductor.domain.entities.tema.Tema
 
-class AndroidAudioPlayer(private val context: Context) : AudioPlayerUseCases {
-    // Variable para almacenar la instancia de ExoPlayer
-    private var exoPlayer: ExoPlayer? = null
+class AndroidAudioPlayer @OptIn(UnstableApi::class) constructor(private val context: Context) : AudioPlayerUseCases {
+    private var player: ExoPlayer? = null
+    val session: MediaSession
+    val controller: MediaController
+    private val audioManager: AudioManager = context.getSystemService(Context.AUDIO_SERVICE) as AudioManager
 
-    // Método para reproducir un tema
+    init {
+        createPlayer()
+        session = MediaSession.Builder(context, player!!).build()
+        controller = MediaController.Builder(context, session.token).buildAsync().get()
+    }
+
+    private fun createPlayer() {
+        player = ExoPlayer.Builder(context).build()
+        // Add your player listener here
+        player?.addListener(object : Player.Listener {
+            override fun onPlaybackStateChanged(state: Int) {
+                super.onPlaybackStateChanged(state)
+                when (state) {
+                    Player.STATE_IDLE -> {
+                        println("Player state: IDLE")
+                    }
+                    Player.STATE_BUFFERING -> {
+                        println("Player state: BUFFERING")
+                    }
+                    Player.STATE_READY -> {
+                        println("Player state: READY")
+                    }
+                    Player.STATE_ENDED -> {
+                        println("Player state: ENDED")
+                    }
+                }
+            }
+
+            override fun onPlayerError(error: PlaybackException) {
+                super.onPlayerError(error)
+                println("Player error: ${error.message}")
+            }
+        })
+    }
+
     override fun play(tema: Tema) {
-        // Detiene cualquier audio que se esté reproduciendo
-        stop()
-        // Crea un MediaItem a partir de la URL del audio del tema
-        val mediaItem = MediaItem.fromUri(tema.audioUrl)
-        // Inicializa ExoPlayer
-        exoPlayer = ExoPlayer.Builder(context).build().apply {
-            // Establece el MediaItem a reproducir
-            setMediaItem(mediaItem)
-            // Prepara el reproductor
-            prepare()
-            // Inicia la reproducción
-            play()
+        //stop()
+        if (player == null) {
+            createPlayer()
         }
+
+        val mediaItem: MediaItem = MediaItem.fromUri(tema.audioUrl)
+        player?.setMediaItem(mediaItem)
+        player?.prepare()
+        player?.playWhenReady = true
+        //player?.play()
+        controller.play()
     }
 
-    // Método para detener la reproducción
     override fun stop() {
-        // Si ExoPlayer no es nulo, detiene y libera la instancia
-        exoPlayer?.let {
-            it.stop()
-            it.release()
-        }
-        // Establece ExoPlayer a nulo
-        exoPlayer = null
+        player?.stop()
+        player?.release()
+        player = null
     }
 
-    // Método para pausar la reproducción
     override fun pausa() {
-        // Si ExoPlayer no es nulo, pausa la reproducción
-        exoPlayer?.pause()
+        player?.pause()
     }
 
-    // Método para continuar la reproducción
     override fun continuar() {
-        // Si ExoPlayer no es nulo, reanuda la reproducción
-        exoPlayer?.play()
+        player?.play()
     }
 
-    // Método para reproducir una muestra de MP3
-    fun playSample() {
-        // Detiene cualquier audio que se esté reproduciendo
-        exoPlayer?.release()
-        exoPlayer = null
+    private fun requestAudioFocus() {
+        val audioAttributes = AudioAttributes.Builder()
+            .setContentType(C.AUDIO_CONTENT_TYPE_MUSIC)
+            .build()
 
-        // Crea un MediaItem que representa la muestra de MP3
-        val mediaItem = MediaItem.fromUri("https://file-examples.com/storage/fe92070d83663e82d92ecf7/2017/11/file_example_MP3_700KB.mp3")
+        val focusChangeListener = AudioManager.OnAudioFocusChangeListener { focusChange ->
+            when (focusChange) {
+                AudioManager.AUDIOFOCUS_GAIN -> player?.playWhenReady = true
+                AudioManager.AUDIOFOCUS_LOSS_TRANSIENT, AudioManager.AUDIOFOCUS_LOSS -> player?.playWhenReady = false
+            }
+        }
 
-        // Inicializa ExoPlayer
-        exoPlayer = ExoPlayer.Builder(context).build().apply {
-            // Establece el MediaItem a reproducir
-            setMediaItem(mediaItem)
-            // Prepara el reproductor
-            prepare()
-            // Inicia la reproducción
-            play()
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            val mediaAudioAttributes = MediaAndroidAudioAttributes.Builder()
+                .setContentType(MediaAndroidAudioAttributes.CONTENT_TYPE_MUSIC)
+                .build()
+            val focusRequest = AudioFocusRequest.Builder(AudioManager.AUDIOFOCUS_GAIN)
+                .setAudioAttributes(mediaAudioAttributes)
+                .setOnAudioFocusChangeListener(focusChangeListener)
+                .build()
+
+            audioManager.requestAudioFocus(focusRequest)
+        } else {
+            @Suppress("DEPRECATION")
+            audioManager.requestAudioFocus(focusChangeListener, AudioManager.STREAM_MUSIC, AudioManager.AUDIOFOCUS_GAIN)
         }
     }
+
+    fun getPlayer(): ExoPlayer? {
+        return player
+    }
+
 }
