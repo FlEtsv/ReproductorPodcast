@@ -50,6 +50,7 @@ android {
 }
 
 dependencies {
+    implementation("com.google.android.exoplayer:exoplayer:2.14.2")
     implementation("androidx.car.app:app:1.0.0")
     implementation ("androidx.media:media:1.4.3")
     // Dependencias para Jetpack Compose
@@ -58,6 +59,7 @@ dependencies {
     implementation("androidx.compose.ui:ui-tooling-preview:1.0.5")
     // Consolidar las versiones de Core KTX
     implementation("androidx.core:core-ktx:1.13.1")
+    implementation(libs.transport.api)
 
     // Navegación y Compose
     val nav_version = "2.7.7"

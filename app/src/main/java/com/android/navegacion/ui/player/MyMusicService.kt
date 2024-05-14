@@ -1,109 +1,91 @@
-package com.android.navegacion.ui.player
-
+import android.net.Uri
 import android.os.Bundle
-import android.support.v4.media.MediaBrowserCompat.MediaItem
+import android.support.v4.media.MediaBrowserCompat
 import android.support.v4.media.session.MediaSessionCompat
 import androidx.media.MediaBrowserServiceCompat
+import com.google.android.exoplayer2.C
+import com.google.android.exoplayer2.ExoPlayer
+import com.google.android.exoplayer2.MediaItem
+import com.google.android.exoplayer2.SimpleExoPlayer
+import com.google.android.exoplayer2.audio.AudioAttributes
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
 
-/**
- * This class provides a MediaBrowser through a service. It exposes the media library to a browsing
- * client, through the onGetRoot and onLoadChildren methods. It also creates a MediaSession and
- * exposes it through its MediaSession.Token, which allows the client to create a MediaController
- * that connects to and send control commands to the MediaSession remotely. This is useful for
- * user interfaces that need to interact with your media session, like Android Auto. You can
- * (should) also use the same service from your app's UI, which gives a seamless playback
- * experience to the user.
- *
- *
- * To implement a MediaBrowserService, you need to:
- *
- *  *  Extend [MediaBrowserServiceCompat], implementing the media browsing
- * related methods [MediaBrowserServiceCompat.onGetRoot] and
- * [MediaBrowserServiceCompat.onLoadChildren];
- *
- *  *  In onCreate, start a new [MediaSessionCompat] and notify its parent
- * with the session"s token [MediaBrowserServiceCompat.setSessionToken];
- *
- *  *  Set a callback on the [MediaSessionCompat.setCallback].
- * The callback will receive all the user"s actions, like play, pause, etc;
- *
- *  *  Handle all the actual music playing using any method your app prefers (for example,
- * [android.media.MediaPlayer])
- *
- *  *  Update playbackState, "now playing" metadata and queue, using MediaSession proper methods
- * [MediaSessionCompat.setPlaybackState]
- * [MediaSessionCompat.setMetadata] and
- * [MediaSessionCompat.setQueue])
- *
- *  *  Declare and export the service in AndroidManifest with an intent receiver for the action
- * android.media.browse.MediaBrowserService
- *
- * To make your app compatible with Android Auto, you also need to:
- *
- *  *  Declare a meta-data tag in AndroidManifest.xml linking to a xml resource
- * with a &lt;automotiveApp&gt; root element. For a media app, this must include
- * an &lt;uses name="media"/&gt; element as a child.
- * For example, in AndroidManifest.xml:
- * &lt;meta-data android:name="com.google.android.gms.car.application"
- * android:resource="@xml/automotive_app_desc"/&gt;
- * And in res/values/automotive_app_desc.xml:
- * &lt;automotiveApp&gt;
- * &lt;uses name="media"/&gt;
- * &lt;/automotiveApp&gt;
- *
- */
 class MyMusicService : MediaBrowserServiceCompat() {
-
     private lateinit var session: MediaSessionCompat
+    private var player: ExoPlayer? = null
+    private val serviceScope = CoroutineScope(Dispatchers.Main)
 
-    private val callback = object : MediaSessionCompat.Callback() {
-        override fun onPlay() {}
-
-        override fun onSkipToQueueItem(queueId: Long) {}
-
-        override fun onSeekTo(position: Long) {}
-
-        override fun onPlayFromMediaId(mediaId: String?, extras: Bundle?) {}
-
-        override fun onPause() {}
-
-        override fun onStop() {}
-
-        override fun onSkipToNext() {}
-
-        override fun onSkipToPrevious() {}
-
-        override fun onCustomAction(action: String?, extras: Bundle?) {}
-
-        override fun onPlayFromSearch(query: String?, extras: Bundle?) {}
-    }
-
+    // Se llama cuando el servicio se crea
     override fun onCreate() {
         super.onCreate()
+        initializeMediaSession()
+        initializePlayer()
+    }
 
+    // Inicializa la sesión de medios
+    private fun initializeMediaSession() {
         session = MediaSessionCompat(this, "MyMusicService")
         sessionToken = session.sessionToken
-        session.setCallback(callback)
-        session.setFlags(
-            MediaSessionCompat.FLAG_HANDLES_MEDIA_BUTTONS or
-                    MediaSessionCompat.FLAG_HANDLES_TRANSPORT_CONTROLS
-        )
+        session.isActive = true
+        session.setCallback(object : MediaSessionCompat.Callback() {
+            override fun onPlay() {
+                player?.playWhenReady = true
+            }
+
+            override fun onPause() {
+                player?.playWhenReady = false
+            }
+
+            override fun onPrepare() {
+                serviceScope.launch {
+                    preparePlayer("file:///android_asset/Adele.mp3")
+                }
+            }
+
+            override fun onSeekTo(pos: Long) {
+                serviceScope.launch {
+                    player?.seekTo(pos)
+                }
+            }
+        })
     }
 
+    // Inicializa el reproductor ExoPlayer
+    private fun initializePlayer() {
+        player = SimpleExoPlayer.Builder(this).build().apply {
+            setAudioAttributes(
+                AudioAttributes.Builder()
+                    .setContentType(C.CONTENT_TYPE_MUSIC)
+                    .setUsage(C.USAGE_MEDIA)
+                    .build(), true
+            )
+        }
+    }
+
+    // Prepara el reproductor con un URI de media
+    private suspend fun preparePlayer(uriString: String) {
+        val mediaItem = MediaItem.fromUri(Uri.parse(uriString))
+        player?.setMediaItem(mediaItem)
+        player?.prepare()
+    }
+
+    // Se llama cuando el servicio se destruye
     override fun onDestroy() {
         session.release()
+        player?.release()
+        player = null
+        super.onDestroy()
     }
 
-    override fun onGetRoot(
-        clientPackageName: String,
-        clientUid: Int,
-        rootHints: Bundle?
-    ): MediaBrowserServiceCompat.BrowserRoot? {
-        return MediaBrowserServiceCompat.BrowserRoot("root", null)
+    // Retorna el root de navegación para el MediaBrowser
+    override fun onGetRoot(clientPackageName: String, clientUid: Int, rootHints: Bundle?): BrowserRoot {
+        return BrowserRoot("ROOT_ID", null)
     }
-    override fun onLoadChildren(parentId: String, result: Result<MutableList<MediaItem>>) {
-        val mediaItems = mutableListOf<MediaItem>()
-        // Cargar y transformar tus pistas de medios aquí
-        result.sendResult(mediaItems)
+
+    // Carga los hijos para el navegador de medios
+    override fun onLoadChildren(parentId: String, result: Result<MutableList<MediaBrowserCompat.MediaItem>>) {
+        result.sendResult(null)
     }
 }

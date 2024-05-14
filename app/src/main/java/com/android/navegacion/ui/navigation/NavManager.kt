@@ -1,13 +1,13 @@
 package com.android.navegacion.navigation
 
 import HomeView
-import ReproductorPodcast
 import androidx.compose.runtime.Composable
 import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
+import com.android.navegacion.ui.player.ReproductorPodcast
 import com.android.navegacion.views.DetailView
 import com.android.navegacion.views.Login
 import com.android.navegacion.views.SplashScreen
