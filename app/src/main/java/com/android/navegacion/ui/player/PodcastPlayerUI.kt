@@ -32,7 +32,6 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import androidx.media3.session.MediaController
 import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
 import com.android.navegacion.components.iconArrowBack
@@ -53,11 +52,11 @@ import kotlin.time.toDuration
 fun ReproductorPodcast(navController: NavController, tituloTema: String) {
     var reproduciendo by remember { mutableStateOf(false) }
     val progress = remember { mutableStateOf(0.0f) }
-    // crea instancia audioPlayer
+    // crea instancia audioPlayer e inicializa el controlador de reproducción mediante el composable AndroidAudioPlayerComposable
     val context = LocalContext.current
     val audioPlayer = remember { AndroidAudioPlayer(context) }
-    val controller =
-        remember { MediaController.Builder(context, audioPlayer.session.token).buildAsync() }
+    AndroidAudioPlayerComposable(audioPlayer = audioPlayer)
+
 
     // Replace with your actual Tema instance
     //TODO("Reemplazar con tu instancia real de Tema")
@@ -70,7 +69,7 @@ fun ReproductorPodcast(navController: NavController, tituloTema: String) {
     )
 
 
-    // Interfaz de usuario
+    // Interfaz de usuario del reproductor de podcast
     Column(
         modifier = Modifier
             .fillMaxWidth()
@@ -118,7 +117,15 @@ fun ReproductorPodcast(navController: NavController, tituloTema: String) {
         Spacer(modifier = Modifier.height(16.dp))
         ControlesReproduccion(
             reproduciendo = reproduciendo,
-            onReproduccionPausaToggle = { },
+            onReproduccionPausaToggle = {
+                if (reproduciendo) {
+                    audioPlayer.pausa()
+                } else {
+                    if (audioPlayer.controller.
+                    }
+
+                }
+            },
             onRetroceder = { /* TODO: Retroceder */ },
             onAvanzar = { /* TODO: Avanzar */ },
             onAvanzarRapido = { },
@@ -184,12 +191,6 @@ fun ControlesReproduccion(
 
         // Botón de reproducción/pausa
         IconButton(onClick = {
-            onReproduccionPausaToggle()
-            if (reproduciendo) {
-
-            } else {
-
-            }
         }) {
             Icon(
                 imageVector = if (reproduciendo) iconPause() else iconPlay(),

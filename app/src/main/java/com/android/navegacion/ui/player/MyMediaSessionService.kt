@@ -14,6 +14,7 @@ class MyMediaSessionService : MediaSessionService() {
 
     // MediaSession es una clase que permite controlar la reproducción de medios.
     private lateinit var mediaSession: MediaSession
+
     // AndroidAudioPlayer es una clase personalizada para la reproducción de audio.
     private lateinit var audioPlayer: AndroidAudioPlayer
 
@@ -39,7 +40,8 @@ class MyMediaSessionService : MediaSessionService() {
     override fun onCreate() {
         super.onCreate()
         audioPlayer = AndroidAudioPlayer(this)
-        mediaSession = MediaSession.Builder(/*context=*/ this, /*player=*/ audioPlayer.player).build()
+        mediaSession =
+            MediaSession.Builder(/*context=*/ this, /*player=*/ audioPlayer.player).build()
         mediaSession.setPlayer(audioPlayer.player)
         audioPlayer.player.addListener(mediaSessionCallback)
     }
