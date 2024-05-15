@@ -1,8 +1,16 @@
 package com.android.navegacion.ui.player
 
+import android.Manifest
+import android.app.NotificationChannel
+import android.app.NotificationManager
 import android.content.Intent
-import androidx.media3.common.Player
-
+import android.content.pm.PackageManager
+import android.os.Build
+import androidx.annotation.OptIn
+import androidx.core.app.NotificationCompat
+import androidx.core.app.NotificationManagerCompat
+import androidx.media3.common.util.UnstableApi
+import androidx.media3.exoplayer.ExoPlayer
 import androidx.media3.session.MediaSession
 import androidx.media3.session.MediaSessionService
 
@@ -12,38 +20,32 @@ import androidx.media3.session.MediaSessionService
  */
 class MyMediaSessionService : MediaSessionService() {
 
-    // MediaSession es una clase que permite controlar la reproducción de medios.
-    private lateinit var mediaSession: MediaSession
+    private var _mediaSession: MediaSession? = null
+    private val mediaSession get() = _mediaSession!!
 
-    // AndroidAudioPlayer es una clase personalizada para la reproducción de audio.
-    private lateinit var audioPlayer: AndroidAudioPlayer
-
-    // Este es un objeto de devolución de llamada que escucha los cambios en el estado de reproducción del reproductor.
-    private val mediaSessionCallback = object : Player.Listener {
-        // Este método se llama cuando cambia el estado de reproducción del reproductor.
-        override fun onPlayWhenReadyChanged(playWhenReady: Boolean, reason: Int) {
-            // TODO: Manejar los comandos de reproducción y pausa
-        }
-
-        // TODO: Implementar otros comandos de reproducción
+    companion object {
+        private const val NOTIFICATION_ID = 42
+        private const val CHANNEL_ID = "session_notification_channel_id"
     }
 
     /**
      * Este método se llama cuando se crea el servicio.
      *
-     * En este método, se realizan las siguientes operaciones:
-     * 1. Se inicializa el AndroidAudioPlayer.
-     * 2. Se crea una nueva MediaSession.
-     * 3. Se establece la devolución de llamada en la MediaSession.
-     * 4. Se agrega el listener a la instancia de Player.
+     * En este método, se inicializan las instancias de ExoPlayer y MediaSession y se establece el MediaSessionServiceListener.
      */
+    @OptIn(UnstableApi::class)
     override fun onCreate() {
-        super.onCreate()
-        audioPlayer = AndroidAudioPlayer(this)
-        mediaSession =
-            MediaSession.Builder(/*context=*/ this, /*player=*/ audioPlayer.player).build()
-        mediaSession.setPlayer(audioPlayer.player)
-        audioPlayer.player.addListener(mediaSessionCallback)
+        super.onCreate() // Call the superclass method
+
+        // Create an ExoPlayer instance
+        val player = ExoPlayer.Builder(this).build()
+
+        // Create a MediaSession instance
+        _mediaSession = MediaSession.Builder(this, player)
+            .build() // Build the MediaSession instance
+
+        // Set the listener for the MediaSessionService
+        setListener(MediaSessionServiceListener())
     }
 
     /**
@@ -51,19 +53,19 @@ class MyMediaSessionService : MediaSessionService() {
      *
      * En este método, se devuelve la MediaSession que se creó en onCreate().
      */
-    override fun onGetSession(controllerInfo: MediaSession.ControllerInfo): MediaSession {
-        return mediaSession
+    override fun onGetSession(controllerInfo: MediaSession.ControllerInfo): MediaSession? {
+        return _mediaSession
     }
 
-    /**
-     * Este método se llama cuando se destruye la tarea de la aplicación.
-     *
-     * En este método, se detiene la reproducción y se liberan los recursos.
-     */
-    override fun onTaskRemoved(rootIntent: Intent) {
-        mediaSession.player.stop()
-        mediaSession.player.release()
-        stopSelf()
+    override fun onTaskRemoved(rootIntent: Intent?) {
+        // Get the player from the media session
+        val player = mediaSession.player
+
+        // Check if the player is not ready to play or there are no items in the media queue
+        if (!player.playWhenReady || player.mediaItemCount == 0) {
+            // Stop the service
+            stopSelf()
+        }
     }
 
     /**
@@ -71,8 +73,71 @@ class MyMediaSessionService : MediaSessionService() {
      *
      * En este método, se libera el reproductor de audio.
      */
+    @OptIn(UnstableApi::class)
     override fun onDestroy() {
-        mediaSession.player.release()
+        // If _mediaSession is not null, run the following block
+        _mediaSession?.run {
+            // Release the player
+            player.release()
+            // Release the MediaSession instance
+            release()
+            // Set _mediaSession to null
+            _mediaSession = null
+        }
+        // Clear the listener
+        clearListener()
+        // Call the superclass method
         super.onDestroy()
+    }
+
+    @UnstableApi
+    private inner class MediaSessionServiceListener : Listener {
+
+        /**
+         * This method is only required to be implemented on Android 12 or above when an attempt is made
+         * by a media controller to resume playback when the {@link MediaSessionService} is in the
+         * background.
+         */
+        override fun onForegroundServiceStartNotAllowedException() {
+            if (
+                Build.VERSION.SDK_INT >= 33 &&
+                checkSelfPermission(Manifest.permission.POST_NOTIFICATIONS) !=
+                PackageManager.PERMISSION_GRANTED
+            ) {
+                // Notification permission is required but not granted
+                return
+            }
+            val notificationManagerCompat =
+                NotificationManagerCompat.from(this@MyMediaSessionService)
+            ensureNotificationChannel(notificationManagerCompat)
+            val builder =
+                NotificationCompat.Builder(this@MyMediaSessionService, CHANNEL_ID)
+                    .setSmallIcon(androidx.media3.session.R.drawable.media3_notification_small_icon)
+                    .setContentTitle("Payback no puede continuar")
+                    .setStyle(
+                        NotificationCompat.BigTextStyle()
+                            .bigText("Press on the play button on the media notification if it is still present, otherwise please open the app to start the playback and re-connect the session to the controller")
+                    )
+                    .setPriority(NotificationCompat.PRIORITY_DEFAULT)
+                    .setAutoCancel(true)
+            notificationManagerCompat.notify(NOTIFICATION_ID, builder.build())
+        }
+    }
+
+    private fun ensureNotificationChannel(notificationManagerCompat: NotificationManagerCompat) {
+        if (
+            Build.VERSION.SDK_INT < 26 ||
+            notificationManagerCompat.getNotificationChannel(CHANNEL_ID) != null
+        ) {
+            return
+        }
+
+        val channel =
+            NotificationChannel(
+                CHANNEL_ID,
+                "Payback no puede continuar",
+                NotificationManager.IMPORTANCE_DEFAULT
+            )
+        notificationManagerCompat.createNotificationChannel(channel)
     }
 }

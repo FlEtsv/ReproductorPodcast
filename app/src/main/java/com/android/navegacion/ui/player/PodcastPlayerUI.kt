@@ -32,6 +32,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.media3.common.Player
 import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
 import com.android.navegacion.components.iconArrowBack
@@ -121,10 +122,13 @@ fun ReproductorPodcast(navController: NavController, tituloTema: String) {
                 if (reproduciendo) {
                     audioPlayer.pausa()
                 } else {
-                    if (audioPlayer.controller.
+                    if (audioPlayer.controller?.playbackState == Player.STATE_READY && audioPlayer.controller?.playWhenReady?.not() == true) {
+                        audioPlayer.continuar()
+                    } else {
+                        audioPlayer.reproducir(tema)
                     }
-
                 }
+                reproduciendo = !reproduciendo
             },
             onRetroceder = { /* TODO: Retroceder */ },
             onAvanzar = { /* TODO: Avanzar */ },
