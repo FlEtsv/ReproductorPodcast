@@ -9,16 +9,15 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import com.android.navegacion.components.*
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.delay
-import kotlinx.coroutines.withContext
-import androidx.compose.material3.MaterialTheme
 import com.universae.reproductor.domain.entities.alumno.Alumno
 import com.universae.reproductor.domain.entities.asignatura.Asignatura
 import com.universae.reproductor.domain.entities.tema.Tema
 import com.universae.reproductor.domaintest.PreviewAlumno
 import com.universae.reproductor.domaintest.PreviewAsignaturas
 import com.universae.reproductor.domaintest.PreviewTemas
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.withContext
 
 /**
  * Vista principal de la aplicación, configurada para mostrar una barra superior, un botón flotante y un contenido dinámico.
@@ -114,7 +113,7 @@ fun FilaTituloCola() {
         ) {
             Box(contentAlignment = Alignment.Center) {
                 Text(
-                    text = "Card",
+                    text = "",
                     style = MaterialTheme.typography.bodyMedium
                 )
             }
