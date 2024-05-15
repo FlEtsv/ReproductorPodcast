@@ -66,7 +66,7 @@ dependencies {
     implementation("androidx.media3:media3-session:$media3_version")
 
     // add JDBC driver for MySQL
-    implementation("mysql:mysql-connector-java:5.1.49")
+    //implementation("mysql:mysql-connector-java:5.1.49")
 
     // Opcional: si decides usar Material 3
     implementation("androidx.compose.material3:material3:1.2.1")

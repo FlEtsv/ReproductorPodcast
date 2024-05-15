@@ -10,15 +10,14 @@ import com.universae.reproductor.domaintest.PreviewTemas
 import java.sql.Connection
 import java.sql.DriverManager
 import java.sql.PreparedStatement
-import java.sql.ResultSet
 import java.sql.SQLException
-import kotlin.time.DurationUnit
-import kotlin.time.toDuration
 
 object TemaRepositoryImpl : TemaRepository {
 
     override fun guardarPuntoParada(alumnoId: AlumnoId, temaId: TemaId, puntoParada: Int): Int {
-        val query = "INSERT INTO progreso_escucha_alumno (usuario_id, tema_id, punto_parada) VALUES (?, ?, ?)"
+        /* TODO("Implementar la lógica para guardar el punto de parada de un tema escuchado por un alumno en el mock data")
+        val query =
+            "INSERT INTO progreso_escucha_alumno (usuario_id, tema_id, punto_parada) VALUES (?, ?, ?)"
         var connection: Connection? = null
         var preparedStatement: PreparedStatement? = null
 
@@ -43,10 +42,14 @@ object TemaRepositoryImpl : TemaRepository {
             preparedStatement?.close()
             connection?.close()
         }
+         */
+        return 0
     }
 
     override fun marcarTemaComoEscuchado(alumnoId: AlumnoId, temaId: TemaId): Int {
-        val query = "INSERT INTO progreso_escucha_alumno (usuario_id, tema_id, escuchado) VALUES (?, ?, ?)"
+        /* TODO("Implementar la lógica para marcar un tema como escuchado por un alumno en el mock data")
+        val query =
+            "INSERT INTO progreso_escucha_alumno (usuario_id, tema_id, escuchado) VALUES (?, ?, ?)"
         var connection: Connection? = null
         var preparedStatement: PreparedStatement? = null
 
@@ -71,12 +74,14 @@ object TemaRepositoryImpl : TemaRepository {
             preparedStatement?.close()
             connection?.close()
         }
+         */
+        return 0
     }
 
     override fun obtenerTema(temaId: TemaId): Tema? {
 
-        return if(PreviewTemas.filter { it.temaId == temaId}.isNotEmpty()){
-            PreviewTemas.filter { it.temaId == temaId}[0]
+        return if (PreviewTemas.filter { it.temaId == temaId }.isNotEmpty()) {
+            PreviewTemas.filter { it.temaId == temaId }[0]
         } else {
             null
         }

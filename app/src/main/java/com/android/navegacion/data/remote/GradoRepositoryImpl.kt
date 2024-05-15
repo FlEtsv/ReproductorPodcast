@@ -1,21 +1,16 @@
 package com.android.navegacion.data.remote
 
-import com.universae.reproductor.domain.entities.asignatura.AsignaturaId
 import com.universae.reproductor.domain.entities.grado.Grado
 import com.universae.reproductor.domain.entities.grado.GradoId
 import com.universae.reproductor.domain.entities.grado.GradoRepository
 import com.universae.reproductor.domaintest.PreviewGrados
-import java.sql.Connection
-import java.sql.DriverManager
-import java.sql.PreparedStatement
-import java.sql.ResultSet
 
 object GradoRepositoryImpl : GradoRepository {
 
     override fun getGrado(gradoId: GradoId): Grado? {
 
-        return if(PreviewGrados.filter { it.gradoId == gradoId}.isNotEmpty()){
-            PreviewGrados.filter { it.gradoId == gradoId}[0]
+        return if (PreviewGrados.filter { it.gradoId == gradoId }.isNotEmpty()) {
+            PreviewGrados.filter { it.gradoId == gradoId }[0]
         } else {
             null
         }
@@ -58,6 +53,7 @@ object GradoRepositoryImpl : GradoRepository {
          */
     }
 
+    /*
     private fun buscarAsignaturasIdGrado(gradoId: Int): List<Int> {
         val query = "SELECT * FROM grado_asignatura WHERE grado_id = ?"
         var connection: Connection? = null
@@ -88,5 +84,7 @@ object GradoRepositoryImpl : GradoRepository {
             connection?.close()
         }
     }
+
+     */
 
 }

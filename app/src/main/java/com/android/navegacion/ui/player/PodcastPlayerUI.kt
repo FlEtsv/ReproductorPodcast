@@ -1,5 +1,6 @@
 package com.android.navegacion.ui.player
 
+import androidx.annotation.OptIn
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -66,7 +67,7 @@ fun ReproductorPodcast(navController: NavController, tituloTema: String) {
         nombreTema = "nombreTema",
         descripcionTema = "descripciontema",
         duracionAudio = 120.toDuration(DurationUnit.SECONDS),
-        audioUrl = "https://file-examples.com/storage/fe92070d83663e82d92ecf7/2017/11/file_example_MP3_700KB.mp3"
+        audioUrl = "https://file-examples.com/storage/fe440f1b4566456eb99f751/2017/11/file_example_MP3_700KB.mp3"
     )
 
 
@@ -195,6 +196,7 @@ fun ControlesReproduccion(
 
         // Botón de reproducción/pausa
         IconButton(onClick = {
+            onReproduccionPausaToggle()
         }) {
             Icon(
                 imageVector = if (reproduciendo) iconPause() else iconPlay(),

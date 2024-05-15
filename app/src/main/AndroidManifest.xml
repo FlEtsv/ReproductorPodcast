@@ -1,11 +1,11 @@
-<?xml version="1.0" encoding="utf-8"?>
-<!--suppress AndroidDomInspection -->
+<?xml version="1.0" encoding="utf-8"?><!--suppress AndroidDomInspection -->
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools">
 
     <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.FOREGROUND_SERVICE" />
     <uses-permission android:name="android.permission.POST_NOTIFICATIONS" />
+    <uses-permission android:name="android.permission.FOREGROUND_SERVICE_MEDIA_PLAYBACK" />
 
     <application
         android:allowBackup="true"
@@ -37,13 +37,15 @@
         -->
         <service
             android:name=".ui.player.MyMediaSessionService"
-            android:exported="true">
+            android:enabled="true"
+            android:exported="true"
+            android:foregroundServiceType="mediaPlayback">
             <!--
                 Este es un filtro de intención que especifica el tipo de intenciones que el servicio puede recibir.
                 En este caso, el servicio puede recibir intenciones con la acción androidx.media3.session.MediaSessionService.
             -->
             <intent-filter>
-                <action android:name="androidx.media3.session.MediaSessionService"/>
+                <action android:name="androidx.media3.session.MediaSessionService" />
             </intent-filter>
         </service>
 
