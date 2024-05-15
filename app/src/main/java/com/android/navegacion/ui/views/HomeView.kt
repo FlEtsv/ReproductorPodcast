@@ -1,12 +1,21 @@
 
 import android.annotation.SuppressLint
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Star
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.shadow
+import androidx.compose.ui.graphics.Brush
+import androidx.compose.ui.text.TextStyle
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import com.android.navegacion.components.*
 import com.android.navegacion.data.remote.GradoRepositoryImpl
@@ -18,6 +27,7 @@ import com.universae.reproductor.domain.usecases.AlumnoUseCaseImpl
 import com.universae.reproductor.domain.usecases.AsignaturaUseCasesImpl
 import com.universae.reproductor.domaintest.PreviewAsignaturas
 import com.universae.reproductor.domaintest.PreviewTemas
+import com.universae.reproductor.ui.theme.GrisOscuro
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.withContext
@@ -38,7 +48,7 @@ fun HomeView(navController: NavController, alumnoId: Int) {
 
     //val alumno: Alumno = AlumnoUseCaseImpl.gatAlumnoById(alumnoId)!! // Si llegamos a esta view es porque el alumno existe y siempre retorna un alumno
     // TODO("comprobar si hay cola de reproducción")
-    var hayCola = true
+    var hayCola = false
     // TODO("Obtener listas")
 
     var listaAsignaturas: List<Asignatura> = mutableListOf()
@@ -141,9 +151,11 @@ fun FilaTituloCola() {
         }
     }
 }
+
 /**
-* Muestra una Card pequeña alineada a la izquierda con texto a su derecha, ambos centrados en el Row.
-*/
+ * Muestra una Card pequeña alineada a la izquierda con texto a su derecha, ambos centrados en el Row.
+ * */
+
 @Composable
 fun FilaTituloNoCola() {
     Row(
@@ -153,53 +165,110 @@ fun FilaTituloNoCola() {
         verticalAlignment = Alignment.CenterVertically,
         horizontalArrangement = Arrangement.Center // Centra los elementos dentro del Row
     ) {
-        // Card pequeña a la izquierda
+// Card pequeña a la izquierda
         Card(
             modifier = Modifier
                 .width(100.dp)
                 .height(100.dp)
-                .weight(1f), // Usa weight para permitir que el elemento ocupe un espacio proporcional en el Row
-            elevation = CardDefaults.cardElevation(4.dp)
+                .weight(1f) // Usa weight para permitir que el elemento ocupe un espacio proporcional en el Row
+                .shadow(
+                    8.dp,
+                    shape = RoundedCornerShape(16.dp)
+                ), // Sombra más pronunciada y bordes redondeados
+            shape = RoundedCornerShape(16.dp),
+            elevation = CardDefaults.cardElevation(8.dp)
         ) {
-            Box(contentAlignment = Alignment.Center) {
-                Text(
-                    text = "Card",
-                    style = MaterialTheme.typography.bodyMedium
+            Box(
+                modifier = Modifier
+                    .fillMaxSize()
+                    .background(
+                        Brush.verticalGradient(
+                            colors = listOf(
+                                MaterialTheme.colorScheme.primary,
+                                MaterialTheme.colorScheme.primaryContainer
+                            )
+                        )
+                    ),
+                contentAlignment = Alignment.Center
+            ) {
+                Icon(
+                    imageVector = Icons.Default.Star,
+                    contentDescription = "Decorative Icon",
+                    modifier = Modifier.size(32.dp),
+                    tint = GrisOscuro
                 )
             }
         }
         Spacer(modifier = Modifier.width(16.dp)) // Espaciador para crear un padding mínimo entre la Card y el texto
-        // Columna para el texto a la derecha de la Card
+// Columna para el texto y el progreso a la derecha de la Card
         Column(
-            modifier = Modifier.weight(1f), // Igual peso que la Card para centrar los elementos dentro del Row
+            modifier = Modifier.weight(2f), // Usa un peso mayor para la columna
             verticalArrangement = Arrangement.Center,
             horizontalAlignment = Alignment.Start // Alinea el texto al inicio (izquierda de su columna)
         ) {
-            Text("Grado: X", style = MaterialTheme.typography.bodyLarge)
-            Text("Título: X", style = MaterialTheme.typography.bodyMedium)
-            Row {
-                
-                val progress = remember { mutableStateOf(0.0f) }
+            Text(
+                text = "Grado: X",
+                style = TextStyle(
+                    color = MaterialTheme.colorScheme.onBackground,
+                    fontSize = 24.sp,
+                    fontWeight = FontWeight.Bold,
+                    letterSpacing = 1.sp,
+                    lineHeight = 28.sp
+                ).merge(MaterialTheme.typography.bodyLarge)
+            )
+            Text(
+                text = "Título: X",
+                style = MaterialTheme.typography.bodyMedium.copy(
+                    color = MaterialTheme.colorScheme.onBackground,
+                    fontSize = 16.sp
+                )
+            )
+            Spacer(modifier = Modifier.height(8.dp))
+            Row(
+                verticalAlignment = Alignment.CenterVertically,
+                horizontalArrangement = Arrangement.SpaceBetween
+            ) {
                 Column {
-                    Text(text = "Progreso", style = MaterialTheme.typography.bodySmall)
+                    Text(
+                        text = "Progreso",
+                        style = MaterialTheme.typography.bodySmall.copy(
+                            color = MaterialTheme.colorScheme.onBackground,
+                            fontSize = 14.sp
+                        )
+                    )
                 }
-                Column {
-
-                    // Manejo adecuado de la corutina dentro de la composable
-                    LaunchedEffect(Unit) {
-                        withContext(Dispatchers.Default) {
-                            for (i in 1..100) {
-                                delay(100) // Simula un trabajo que toma tiempo 1 segundo
-                                progress.value = i / 100f
-                            }
+                Spacer(modifier = Modifier.width(8.dp))
+                val progress = remember { mutableStateOf(0.0f) }
+                Box(
+                    contentAlignment = Alignment.Center,
+                    modifier = Modifier.size(48.dp) // Tamaño del CircularProgressIndicator
+                ) {
+// CircularProgressBar
+                    CircularProgressIndicator(
+                        progress = { progress.value },
+                        modifier = Modifier.fillMaxSize(),
+                        color = MaterialTheme.colorScheme.primary,
+                        strokeWidth = 4.dp,
+                    )
+// Texto del porcentaje
+                    Text(
+                        text = "${(progress.value * 100).toInt()}%",
+                        style = MaterialTheme.typography.bodySmall.copy(
+                            color = MaterialTheme.colorScheme.onPrimary,
+                            fontSize = 12.sp
+                        )
+                    )
+                }
+// Manejo adecuado de la corutina dentro de la composable
+                LaunchedEffect(Unit) {
+                    withContext(Dispatchers.Default) {
+                        for (i in 1..100) {
+                            delay(100) // Simula un trabajo que toma tiempo 1 segundo
+                            progress.value = i / 100f
                         }
                     }
-
-                    DynamicCircularProgressBar(progress = progress)
-                    
                 }
             }
-
         }
     }
 }

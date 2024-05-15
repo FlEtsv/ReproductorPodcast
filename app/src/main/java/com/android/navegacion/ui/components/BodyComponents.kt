@@ -14,7 +14,6 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
-import androidx.compose.foundation.layout.wrapContentWidth
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -47,6 +46,11 @@ import androidx.navigation.NavController
 import com.android.navegacion.R
 import com.universae.reproductor.domain.entities.asignatura.Asignatura
 import com.universae.reproductor.domain.entities.tema.Tema
+import com.universae.reproductor.ui.theme.AzulClaro
+import com.universae.reproductor.ui.theme.Blanco
+import com.universae.reproductor.ui.theme.GrisClaro
+import com.universae.reproductor.ui.theme.GrisOscuro
+import com.universae.reproductor.ui.theme.Negro
 
 @Composable
 fun TitleView(name : String){
@@ -127,8 +131,9 @@ fun PodcastTopicCard(titulo : String, onClick: () -> Unit) {
                 .background(
                     Brush.linearGradient(
                         colors = listOf(
-                            MaterialTheme.colorScheme.primary,
-                            MaterialTheme.colorScheme.onPrimary
+                            AzulClaro,
+                            Blanco,
+                            GrisClaro
                         )
                     )
                 )
@@ -144,12 +149,12 @@ fun PodcastTopicCard(titulo : String, onClick: () -> Unit) {
                     imageVector = Icons.Default.Star,
                     contentDescription = "Decorative Icon",
                     modifier = Modifier.size(22.dp),
-                    tint = Color.White
+                    tint = Blanco
                 )
                 Spacer(modifier = Modifier.height(8.dp))
                 Text(
                     text = titulo,
-                    style = MaterialTheme.typography.bodyLarge.copy(color = Color.White),
+                    style = MaterialTheme.typography.bodyLarge.copy(color = Negro),
                     modifier = Modifier.padding(horizontal = 16.dp)
                 )
             }
@@ -165,7 +170,7 @@ fun TituloPrincipal(texto: String) {
     Text(
         text = texto,
         style = TextStyle(
-            color = Color.White, // Color del texto
+            color = Blanco, // Color del texto
             fontSize = 20.sp, // Tamaño del texto muy grande para realzar la importancia
             fontWeight = FontWeight.Bold, // Grosor de la fuente para destacar el título
             letterSpacing = 1.sp, // Espaciado entre letras para mejorar la legibilidad
@@ -179,21 +184,46 @@ fun TituloPrincipal(texto: String) {
  */
 @Composable
 fun TituloIzquierda(texto: String) {
-    Text(
-        text = texto,
+    Box(
         modifier = Modifier
-            .padding(top = 5.dp)// Añade un padding en la parte superior de 3dp
-            .padding(start = 14.dp)
-            .fillMaxWidth()  // Asegura que el Text ocupe el ancho completo para permitir la alineación a la izquierda
-            .wrapContentWidth(Alignment.Start),  // Alinea el contenido del Text a la izquierda
-        style = TextStyle(
-            color = Color.White, // Color del texto
-            fontSize = 35.sp, // Tamaño del texto
-            letterSpacing = 3.sp, // Espaciado entre letras
-            lineHeight = 30.sp // Altura de línea del texto
+            .fillMaxWidth()
+            .padding(16.dp),
+        contentAlignment = Alignment.Center // Centra la Box internamente
+    ) {
+        Box(
+            modifier = Modifier
+                .background(
+                    brush = Brush.linearGradient(
+                        colors = listOf(
 
-        ).merge(MaterialTheme.typography.bodyLarge) // Combina con los estilos predeterminados de MaterialTheme
-    )
+                            AzulClaro,
+                            Blanco,
+                            GrisClaro
+                        )
+                    ),
+                    shape = RoundedCornerShape(8.dp)
+                )
+                .padding(16.dp)
+                .fillMaxWidth(), // Asegura que la Box interna ocupe todo el ancho disponible
+            contentAlignment = Alignment.Center // Centra el contenido internamente
+        ) {
+            Text(
+                text = texto,
+                style = TextStyle(
+                    color = Negro,
+                    fontSize = 35.sp,
+                    fontWeight = FontWeight.Bold,
+                    letterSpacing = 3.sp,
+                    lineHeight = 40.sp,
+                    shadow = Shadow(
+                        color = Negro,
+                        offset = Offset(2f, 2f),
+                        blurRadius = 4f
+                    )
+                ).merge(MaterialTheme.typography.bodyLarge)
+            )
+        }
+    }
 }
 /**
  * Muestra un título Grande con estilo personalizado.
@@ -204,7 +234,7 @@ fun TituloGrande(texto: String) {
     Text(
         text = texto,
         style = TextStyle(
-            color = Color.White, // Color del texto
+            color = Blanco, // Color del texto
             fontSize = 35.sp, // Tamaño del texto
             fontWeight = FontWeight.Bold, // Grosor de la fuente
             letterSpacing = 3.sp, // Espaciado entre letras
@@ -221,7 +251,7 @@ fun TituloMediano(texto: String) {
     Text(
         text = texto,
         style = TextStyle(
-            color = Color.White, // Color del texto
+            color = Blanco, // Color del texto
             fontSize = 20.sp, // Tamaño del texto
             fontWeight = FontWeight.Bold, // Grosor de la fuente
             letterSpacing = 2.sp, // Espaciado entre letras
@@ -245,13 +275,13 @@ fun TituloMedianoCentralLeft(texto: String) {
         Text(
             text = texto,
             style = TextStyle(
-                color = Color.White, 
+                color = Blanco,
                 fontSize = 24.sp,
                 fontWeight = FontWeight.Bold,
                 letterSpacing = 2.sp,
                 lineHeight = 30.sp,
                 shadow = Shadow(
-                    color = Color.Gray,
+                    color = GrisOscuro,
                     offset = Offset(2f, 2f),
                     blurRadius = 4f
                 )
