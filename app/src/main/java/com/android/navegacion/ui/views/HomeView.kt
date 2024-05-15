@@ -9,10 +9,13 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import com.android.navegacion.components.*
+import com.android.navegacion.data.remote.GradoRepositoryImpl
 import com.universae.reproductor.domain.entities.alumno.Alumno
 import com.universae.reproductor.domain.entities.asignatura.Asignatura
+import com.universae.reproductor.domain.entities.grado.GradoId
 import com.universae.reproductor.domain.entities.tema.Tema
-import com.universae.reproductor.domaintest.PreviewAlumno
+import com.universae.reproductor.domain.usecases.AlumnoUseCaseImpl
+import com.universae.reproductor.domain.usecases.AsignaturaUseCasesImpl
 import com.universae.reproductor.domaintest.PreviewAsignaturas
 import com.universae.reproductor.domaintest.PreviewTemas
 import kotlinx.coroutines.Dispatchers
@@ -30,15 +33,22 @@ import kotlinx.coroutines.withContext
 @Composable
 fun HomeView(navController: NavController, alumnoId: Int) {
 
-    //REVISAR TRAER NOMBRE DE USUARIO !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-    val alumno: Alumno = PreviewAlumno.filter { it.alumnoId.id == alumnoId }[0] // Si llegamos a esta view es porque el alumno existe y siempre retorna un alumno
+    val alumno: Alumno = AlumnoUseCaseImpl.gatAlumnoById(alumnoId)!! // Si llegamos a esta view es porque el alumno existe y siempre retorna un alumno
 
 
     //val alumno: Alumno = AlumnoUseCaseImpl.gatAlumnoById(alumnoId)!! // Si llegamos a esta view es porque el alumno existe y siempre retorna un alumno
     // TODO("comprobar si hay cola de reproducción")
     var hayCola = true
     // TODO("Obtener listas")
-    val listaAsignaturasNoCompletadas: List<Asignatura> = PreviewAsignaturas
+
+    var listaAsignaturas: List<Asignatura> = mutableListOf()
+
+    for (gradoId: GradoId in alumno.gradosId) {
+        listaAsignaturas += AsignaturaUseCasesImpl.asignaturasNoCompletadas(gradoId)
+    }
+
+    var listadoReal: Set<Asignatura> = listaAsignaturas.sortedBy { it.asignaturaId.id }.toSet()
+
     val listaTemas: List<Tema> = PreviewTemas
     // Estructura básica con barra superior y botón flotante
     Scaffold(
@@ -71,7 +81,7 @@ fun HomeView(navController: NavController, alumnoId: Int) {
 
 
             item { Spacer(modifier = Modifier.height(5.dp)) }
-            item { PodcastsAsignaturas(listaAsignaturasNoCompletadas, navController = navController) }
+            item { PodcastsAsignaturas(listadoReal.toList(), navController = navController) }
             item { Spacer(modifier = Modifier.height(40.dp)) }
             item {
                 // ya es una row

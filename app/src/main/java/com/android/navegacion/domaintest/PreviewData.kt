@@ -165,7 +165,7 @@ val PreviewAsignaturas = listOf(
 val PreviewGrados = listOf(
     Grado(GradoId(1), "Grado 1", PreviewAsignaturas.map { it.asignaturaId }.filter { it.id in 1..3 || it.id == 98 || it.id == 99 }, "icon"),
     Grado(GradoId(2), "Grado 2", PreviewAsignaturas.map { it.asignaturaId }.filter { it.id in 4..6 || it.id == 98 || it.id == 99}, "icon"),
-    Grado(GradoId(3), "Grado 3", PreviewAsignaturas.map { it.asignaturaId }.filter { it.id in 7..9}, "icon"),
+    Grado(GradoId(3), "Grado 3", PreviewAsignaturas.map { it.asignaturaId }.filter { it.id == 98}, "icon"),
     Grado(GradoId(4), "Grado 4", PreviewAsignaturas.map { it.asignaturaId }.filter { it.id in 10..12 || it.id == 98 || it.id == 99}, "icon"),
 )
 

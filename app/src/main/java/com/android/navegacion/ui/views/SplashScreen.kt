@@ -110,5 +110,5 @@ fun SplashScreen(navController: NavController, usuario : String, pass : String) 
 }
 
 fun DataFech(usuario: String, password: String): Boolean {
-    return PreviewAlumno.filter { it.nombreUsuario == usuario}.isNotEmpty()
+    return SesionUseCase.iniciarSesion(usuario, password)
 }
