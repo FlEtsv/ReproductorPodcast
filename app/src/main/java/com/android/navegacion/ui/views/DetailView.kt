@@ -1,17 +1,14 @@
 package com.android.navegacion.views
 
 import android.annotation.SuppressLint
-import com.universae.reproductor.ui.theme.AzulOscuro
-import android.content.res.Resources.Theme
 import androidx.compose.foundation.Image
+import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.gestures.detectTapGestures
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.BoxWithConstraints
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.background
-import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
@@ -21,17 +18,13 @@ import androidx.compose.foundation.layout.statusBarsPadding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material3.Icon
-import androidx.compose.material3.Scaffold
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material.icons.filled.PlayArrow
-import androidx.compose.material3.Card
-import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
-import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
@@ -51,11 +44,11 @@ import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
 import com.android.navegacion.R
-import com.android.navegacion.components.MainIconButton
-import com.android.navegacion.components.TitleBar
+import com.android.navegacion.components.iconArrowBack
 import com.universae.reproductor.domain.entities.tema.Tema
 import com.universae.reproductor.domaintest.PreviewTemas
 import com.universae.reproductor.ui.theme.AzulDark
+import com.universae.reproductor.ui.theme.AzulOscuro
 import com.universae.reproductor.ui.theme.ReproductorTheme
 import com.universae.reproductor.ui.theme.ralewayFamily
 import androidx.compose.foundation.layout.Box as Box1
@@ -63,15 +56,15 @@ import androidx.compose.foundation.layout.Box as Box1
 @OptIn(ExperimentalMaterial3Api::class)
 @SuppressLint("UnusedMaterialScaffoldPaddingParameter")
 @Composable
-fun DetailView(navController: NavController,idCard : String){
+fun DetailView(navController: NavController, idCard: String) {
     Column {
         BarraSuperior(navController)
-        ContentDetailView(navController,idCard)
+        ContentDetailView(navController, idCard)
     }
 }
 
 @Composable
-fun BarraSuperior(navController: NavController){
+fun BarraSuperior(navController: NavController) {
     Row(
         modifier = Modifier
             .fillMaxWidth()
@@ -88,37 +81,45 @@ fun BarraSuperior(navController: NavController){
                 onClick = { navController.popBackStack() },
                 modifier = Modifier.padding(8.dp) // Ajusta el espaciado según sea necesario
             ) {
-                Icon(Icons.Default.ArrowBack, contentDescription = "Back", tint = Color.White) // Ajusta el contenido de descripción según sea necesario
+                Icon(
+                    iconArrowBack(),
+                    contentDescription = "Back",
+                    tint = Color.White
+                ) // Ajusta el contenido de descripción según sea necesario
             }
         }
     }
 }
+
 @Composable
-fun ContentDetailView(navController: NavController, idCard: String){
+fun ContentDetailView(navController: NavController, idCard: String) {
     BoxWithConstraints {//con esta funcion ya se puede sacar altura
 
         val screenHeight = maxHeight
         val islandHeight = screenHeight * 0.25f  // Calcular el 25% de la altura
 
-        LazyColumn(modifier = Modifier
-            .fillMaxSize()
-            .background(MaterialTheme.colorScheme.background)) {
+        LazyColumn(
+            modifier = Modifier
+                .fillMaxSize()
+                .background(MaterialTheme.colorScheme.background)
+        ) {
             item {
                 IslandRowTittle(idCard = idCard, height = islandHeight)
             }
             item {
-                MostrarTemas(PreviewTemas,navController)
+                MostrarTemas(PreviewTemas, navController)
             }
         }
     }
 }
-@Composable
-fun MostrarTemas(temas: List<Tema>,navController: NavController) {
 
-        temas.forEach { tema ->
-            TarjetaTema(tema = tema, modifier = Modifier, navController = navController)
-        }
+@Composable
+fun MostrarTemas(temas: List<Tema>, navController: NavController) {
+
+    temas.forEach { tema ->
+        TarjetaTema(tema = tema, modifier = Modifier, navController = navController)
     }
+}
 
 
 /**
@@ -202,8 +203,9 @@ fun TarjetaTema(tema: Tema, modifier: Modifier = Modifier, navController: NavCon
         }
     }
 }
+
 @Composable
-fun IslandRowTittle(idCard: String, height : Dp) {
+fun IslandRowTittle(idCard: String, height: Dp) {
     Box1(
         modifier = Modifier
             .padding(10.dp)  // Aumentar el padding para dar la impresión de más espacio alrededor
@@ -229,13 +231,12 @@ fun IslandRowTittle(idCard: String, height : Dp) {
 }
 
 
-
 @Preview(showBackground = true)
 @Composable
 fun GreetingPreview() {
     ReproductorTheme {
-        val idCard : String = "1"
-    DetailView(navController = rememberNavController(), idCard = idCard )
+        val idCard: String = "1"
+        DetailView(navController = rememberNavController(), idCard = idCard)
 
     }
 }

@@ -15,8 +15,10 @@ import kotlinx.coroutines.withContext
 import androidx.compose.material3.MaterialTheme
 import com.universae.reproductor.domain.entities.alumno.Alumno
 import com.universae.reproductor.domain.entities.asignatura.Asignatura
-import com.universae.reproductor.domain.usecases.AlumnoUseCaseImpl
-import com.universae.reproductor.domain.usecases.AsignaturaUseCasesImpl
+import com.universae.reproductor.domain.entities.tema.Tema
+import com.universae.reproductor.domaintest.PreviewAlumno
+import com.universae.reproductor.domaintest.PreviewAsignaturas
+import com.universae.reproductor.domaintest.PreviewTemas
 
 /**
  * Vista principal de la aplicación, configurada para mostrar una barra superior, un botón flotante y un contenido dinámico.
@@ -28,14 +30,17 @@ import com.universae.reproductor.domain.usecases.AsignaturaUseCasesImpl
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun HomeView(navController: NavController, alumnoId: Int) {
-    val alumno: Alumno = AlumnoUseCaseImpl.gatAlumnoById(alumnoId)!! // Si llegamos a esta view es porque el alumno existe y siempre retorna un alumno
+
+    //REVISAR TRAER NOMBRE DE USUARIO !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+    val alumno: Alumno = PreviewAlumno.filter { it.alumnoId.id == alumnoId }[0] // Si llegamos a esta view es porque el alumno existe y siempre retorna un alumno
+
+
+    //val alumno: Alumno = AlumnoUseCaseImpl.gatAlumnoById(alumnoId)!! // Si llegamos a esta view es porque el alumno existe y siempre retorna un alumno
     // TODO("comprobar si hay cola de reproducción")
     var hayCola = true
     // TODO("Obtener listas")
-    val listaAsignaturasNoCompletadas: List<Asignatura> = alumno.gradosId.flatMap { gradoId ->
-        AsignaturaUseCasesImpl.asignaturasNoCompletadas(gradoId)
-    }
-    val podcasts2 = listOf("1","2","3","4","5","6","7","8","9","10")
+    val listaAsignaturasNoCompletadas: List<Asignatura> = PreviewAsignaturas
+    val listaTemas: List<Tema> = PreviewTemas
     // Estructura básica con barra superior y botón flotante
     Scaffold(
         floatingActionButton = { ActionButton() }
@@ -67,7 +72,7 @@ fun HomeView(navController: NavController, alumnoId: Int) {
 
 
             item { Spacer(modifier = Modifier.height(5.dp)) }
-            item { PodcastsRow(listaAsignaturasNoCompletadas, navController = navController) }
+            item { PodcastsAsignaturas(listaAsignaturasNoCompletadas, navController = navController) }
             item { Spacer(modifier = Modifier.height(40.dp)) }
             item {
                 // ya es una row
@@ -75,7 +80,7 @@ fun HomeView(navController: NavController, alumnoId: Int) {
                 }
 
             item { Spacer(modifier = Modifier.height(5.dp)) }
-            item { PodcastsRow(podcasts2, navController = navController) }
+            item { PodcastsTemas(listaTemas, navController = navController) }
             /*
             funcion para generar las lineas
             items(PreviewTemas) { tema ->

@@ -94,10 +94,24 @@ val PreviewAsignaturas = listOf(
 val PreviewGrados = listOf(
     Grado(GradoId(1), "Grado 1", PreviewAsignaturas.map { it.asignaturaId }, "icon"),
     Grado(GradoId(2), "Grado 2", PreviewAsignaturas.map { it.asignaturaId }, "icon"),
+    Grado(GradoId(3), "Grado 3", PreviewAsignaturas.map { it.asignaturaId }, "icon"),
+    Grado(GradoId(4), "Grado 4", PreviewAsignaturas.map { it.asignaturaId }, "icon"),
 )
 
-val PreviewAlumno = Alumno(
-    "Alumno 1",
-    AlumnoId(1),
-    PreviewGrados.map { it.gradoId }
+val PreviewAlumno = listOf(
+    Alumno(
+        "Alumno 1",
+        AlumnoId(1),
+        PreviewGrados.map { it.gradoId }.filter { it.id <= 2 }
+    ),
+    Alumno(
+        "Prueba",
+        AlumnoId(2),
+        PreviewGrados.map { it.gradoId }.filter { it.id == 3 }
+    ),
+    Alumno(
+        "Alumno 3",
+        AlumnoId(3),
+        PreviewGrados.map { it.gradoId }.filter { it.id >= 3 }
+    )
 )

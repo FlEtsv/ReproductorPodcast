@@ -19,13 +19,13 @@ fun NavManager(){
         composable("Login"){
             Login(navController)
         }
-        composable("Splash/{id}/{pass}", arguments = listOf(
-            navArgument("id"){ type = NavType.StringType},
+        composable("Splash/{usuario}/{pass}", arguments = listOf(
+            navArgument("usuario"){ type = NavType.StringType},
             navArgument("pass"){ type = NavType.StringType}
         )){
-            val id = it.arguments?.getString("id") ?: "Null"
+            val usuario = it.arguments?.getString("usuario") ?: "Null"
             val pass = it.arguments?.getString("pass") ?: "Empty"
-            SplashScreen(navController,id, pass)
+            SplashScreen(navController,usuario, pass)
         }
         composable("Home/{id}", arguments = listOf(
             navArgument("id"){ type = NavType.IntType}

@@ -33,6 +33,7 @@ import com.android.navegacion.data.remote.AlumnoRepositoryImpl
 import com.android.navegacion.domain.usecases.SesionUseCase
 import com.universae.reproductor.domain.entities.alumno.Alumno
 import com.universae.reproductor.domain.usecases.AlumnoUseCaseImpl
+import com.universae.reproductor.domaintest.PreviewAlumno
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.TimeoutCancellationException
 import kotlinx.coroutines.delay
@@ -41,30 +42,33 @@ import kotlinx.coroutines.withContext
 import kotlinx.coroutines.withTimeout
 
 @Composable
-fun SplashScreen(navController: NavController, id : String, pass : String) {
+fun SplashScreen(navController: NavController, usuario : String, pass : String) {
     val coroutineScope = rememberCoroutineScope()
 
     LaunchedEffect(key1 = true) {
         coroutineScope.launch {
             // TODO("Mirar si quitar error por un cambio en navegacion si tarda demasiado en conectar, ej: volver a pantalla login")
-            var conexionDataCorrecta: Boolean = false
+            var usuarioEncontrado: Boolean = false
             try {
                 withTimeout(10000) { // Timeout of 10 seconds
                     withContext(Dispatchers.IO) {
-                        while (!DataFech(usuario = id, password = pass)) {
+                        //COMPARAR CON BBDD DESDE PREVIEWDATA
+                        while (!DataFech(usuario = usuario, password = pass)) {
                             delay(1000)
                         }
                     }
                 }
-                conexionDataCorrecta = true
+                usuarioEncontrado = true
             } catch (e: TimeoutCancellationException) {
                 // Manejar la excepción de tiempo de espera aquí
                 println("La operación de la base de datos excedió el tiempo límite después de 10 segundos.")
             }
             var alumno: Alumno? = null
-            if (conexionDataCorrecta) {
-                alumno = AlumnoUseCaseImpl.getAlumno(id, pass)
+
+            if (usuarioEncontrado){
+                alumno = PreviewAlumno.filter { it.nombreUsuario == usuario}[0]
             }
+
             if (alumno != null) {
                 val id: Int = alumno.alumnoId.id
                 navController.navigate("Home/$id") {
@@ -106,8 +110,5 @@ fun SplashScreen(navController: NavController, id : String, pass : String) {
 }
 
 fun DataFech(usuario: String, password: String): Boolean {
-    return SesionUseCase.iniciarSesion(
-        nombreUsuario = usuario,
-        clave = password
-    )
+    return PreviewAlumno.filter { it.nombreUsuario == usuario}.isNotEmpty()
 }

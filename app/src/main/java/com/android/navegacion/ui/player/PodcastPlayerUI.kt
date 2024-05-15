@@ -1,11 +1,5 @@
 package com.android.navegacion.ui.player
 
-import MyMusicService
-import android.content.ComponentName
-import android.support.v4.media.MediaBrowserCompat
-import android.support.v4.media.MediaMetadataCompat
-import android.support.v4.media.session.MediaControllerCompat
-import android.support.v4.media.session.PlaybackStateCompat
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -16,7 +10,6 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
@@ -27,7 +20,6 @@ import androidx.compose.material3.LinearProgressIndicator
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -40,23 +32,20 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import androidx.media3.common.Player
 import androidx.media3.session.MediaController
 import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
-import com.android.navegacion.components.iconArroyBack
-import com.android.navegacion.components.iconArroyForward
+import com.android.navegacion.components.iconArrowBack
+import com.android.navegacion.components.iconArrowForward
 import com.android.navegacion.components.iconCast
 import com.android.navegacion.components.iconFastForward
 import com.android.navegacion.components.iconFastReward
 import com.android.navegacion.components.iconPause
 import com.android.navegacion.components.iconPlay
-import com.android.navegacion.ui.player.AndroidAudioPlayer
 import com.universae.reproductor.domain.entities.tema.Tema
 import com.universae.reproductor.domain.entities.tema.TemaId
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.delay
-import kotlinx.coroutines.withContext
+import com.universae.reproductor.ui.theme.AzulClaro
+import com.universae.reproductor.ui.theme.AzulOscuro
 import kotlin.time.DurationUnit
 import kotlin.time.toDuration
 
@@ -80,34 +69,6 @@ fun ReproductorPodcast(navController: NavController, tituloTema: String) {
         audioUrl = "https://file-examples.com/storage/fe92070d83663e82d92ecf7/2017/11/file_example_MP3_700KB.mp3"
     )
 
-    var mediaController by remember { mutableStateOf<MediaControllerCompat?>(null) }
-
-    // Declaración de una variable lateinit para el mediaBrowser
-    lateinit var mediaBrowser: MediaBrowserCompat
-
-    // Inicializar la instancia de MediaBrowserCompat
-    mediaBrowser = MediaBrowserCompat(
-        context,
-        ComponentName(context, MyMusicService::class.java),
-        object : MediaBrowserCompat.ConnectionCallback() {
-            override fun onConnected() {
-                // Ahora mediaBrowser ya está inicializado y puede ser usado de manera segura aquí
-                mediaController = MediaControllerCompat(context, mediaBrowser.sessionToken).apply {
-                    registerCallback(ControllerCallback())
-                    transportControls.play()
-                }
-            }
-        },
-        null // Bundle extras
-    )
-
-    // Efecto desechable para conectar y desconectar el mediaBrowser
-    DisposableEffect(Unit) {
-        mediaBrowser.connect()
-        onDispose {
-            mediaBrowser.disconnect()
-        }
-    }
 
     // Interfaz de usuario
     Column(
@@ -157,18 +118,7 @@ fun ReproductorPodcast(navController: NavController, tituloTema: String) {
         Spacer(modifier = Modifier.height(16.dp))
         ControlesReproduccion(
             reproduciendo = reproduciendo,
-            onReproduccionPausaToggle = {
-                if (reproduciendo) {
-                    controller.get().pause()
-                } else {
-                    if (controller.get().playbackState == Player.STATE_READY && controller.get().playWhenReady.not()) {
-                        audioPlayer.continuar()
-                    } else {
-                        audioPlayer.reproducir(tema)
-                    }
-                }
-                reproduciendo = !reproduciendo
-            },
+            onReproduccionPausaToggle = { },
             onRetroceder = { /* TODO: Retroceder */ },
             onAvanzar = { /* TODO: Avanzar */ },
             onAvanzarRapido = { },
@@ -177,10 +127,10 @@ fun ReproductorPodcast(navController: NavController, tituloTema: String) {
             }
         )
         Spacer(modifier = Modifier.height(16.dp))
-        }
-        Spacer(modifier = Modifier.height(16.dp))
     }
+    Spacer(modifier = Modifier.height(16.dp))
 }
+
 
 @Composable
 fun PortadaPodcast() {
@@ -202,7 +152,6 @@ fun PortadaPodcast() {
 
 @Composable
 fun ControlesReproduccion(
-    mediaController: MediaControllerCompat?,
     reproduciendo: Boolean,
     onReproduccionPausaToggle: () -> Unit,
     onRetroceder: () -> Unit,
@@ -224,10 +173,10 @@ fun ControlesReproduccion(
 
         // Botón para volver a la pista anterior
         IconButton(onClick = {
-            mediaController?.transportControls?.skipToPrevious()  // Salta a la pista anterior
+
         }) {
             Icon(
-                imageVector = iconArroyBack(),
+                imageVector = iconArrowBack(),
                 contentDescription = "Pista anterior",
                 tint = Color.White
             )
@@ -237,9 +186,9 @@ fun ControlesReproduccion(
         IconButton(onClick = {
             onReproduccionPausaToggle()
             if (reproduciendo) {
-                mediaController?.transportControls?.pause()
+
             } else {
-                mediaController?.transportControls?.play()
+
             }
         }) {
             Icon(
@@ -251,10 +200,10 @@ fun ControlesReproduccion(
 
         // Botón para avanzar 5 segundos en la pista actual
         IconButton(onClick = {
-            mediaController?.transportControls?.fastForward()  // Implementar lógicamente en el servicio para avanzar 5 segundos
+
         }) {
             Icon(
-                imageVector = iconArroyForward(),
+                imageVector = iconArrowForward(),
                 contentDescription = "Avanzar rápidamente",
                 tint = Color.White
             )
@@ -262,7 +211,7 @@ fun ControlesReproduccion(
 
         // Botón para pasar a la siguiente pista
         IconButton(onClick = {
-            mediaController?.transportControls?.skipToNext()  // Salta a la próxima pista
+
         }) {
             Icon(
                 imageVector = iconFastForward(),
@@ -293,7 +242,7 @@ fun ProgressBarRow(progress: MutableState<Float>) {  // 'progress' debería ser 
             .fillMaxWidth()
             .padding(16.dp), content = {
             LinearProgressIndicator(
-                progress = progress.value,
+                progress = { progress.value },
                 modifier = Modifier.fillMaxWidth(),
                 color = MaterialTheme.colorScheme.primary,
                 trackColor = MaterialTheme.colorScheme.onPrimary.copy(alpha = 0.5f),
@@ -302,26 +251,6 @@ fun ProgressBarRow(progress: MutableState<Float>) {  // 'progress' debería ser 
     )
 }
 
-class PlaybackStateListener(
-    private val progressState: MutableState<Float>,
-    private val mediaController: MediaControllerCompat
-) : MediaControllerCompat.Callback() {
-
-    override fun onPlaybackStateChanged(state: PlaybackStateCompat?) {
-        state ?: return
-        val maxProgress = mediaController.metadata?.getLong(MediaMetadataCompat.METADATA_KEY_DURATION) ?: 0L
-        if (maxProgress > 0) {
-            val currentProgress = state.position.toFloat()
-            progressState.value = currentProgress / maxProgress
-        }
-    }
-}
-
-class ControllerCallback : MediaControllerCompat.Callback() {
-    override fun onPlaybackStateChanged(playbackState: PlaybackStateCompat) {
-        // Aquí puedes actualizar el estado UI basado en el estado de reproducción
-    }
-}
 
 @Preview(showBackground = true)
 @Composable

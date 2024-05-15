@@ -23,8 +23,6 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.MutableState
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -32,16 +30,12 @@ import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import com.android.navegacion.R
 import com.universae.reproductor.domain.entities.asignatura.Asignatura
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.delay
-import kotlinx.coroutines.launch
+import com.universae.reproductor.domain.entities.tema.Tema
 
 @Composable
 fun TitleView(name : String){
@@ -58,7 +52,7 @@ fun MainButton(name : String, backColor : Color, color : Color, onClick:() -> Un
         containerColor     = backColor,
         contentColor  = color
     )) {
-        Text(text = name)
+        Text(text = "Prueba")
     }
 }
 /**
@@ -66,7 +60,7 @@ fun MainButton(name : String, backColor : Color, color : Color, onClick:() -> Un
  * @param podcasts Lista de nombres de podcasts para mostrar.
  */
 @Composable
-fun PodcastsRow(podcasts: List<Asignatura>, navController: NavController) {
+fun PodcastsAsignaturas(podcasts: List<Asignatura>, navController: NavController) {
     LazyRow(
         modifier = Modifier
             .height(120.dp)
@@ -80,6 +74,24 @@ fun PodcastsRow(podcasts: List<Asignatura>, navController: NavController) {
         }
     }
 }
+
+@Composable
+fun PodcastsTemas(podcasts: List<Tema>, navController: NavController) {
+    LazyRow(
+        modifier = Modifier
+            .height(120.dp)
+            .padding(top = 10.dp),
+        horizontalArrangement = Arrangement.spacedBy(8.dp),
+        contentPadding = PaddingValues(horizontal = 16.dp)
+    ) {
+        items(podcasts) { podcast ->
+            var idCard : String = podcast.temaId.id.toString()
+            PodcastTopicCard(topic = podcast.nombreTema, { navController.navigate("Detail/${idCard}") })
+        }
+    }
+}
+
+
 
 /**
  * Muestra una tarjeta para un tema de podcast específico.
@@ -237,7 +249,7 @@ fun iconPlay(): ImageVector {
     return imageVector
 }
 @Composable
-fun iconArroyBack(): ImageVector {
+fun iconArrowBack(): ImageVector {
     val imageVector = ImageVector.vectorResource(id = R.drawable.arroyback)
     Icon(
         imageVector = imageVector,
@@ -265,7 +277,7 @@ fun iconFastForward(): ImageVector {
     return imageVector
 }
 @Composable
-fun iconArroyForward(): ImageVector {
+fun iconArrowForward(): ImageVector {
     val imageVector = ImageVector.vectorResource(id = R.drawable.arrowforward)
     Icon(
         imageVector = imageVector,
