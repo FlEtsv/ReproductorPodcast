@@ -1,10 +1,12 @@
 package com.universae.reproductor.data.remote
 
+import com.android.navegacion.data.remote.AsignaturaRepositoryImpl
 import com.universae.reproductor.domain.entities.alumno.AlumnoId
 import com.universae.reproductor.domain.entities.asignatura.AsignaturaId
 import com.universae.reproductor.domain.entities.tema.Tema
 import com.universae.reproductor.domain.entities.tema.TemaId
 import com.universae.reproductor.domain.entities.tema.TemaRepository
+import com.universae.reproductor.domaintest.PreviewTemas
 import java.sql.Connection
 import java.sql.DriverManager
 import java.sql.PreparedStatement
@@ -72,6 +74,14 @@ object TemaRepositoryImpl : TemaRepository {
     }
 
     override fun obtenerTema(temaId: TemaId): Tema? {
+
+        return if(PreviewTemas.filter { it.temaId == temaId}.isNotEmpty()){
+            PreviewTemas.filter { it.temaId == temaId}[0]
+        } else {
+            null
+        }
+
+        /*
         val query = "SELECT * FROM temas WHERE tema_id = ?"
         var connection: Connection? = null
         var preparedStatement: PreparedStatement? = null
@@ -110,9 +120,14 @@ object TemaRepositoryImpl : TemaRepository {
             preparedStatement?.close()
             connection?.close()
         }
+
+         */
     }
 
     override fun obtenerTemasAsignatura(asignaturaId: AsignaturaId): List<Tema> {
+        return AsignaturaRepositoryImpl.getAsignatura(asignaturaId)?.temas ?: emptyList()
+
+        /*
         val query = "SELECT * FROM temas WHERE asignatura_id = ?"
         var connection: Connection? = null
         var preparedStatement: PreparedStatement? = null
@@ -157,5 +172,7 @@ object TemaRepositoryImpl : TemaRepository {
             preparedStatement?.close()
             connection?.close()
         }
+
+         */
     }
 }
