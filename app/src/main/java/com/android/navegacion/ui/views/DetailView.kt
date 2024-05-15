@@ -50,6 +50,7 @@ import com.universae.reproductor.domaintest.PreviewTemas
 import com.universae.reproductor.ui.theme.AzulDark
 import com.universae.reproductor.ui.theme.AzulOscuro
 import com.universae.reproductor.ui.theme.ReproductorTheme
+import com.universae.reproductor.ui.theme.gradientBackground
 import com.universae.reproductor.ui.theme.ralewayFamily
 import androidx.compose.foundation.layout.Box as Box1
 
@@ -57,7 +58,7 @@ import androidx.compose.foundation.layout.Box as Box1
 @SuppressLint("UnusedMaterialScaffoldPaddingParameter")
 @Composable
 fun DetailView(navController: NavController, idCard: String) {
-    Column {
+    Column (modifier = Modifier.gradientBackground()){
         BarraSuperior(navController)
         ContentDetailView(navController, idCard)
     }

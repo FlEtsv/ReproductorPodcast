@@ -18,16 +18,15 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import com.android.navegacion.components.*
-import com.android.navegacion.data.remote.GradoRepositoryImpl
 import com.universae.reproductor.domain.entities.alumno.Alumno
 import com.universae.reproductor.domain.entities.asignatura.Asignatura
 import com.universae.reproductor.domain.entities.grado.GradoId
 import com.universae.reproductor.domain.entities.tema.Tema
 import com.universae.reproductor.domain.usecases.AlumnoUseCaseImpl
 import com.universae.reproductor.domain.usecases.AsignaturaUseCasesImpl
-import com.universae.reproductor.domaintest.PreviewAsignaturas
 import com.universae.reproductor.domaintest.PreviewTemas
 import com.universae.reproductor.ui.theme.GrisOscuro
+import com.universae.reproductor.ui.theme.gradientBackground
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.withContext
@@ -66,7 +65,7 @@ fun HomeView(navController: NavController, alumnoId: Int) {
     ) { innerPadding ->
         // Columna Lazy que se ajusta al padding proporcionado por el Scaffold
         LazyColumn(
-            modifier = Modifier
+            modifier = Modifier.gradientBackground()
                 .padding(innerPadding)
                 .fillMaxSize(),
             verticalArrangement = Arrangement.Top,

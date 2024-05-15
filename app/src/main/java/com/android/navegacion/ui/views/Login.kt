@@ -17,7 +17,6 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.OutlinedTextFieldDefaults
 import androidx.compose.material3.Text
-import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -37,6 +36,7 @@ import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import com.android.navegacion.R
 import com.android.navegacion.components.MainButton
+import com.universae.reproductor.ui.theme.gradientBackground
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 
@@ -46,6 +46,7 @@ fun Login(navController: NavController) {
     val keyboardController = LocalSoftwareKeyboardController.current
     Column(
         modifier = Modifier
+            .gradientBackground()
             .pointerInput(Unit) {
                 detectTapGestures {
                     // Ocultar el teclado al hacer clic fuera de los campos de texto
