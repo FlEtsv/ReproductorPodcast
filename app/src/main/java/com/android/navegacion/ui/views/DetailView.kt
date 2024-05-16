@@ -45,8 +45,9 @@ import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
 import com.android.navegacion.R
 import com.android.navegacion.components.iconArrowBack
+import com.universae.reproductor.domain.entities.asignatura.AsignaturaId
 import com.universae.reproductor.domain.entities.tema.Tema
-import com.universae.reproductor.domaintest.PreviewTemas
+import com.universae.reproductor.domain.usecases.AsignaturaUseCasesImpl
 import com.universae.reproductor.ui.theme.AzulDark
 import com.universae.reproductor.ui.theme.AzulOscuro
 import com.universae.reproductor.ui.theme.ReproductorTheme
@@ -57,10 +58,10 @@ import androidx.compose.foundation.layout.Box as Box1
 @OptIn(ExperimentalMaterial3Api::class)
 @SuppressLint("UnusedMaterialScaffoldPaddingParameter")
 @Composable
-fun DetailView(navController: NavController, idCard: String) {
-    Column (modifier = Modifier.gradientBackground()){
+fun DetailView(navController: NavController, idAsignatura: Int) {
+    Column(modifier = Modifier.gradientBackground()) {
         BarraSuperior(navController)
-        ContentDetailView(navController, idCard)
+        ContentDetailView(navController, idAsignatura)
     }
 }
 
@@ -93,9 +94,10 @@ fun BarraSuperior(navController: NavController) {
 }
 
 @Composable
-fun ContentDetailView(navController: NavController, idCard: String) {
+fun ContentDetailView(navController: NavController, idAsignatura: Int) {
     BoxWithConstraints {//con esta funcion ya se puede sacar altura
-
+         val asignatura = AsignaturaUseCasesImpl.getAsignatura(AsignaturaId(idAsignatura))
+        val nombreAsignatura = asignatura?.nombreAsignatura
         val screenHeight = maxHeight
         val islandHeight = screenHeight * 0.25f  // Calcular el 25% de la altura
 
@@ -105,10 +107,16 @@ fun ContentDetailView(navController: NavController, idCard: String) {
                 .background(MaterialTheme.colorScheme.background)
         ) {
             item {
-                IslandRowTittle(idCard = idCard, height = islandHeight)
+                if (nombreAsignatura != null) {
+                    IslandRowTittle(idCard = nombreAsignatura, height = islandHeight)
+                }
             }
             item {
-                MostrarTemas(PreviewTemas, navController)
+
+                AsignaturaUseCasesImpl.getAsignatura(AsignaturaId(idAsignatura))?.let { asignatura ->
+                    MostrarTemas(asignatura.temas, navController)
+                }
+
             }
         }
     }
@@ -237,7 +245,7 @@ fun IslandRowTittle(idCard: String, height: Dp) {
 fun GreetingPreview() {
     ReproductorTheme {
         val idCard: String = "1"
-        DetailView(navController = rememberNavController(), idCard = idCard)
+        DetailView(navController = rememberNavController(), idAsignatura = 1)
 
     }
 }

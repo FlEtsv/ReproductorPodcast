@@ -23,11 +23,9 @@ import com.universae.reproductor.domain.entities.alumno.Alumno
 import com.universae.reproductor.domain.entities.asignatura.Asignatura
 import com.universae.reproductor.domain.entities.grado.Grado
 import com.universae.reproductor.domain.entities.grado.GradoId
-import com.universae.reproductor.domain.entities.tema.Tema
 import com.universae.reproductor.domain.usecases.AlumnoUseCaseImpl
 import com.universae.reproductor.domain.usecases.AsignaturaUseCasesImpl
 import com.universae.reproductor.domain.usecases.GradoUseCaseImpl
-import com.universae.reproductor.domaintest.PreviewTemas
 import com.universae.reproductor.ui.theme.GrisOscuro
 import com.universae.reproductor.ui.theme.gradientBackground
 import kotlinx.coroutines.Dispatchers
@@ -62,8 +60,7 @@ fun HomeView(navController: NavController, alumnoId: Int) {
     }
 
     var listadoReal: Set<Asignatura> = listaAsignaturas.sortedBy { it.asignaturaId.id }.toSet()
-
-    val listaTemas: List<Tema> = PreviewTemas
+    
     // Estructura básica con barra superior y botón flotante
     Scaffold(
         floatingActionButton = { ActionButton() }

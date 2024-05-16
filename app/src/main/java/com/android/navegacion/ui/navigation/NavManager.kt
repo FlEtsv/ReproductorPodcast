@@ -33,10 +33,14 @@ fun NavManager(){
             val id = it.arguments?.getInt("id") ?: -1
             HomeView(navController,id)
         }
-        composable("Detail/{idCard}", arguments = listOf(
-            navArgument("idCard"){ type = NavType.StringType})){
-            val idCard = it.arguments?.getString("idCard") ?: "Null"
-            DetailView(navController,idCard)
+        composable(
+            route = "Detail/{idAsignatura}",
+            arguments = listOf(
+                navArgument("idAsignatura") { type = NavType.IntType }
+            )
+        ) {
+            val idAsignatura = it.arguments?.getInt("idAsignatura") ?: -1
+            DetailView(navController, idAsignatura)
         }
         composable("Podcast/{tituloTema}", arguments = listOf(
             navArgument("tituloTema"){type = NavType.StringType},)){
