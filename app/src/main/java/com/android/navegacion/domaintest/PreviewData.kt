@@ -172,16 +172,19 @@ val PreviewGrados = listOf(
 val PreviewAlumno = listOf(
     Alumno(
         "Alumno 1",
+        "Steven",
         AlumnoId(1),
         PreviewGrados.map { it.gradoId }.filter { it.id == 1 || it.id == 4 } //Alumno matriculado en el grado 1 y 2
     ),
     Alumno(
         "Prueba",
+        "Gabriel",
         AlumnoId(2),
         PreviewGrados.map { it.gradoId }.filter { it.id == 3 } //Alumno matriculado en el grado 3
     ),
     Alumno(
         "Alumno 3",
+        "Alberto",
         AlumnoId(3),
         PreviewGrados.map { it.gradoId }.filter { it.id >= 3 } //Alumno matriculado en los grados desde el 3 al último (4, en este caso)
     )

@@ -12,6 +12,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.Brush
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
@@ -46,7 +47,7 @@ fun HomeView(navController: NavController, alumnoId: Int) {
 
     val alumno: Alumno = AlumnoUseCaseImpl.getAlumnoById(alumnoId)!! // Si llegamos a esta view es porque el alumno existe y siempre retorna un alumno
     val grado : Grado? = GradoUseCaseImpl.getGrado(alumno.gradosId.first())
-
+    val nombreReal = alumno.nombreReal
 
     //val alumno: Alumno = AlumnoUseCaseImpl.gatAlumnoById(alumnoId)!! // Si llegamos a esta view es porque el alumno existe y siempre retorna un alumno
     // TODO("comprobar si hay cola de reproducción")
@@ -76,17 +77,17 @@ fun HomeView(navController: NavController, alumnoId: Int) {
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
             if (hayCola) {
-                item {Spacer(modifier = Modifier.height(20.dp)) }
-                item { TituloIzquierda(texto = "${alumno.nombreUsuario}, ¿Quieres continuar escuchando...?",) }
-                item {Spacer(modifier = Modifier.height(20.dp)) }
+                item {Spacer(modifier = Modifier.height(10.dp)) }
+                item { TituloIzquierda(texto = "${nombreReal}, ¿Quieres continuar escuchando...?",) }
+                item {Spacer(modifier = Modifier.height(10.dp)) }
                 item { FilaTituloCola() }// Todo("hacer despues de todo listo")
-                item { Spacer(modifier = Modifier.height(30.dp)) }
+                item { Spacer(modifier = Modifier.height(20.dp)) }
             }else{
-                item {Spacer(modifier = Modifier.height(20.dp)) }
-                item { TituloIzquierda(texto = "Bienvenido ${alumno.nombreUsuario} nos escanta volver a verte!") }
-                item {Spacer(modifier = Modifier.height(30.dp))}
+                item {Spacer(modifier = Modifier.height(10.dp)) }
+                item { TituloIzquierda(texto = "Bienvenido ${nombreReal} nos escanta volver a verte!") }
+                item {Spacer(modifier = Modifier.height(20.dp))}
                 item {FilaTituloNoCola(grado) }
-                item { Spacer(modifier = Modifier.height(30.dp)) }
+                item { Spacer(modifier = Modifier.height(20.dp)) }
                 }
 
             item {
@@ -192,7 +193,7 @@ fun FilaTituloNoCola(grado : Grado?) {
                     imageVector = Icons.Default.Star,
                     contentDescription = "Decorative Icon",
                     modifier = Modifier.size(32.dp),
-                    tint = GrisOscuro
+                    tint = Color.White
                 )
             }
         }
@@ -207,7 +208,7 @@ fun FilaTituloNoCola(grado : Grado?) {
                 Text(
                     text = it,
                     style = TextStyle(
-                        color = MaterialTheme.colorScheme.onBackground,
+                        color = Color.White,
                         fontSize = 24.sp,
                         fontWeight = FontWeight.Bold,
                         letterSpacing = 1.sp,
@@ -218,7 +219,7 @@ fun FilaTituloNoCola(grado : Grado?) {
             Text(
                 text = "Título: X",
                 style = MaterialTheme.typography.bodyMedium.copy(
-                    color = MaterialTheme.colorScheme.onBackground,
+                    color = Color.White,
                     fontSize = 16.sp
                 )
             )
@@ -231,7 +232,7 @@ fun FilaTituloNoCola(grado : Grado?) {
                     Text(
                         text = "Progreso",
                         style = MaterialTheme.typography.bodySmall.copy(
-                            color = MaterialTheme.colorScheme.onBackground,
+                            color = Color.White,
                             fontSize = 14.sp
                         )
                     )
@@ -253,7 +254,7 @@ fun FilaTituloNoCola(grado : Grado?) {
                     Text(
                         text = "${(progress.value * 100).toInt()}%",
                         style = MaterialTheme.typography.bodySmall.copy(
-                            color = MaterialTheme.colorScheme.onPrimary,
+                            color = Color.White,
                             fontSize = 12.sp
                         )
                     )

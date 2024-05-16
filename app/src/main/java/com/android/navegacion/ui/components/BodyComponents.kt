@@ -279,17 +279,6 @@ fun TituloIzquierda(texto: String) {
     ) {
         Box(
             modifier = Modifier
-                .background(
-                    brush = Brush.linearGradient(
-                        colors = listOf(
-
-                            AzulClaro,
-                            Blanco,
-                            GrisClaro
-                        )
-                    ),
-                    shape = RoundedCornerShape(8.dp)
-                )
                 .padding(16.dp)
                 .fillMaxWidth(), // Asegura que la Box interna ocupe todo el ancho disponible
             contentAlignment = Alignment.Center // Centra el contenido internamente
@@ -297,7 +286,7 @@ fun TituloIzquierda(texto: String) {
             Text(
                 text = texto,
                 style = TextStyle(
-                    color = Negro,
+                    color = Color.White,
                     fontSize = 35.sp,
                     fontWeight = FontWeight.Bold,
                     letterSpacing = 3.sp,
