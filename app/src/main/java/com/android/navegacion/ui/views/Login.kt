@@ -129,20 +129,31 @@ fun Login(navController: NavController) {
                     .copy(alpha = OutlinedTextFieldTokens.DisabledInputOpacity),
                 errorTextColor = OutlinedTextFieldTokens.ErrorInputColor.value,
                  */
+
+
+                /*
                 focusedContainerColor = Color.Transparent,
                 unfocusedContainerColor = Color.Transparent,
                 disabledContainerColor = Color.Transparent,
                 errorContainerColor = Color.Transparent,
                 cursorColor = Color.White,
+
+                 */
                 /*
                 TODO("cambiar colores por MaterialTheme")
                 errorCursorColor = OutlinedTextFieldTokens.ErrorFocusCaretColor.value,
                 selectionColors = LocalTextSelectionColors.current,
                  */
-                focusedBorderColor = Color.White,
+
+
+
+                //focusedBorderColor = Color.White,
                 unfocusedBorderColor = Color.White,
                 disabledBorderColor = Color.White,
                 errorBorderColor = MaterialTheme.colorScheme.error,
+
+
+
                 /*
                 TODO("cambiar colores por MaterialTheme")
                 focusedLeadingIconColor = OutlinedTextFieldTokens.FocusLeadingIconColor.value,
@@ -262,6 +273,10 @@ fun Login(navController: NavController) {
                 errorSuffixColor = OutlinedTextFieldTokens.InputSuffixColor.value,
 
                  */
+                //focusedBorderColor = Color.White,
+                unfocusedBorderColor = Color.White,
+                disabledBorderColor = Color.White,
+                errorBorderColor = MaterialTheme.colorScheme.error,
             ),
             // VisualTransformation para ocultar la contraseña
             visualTransformation = PasswordVisualTransformation(),
