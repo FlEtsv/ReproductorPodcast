@@ -84,6 +84,8 @@ fun PodcastsAsignaturasTemas(podcasts: List<Asignatura>, navController: NavContr
     var focusedAsignaturaId by remember { mutableStateOf<Int?>(null) }
     var displayedTemas by remember { mutableStateOf<List<Tema>>(emptyList()) }
 
+    var temaMarcado by remember { mutableStateOf<String?>(null) }
+
     LaunchedEffect(focusedAsignaturaId) {
         displayedTemas = if (focusedAsignaturaId != null) {
             podcasts.find { it.asignaturaId.id == focusedAsignaturaId }?.temas ?: emptyList()
@@ -107,6 +109,7 @@ fun PodcastsAsignaturasTemas(podcasts: List<Asignatura>, navController: NavContr
                         navController.navigate("Detail/${podcast.asignaturaId.id}")
                     } else {
                         focusedAsignaturaId = podcast.asignaturaId.id
+                        temaMarcado = "Asignaturas de "+podcast.nombreAsignatura
                     }
                 }
                 PodcastTopicCard(
@@ -117,7 +120,7 @@ fun PodcastsAsignaturasTemas(podcasts: List<Asignatura>, navController: NavContr
             }
         }
         Spacer(modifier = Modifier.height(40.dp))
-        TituloMedianoCentralLeft(texto = "Temas...")
+        TituloMedianoCentralLeft(texto = temaMarcado ?: "Temas sugeridos")
         Spacer(modifier = Modifier.height(5.dp))
 
         LazyRow(
