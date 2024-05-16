@@ -20,10 +20,12 @@ import androidx.navigation.NavController
 import com.android.navegacion.components.*
 import com.universae.reproductor.domain.entities.alumno.Alumno
 import com.universae.reproductor.domain.entities.asignatura.Asignatura
+import com.universae.reproductor.domain.entities.grado.Grado
 import com.universae.reproductor.domain.entities.grado.GradoId
 import com.universae.reproductor.domain.entities.tema.Tema
 import com.universae.reproductor.domain.usecases.AlumnoUseCaseImpl
 import com.universae.reproductor.domain.usecases.AsignaturaUseCasesImpl
+import com.universae.reproductor.domain.usecases.GradoUseCaseImpl
 import com.universae.reproductor.domaintest.PreviewTemas
 import com.universae.reproductor.ui.theme.GrisOscuro
 import com.universae.reproductor.ui.theme.gradientBackground
@@ -42,11 +44,13 @@ import kotlinx.coroutines.withContext
 @Composable
 fun HomeView(navController: NavController, alumnoId: Int) {
 
-    val alumno: Alumno = AlumnoUseCaseImpl.gatAlumnoById(alumnoId)!! // Si llegamos a esta view es porque el alumno existe y siempre retorna un alumno
+    val alumno: Alumno = AlumnoUseCaseImpl.getAlumnoById(alumnoId)!! // Si llegamos a esta view es porque el alumno existe y siempre retorna un alumno
+    val grado : Grado? = GradoUseCaseImpl.getGrado(alumno.gradosId.first())
 
 
     //val alumno: Alumno = AlumnoUseCaseImpl.gatAlumnoById(alumnoId)!! // Si llegamos a esta view es porque el alumno existe y siempre retorna un alumno
     // TODO("comprobar si hay cola de reproducción")
+
     var hayCola = false
     // TODO("Obtener listas")
 
@@ -75,13 +79,13 @@ fun HomeView(navController: NavController, alumnoId: Int) {
                 item {Spacer(modifier = Modifier.height(20.dp)) }
                 item { TituloIzquierda(texto = "${alumno.nombreUsuario}, ¿Quieres continuar escuchando...?",) }
                 item {Spacer(modifier = Modifier.height(20.dp)) }
-                item { FilaTituloCola() }
+                item { FilaTituloCola() }// Todo("hacer despues de todo listo")
                 item { Spacer(modifier = Modifier.height(30.dp)) }
             }else{
                 item {Spacer(modifier = Modifier.height(20.dp)) }
                 item { TituloIzquierda(texto = "Bienvenido ${alumno.nombreUsuario} nos escanta volver a verte!") }
                 item {Spacer(modifier = Modifier.height(30.dp))}
-                item {FilaTituloNoCola() }
+                item {FilaTituloNoCola(grado) }
                 item { Spacer(modifier = Modifier.height(30.dp)) }
                 }
 
@@ -90,15 +94,8 @@ fun HomeView(navController: NavController, alumnoId: Int) {
 
 
             item { Spacer(modifier = Modifier.height(5.dp)) }
-            item { PodcastsAsignaturas(listadoReal.toList(), navController = navController) }
-            item { Spacer(modifier = Modifier.height(40.dp)) }
-            item {
-                // ya es una row
-                    TituloMedianoCentralLeft(texto = "Temas...")
-                }
+            item { PodcastsAsignaturasTemas(listadoReal.toList(), navController = navController) }
 
-            item { Spacer(modifier = Modifier.height(5.dp)) }
-            item { PodcastsTemas(listaTemas, navController = navController) }
             /*
             funcion para generar las lineas
             items(PreviewTemas) { tema ->
@@ -156,7 +153,8 @@ fun FilaTituloCola() {
  * */
 
 @Composable
-fun FilaTituloNoCola() {
+fun FilaTituloNoCola(grado : Grado?) {
+
     Row(
         modifier = Modifier
             .fillMaxWidth()
@@ -205,16 +203,18 @@ fun FilaTituloNoCola() {
             verticalArrangement = Arrangement.Center,
             horizontalAlignment = Alignment.Start // Alinea el texto al inicio (izquierda de su columna)
         ) {
-            Text(
-                text = "Grado: X",
-                style = TextStyle(
-                    color = MaterialTheme.colorScheme.onBackground,
-                    fontSize = 24.sp,
-                    fontWeight = FontWeight.Bold,
-                    letterSpacing = 1.sp,
-                    lineHeight = 28.sp
-                ).merge(MaterialTheme.typography.bodyLarge)
-            )
+            grado?.nombreModulo?.let {
+                Text(
+                    text = it,
+                    style = TextStyle(
+                        color = MaterialTheme.colorScheme.onBackground,
+                        fontSize = 24.sp,
+                        fontWeight = FontWeight.Bold,
+                        letterSpacing = 1.sp,
+                        lineHeight = 28.sp
+                    ).merge(MaterialTheme.typography.bodyLarge)
+                )
+            }
             Text(
                 text = "Título: X",
                 style = MaterialTheme.typography.bodyMedium.copy(

@@ -28,7 +28,12 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.MutableState
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.shadow
@@ -75,33 +80,59 @@ fun MainButton(name : String, backColor : Color, color : Color, onClick:() -> Un
  * @param podcasts Lista de nombres de podcasts para mostrar.
  */
 @Composable
-fun PodcastsAsignaturas(podcasts: List<Asignatura>, navController: NavController) {
-    LazyRow(
-        modifier = Modifier
-            .height(120.dp)
-            .padding(top = 10.dp),
-        horizontalArrangement = Arrangement.spacedBy(8.dp),
-        contentPadding = PaddingValues(horizontal = 16.dp)
-    ) {
-        items(podcasts) { podcast ->
-            var idCard : String = podcast.asignaturaId.id.toString()
-            PodcastTopicCard(titulo = podcast.nombreAsignatura, { navController.navigate("Detail/${idCard}") })
+fun PodcastsAsignaturasTemas(podcasts: List<Asignatura>, navController: NavController) {
+    var focusedAsignaturaId by remember { mutableStateOf<Int?>(null) }
+    var displayedTemas by remember { mutableStateOf<List<Tema>>(emptyList()) }
+
+    LaunchedEffect(focusedAsignaturaId) {
+        displayedTemas = if (focusedAsignaturaId != null) {
+            podcasts.find { it.asignaturaId.id == focusedAsignaturaId }?.temas ?: emptyList()
+        } else {
+            podcasts.mapNotNull { it.temas.firstOrNull() }
         }
     }
-}
 
-@Composable
-fun PodcastsTemas(podcasts: List<Tema>, navController: NavController) {
-    LazyRow(
-        modifier = Modifier
-            .height(120.dp)
-            .padding(top = 10.dp),
-        horizontalArrangement = Arrangement.spacedBy(8.dp),
-        contentPadding = PaddingValues(horizontal = 16.dp)
-    ) {
-        items(podcasts) { podcast ->
-            var idCard : String = podcast.temaId.id.toString()
-            PodcastTopicCard(titulo = podcast.nombreTema, { navController.navigate("Detail/${idCard}") })
+    Column {
+        LazyRow(
+            modifier = Modifier
+                .height(120.dp)
+                .padding(top = 10.dp),
+            horizontalArrangement = Arrangement.spacedBy(8.dp),
+            contentPadding = PaddingValues(horizontal = 16.dp)
+        ) {
+            items(podcasts) { podcast ->
+                val isFocused = podcast.asignaturaId.id == focusedAsignaturaId
+                val onCardClick: () -> Unit = {
+                    if (isFocused) {
+                        navController.navigate("Detail/${podcast.asignaturaId.id}")
+                    } else {
+                        focusedAsignaturaId = podcast.asignaturaId.id
+                    }
+                }
+                PodcastTopicCard(
+                    isFocused = isFocused,
+                    titulo = podcast.nombreAsignatura,
+                    onCardClick = onCardClick
+                )
+            }
+        }
+        Spacer(modifier = Modifier.height(40.dp))
+        TituloMedianoCentralLeft(texto = "Temas...")
+        Spacer(modifier = Modifier.height(5.dp))
+
+        LazyRow(
+            modifier = Modifier
+                .height(120.dp)
+                .padding(top = 10.dp),
+            horizontalArrangement = Arrangement.spacedBy(8.dp),
+            contentPadding = PaddingValues(horizontal = 16.dp)
+        ) {
+            items(displayedTemas) { tema ->
+                cardTema(
+                    titulo = tema.nombreTema,
+                    onClick = { navController.navigate("Podcast/${tema.temaId.id}") }
+                )
+            }
         }
     }
 }
@@ -113,12 +144,12 @@ fun PodcastsTemas(podcasts: List<Tema>, navController: NavController) {
  * @param topic Tema del podcast a mostrar.
  */
 @Composable
-fun PodcastTopicCard(titulo : String, onClick: () -> Unit) {
+fun PodcastTopicCard(isFocused: Boolean, titulo: String, onCardClick: () -> Unit) {
     Card(
         modifier = Modifier
             .width(200.dp)
             .height(120.dp)
-            .clickable(onClick = onClick)
+            .clickable(onClick = onCardClick)
             .shadow(8.dp, shape = RoundedCornerShape(16.dp)), // Sombra más pronunciada y bordes redondeados
         shape = RoundedCornerShape(16.dp),
         elevation = CardDefaults.cardElevation(
@@ -160,6 +191,62 @@ fun PodcastTopicCard(titulo : String, onClick: () -> Unit) {
             }
         }
     }
+}
+
+
+
+
+
+
+@Composable
+fun cardTema(titulo : String, onClick: () -> Unit) {
+
+    Card(
+        modifier = Modifier
+            .width(200.dp)
+            .height(120.dp)
+            .clickable(onClick = onClick)
+            .shadow(8.dp, shape = RoundedCornerShape(16.dp)), // Sombra más pronunciada y bordes redondeados
+shape = RoundedCornerShape(16.dp),
+elevation = CardDefaults.cardElevation(
+defaultElevation = 8.dp
+)
+) {
+    Box(
+        modifier = Modifier
+            .fillMaxSize()
+            .background(
+                Brush.linearGradient(
+                    colors = listOf(
+                        AzulClaro,
+                        Blanco,
+                        GrisClaro
+                    )
+                )
+            )
+    ) {
+        Column(
+            modifier = Modifier
+                .fillMaxSize()
+                .padding(8.dp),
+            verticalArrangement = Arrangement.Center,
+            horizontalAlignment = Alignment.CenterHorizontally
+        ) {
+            Icon(
+                imageVector = Icons.Default.Star,
+                contentDescription = "Decorative Icon",
+                modifier = Modifier.size(22.dp),
+                tint = Blanco
+            )
+            Spacer(modifier = Modifier.height(8.dp))
+            Text(
+                text = titulo,
+                style = MaterialTheme.typography.bodyLarge.copy(color = Negro),
+                modifier = Modifier.padding(horizontal = 16.dp)
+            )
+        }
+    }
+}
 }
 /**
  * Muestra un título grande con estilo imponente.
