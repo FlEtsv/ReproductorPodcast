@@ -109,7 +109,7 @@ fun PodcastsAsignaturasTemas(podcasts: List<Asignatura>, navController: NavContr
                         navController.navigate("Detail/${podcast.asignaturaId.id}")
                     } else {
                         focusedAsignaturaId = podcast.asignaturaId.id
-                        temaMarcado = "Asignaturas de "+podcast.nombreAsignatura
+                        temaMarcado = "Temas de "+podcast.nombreAsignatura
                     }
                 }
                 PodcastTopicCard(
