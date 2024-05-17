@@ -65,6 +65,8 @@ dependencies {
     // For exposing and controlling media sessions
     implementation("androidx.media3:media3-session:$media3_version")
 
+    implementation ("androidx.car.app:app:1.1.0")
+
     // add JDBC driver for MySQL
     //implementation("mysql:mysql-connector-java:5.1.49")
 

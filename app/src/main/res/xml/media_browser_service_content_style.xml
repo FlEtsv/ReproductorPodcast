@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
+    <resources>
+        <integer name="android.media.browse.CONTENT_STYLE_PLAYABLE_HINT">1</integer>
+        <integer name="android.media.browse.CONTENT_STYLE_BROWSABLE_HINT">1</integer>
+    </resources>
+</PreferenceScreen>
