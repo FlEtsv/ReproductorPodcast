@@ -56,7 +56,6 @@ fun ReproductorPodcast(navController: NavController, tituloTema: String) {
     // crea instancia audioPlayer e inicializa el controlador de reproducción mediante el composable AndroidAudioPlayerComposable
     val context = LocalContext.current
     val audioPlayer = remember { AndroidAudioPlayer(context) }
-    AndroidAudioPlayerComposable(audioPlayer = audioPlayer)
 
 
     // Replace with your actual Tema instance
@@ -122,11 +121,14 @@ fun ReproductorPodcast(navController: NavController, tituloTema: String) {
                 if (reproduciendo) {
                     audioPlayer.pausa()
                 } else {
+                    /*
                     if (audioPlayer.controller?.playbackState == Player.STATE_READY && audioPlayer.controller?.playWhenReady?.not() == true) {
                         audioPlayer.continuar()
                     } else {
+
+                     */
                         audioPlayer.reproducir(tema)
-                    }
+                    //}
                 }
                 reproduciendo = !reproduciendo
             },

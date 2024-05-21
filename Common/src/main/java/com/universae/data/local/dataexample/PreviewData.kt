@@ -11,7 +11,7 @@ import com.universae.reproductor.domain.entities.tema.TemaId
 import kotlin.time.DurationUnit
 import kotlin.time.toDuration
 
-var urlAudio = "https://file-examples.com/storage/fe92070d83663e82d92ecf7/2017/11/file_example_MP3_700KB.mp3"
+var urlAudio = "https://file-examples.com/storage/fe83e1f11c664c2259506f1/2017/11/file_example_MP3_700KB.mp3"
 
 val PreviewTemas = listOf(
     Tema(

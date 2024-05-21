@@ -1,6 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    package="com.universae.audioplayerlibrary">
+<manifest xmlns:android="http://schemas.android.com/apk/res/android">
 
     <!-- Permissions -->
     <uses-permission android:name="android.permission.INTERNET" />
@@ -17,7 +16,7 @@
         </receiver>
 
         <provider
-            android:name=".media.library.AlbumArtContentProvider"
+            android:name="com.universae.audioplayerlibrary.media.library.AlbumArtContentProvider"
             android:authorities="com.universae.audioplayerlibrary"
             android:exported="true" />
 

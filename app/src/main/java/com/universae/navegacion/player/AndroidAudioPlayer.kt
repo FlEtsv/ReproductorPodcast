@@ -3,30 +3,23 @@ package com.universae.navegacion.player
 import android.content.ComponentName
 import android.content.Context
 import androidx.media3.common.MediaItem
+import androidx.media3.session.MediaController
 import com.universae.audioplayerlibrary.common.MusicServiceConnection
 import com.universae.audioplayerlibrary.media.MyMediaSessionService
 import com.universae.reproductor.domain.entities.tema.Tema
 import com.universae.reproductor.domain.usecases.AudioPlayerUseCases
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.guava.await
+import kotlinx.coroutines.launch
 
-class AndroidAudioPlayer(context: Context) : AudioPlayerUseCases {
+class AndroidAudioPlayer(private val context: Context) : AudioPlayerUseCases {
     private val serviceComponent = ComponentName(context, MyMediaSessionService::class.java)
     private val musicServiceConnection = MusicServiceConnection(context, serviceComponent)
 
     override fun reproducir(tema: Tema) {
-        // Convertir el ID del tema a String, que es el mediaId
         val mediaId = tema.temaId.id.toString()
-
-        // Utilizar MusicServiceConnection para obtener el MediaItem correspondiente
-        val mediaItemFuture = musicServiceConnection.browser!!.getItem(mediaId)
-        mediaItemFuture.addListener(
-            Runnable {
-                val fullMediaItem = mediaItemFuture.get().value ?: return@Runnable
-
-                // Una vez obtenido el MediaItem, enviarlo para reproducción
-                musicServiceConnection.transportControls.playFromMediaId(fullMediaItem.mediaId, null)
-            },
-            MoreExecutors.directExecutor()
-        )
+        musicServiceConnection.playMediaItem(mediaId)
     }
 
     override fun reproducir(temas: List<Tema>) {
@@ -38,7 +31,7 @@ class AndroidAudioPlayer(context: Context) : AudioPlayerUseCases {
     }
 
     override fun pausa() {
-        // Enviar comando de pausa a MyMediaSessionService a través de MusicServiceConnection
+        musicServiceConnection.pause()
     }
 
     override fun continuar() {

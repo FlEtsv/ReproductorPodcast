@@ -53,6 +53,8 @@ dependencies {
     implementation(project(":Common"))
     implementation(project(":audioPlayerLibrary"))
 
+    implementation(libs.kotlinx.coroutines.guava)
+
     implementation(libs.androidx.navigation.compose)
     implementation(libs.androidx.core.ktx)
     implementation(libs.androidx.ui)

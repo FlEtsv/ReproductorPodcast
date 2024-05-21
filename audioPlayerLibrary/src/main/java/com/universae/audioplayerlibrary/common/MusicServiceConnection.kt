@@ -83,27 +83,28 @@ class MusicServiceConnection(context: Context, serviceComponent: ComponentName) 
     val networkFailure = MutableLiveData<Boolean>()
         .apply { postValue(false) }
 
-    private var browser: MediaBrowser? = null
+    var browser: MediaBrowser? = null
     private val playerListener: PlayerListener = PlayerListener()
 
     private val coroutineContext: CoroutineContext = Dispatchers.Main
     private val scope = CoroutineScope(coroutineContext + SupervisorJob())
 
+    private var mediaBrowser: MediaBrowserCompat? = null
+    private var mediaController: MediaControllerCompat? = null
+
     init {
-        scope.launch {
-            val newBrowser =
-                MediaBrowser.Builder(context, SessionToken(context, serviceComponent))
-                    .setListener(BrowserListener())
-                    .buildAsync()
-                    .await()
-            newBrowser.addListener(playerListener)
-            browser = newBrowser
-            rootMediaItem.postValue(
-                newBrowser.getLibraryRoot(/* params= */ null).await().value
-            )
-            newBrowser.currentMediaItem?.let {
-                nowPlaying.postValue(it)
-            }
+        mediaBrowser = MediaBrowserCompat(context, serviceComponent,
+            object : MediaBrowserCompat.ConnectionCallback() {
+                override fun onConnected() {
+                    // Aquí es el mejor lugar para construir MediaControllerCompat
+                    mediaBrowser?.sessionToken?.also { token ->
+                        mediaController = MediaControllerCompat(context, token).apply {
+                            // Aquí puedes configurar los listeners del controlador, si es necesario
+                        }
+                    }
+                }
+            }, null).apply {
+            connect()
         }
     }
 
@@ -213,6 +214,17 @@ class MusicServiceConnection(context: Context, serviceComponent: ComponentName) 
                 }
             }
         }
+    }
+
+    fun playMediaItem(mediaId: String) {
+        val bundle = Bundle().apply {
+            putString("MEDIA_ID", mediaId)
+        }
+        mediaController?.transportControls?.playFromMediaId(mediaId, bundle)
+    }
+
+    fun pause() {
+        mediaController?.transportControls?.pause()
     }
 }
 
