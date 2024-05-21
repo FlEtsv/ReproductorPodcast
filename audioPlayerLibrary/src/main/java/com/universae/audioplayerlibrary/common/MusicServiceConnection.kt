@@ -40,7 +40,7 @@ import androidx.media3.session.MediaBrowser
 import androidx.media3.session.MediaController
 import androidx.media3.session.SessionCommand
 import androidx.media3.session.SessionToken
-import com.universae.audioplayerlibrary.media.MusicService
+import com.universae.audioplayerlibrary.media.MyMediaSessionService
 import com.google.common.collect.ImmutableList
 import com.google.common.util.concurrent.MoreExecutors
 import kotlinx.coroutines.CoroutineScope
@@ -53,7 +53,7 @@ import kotlin.coroutines.CoroutineContext
 // TODO: Check todo esto
 /**
  * Class that manages a connection to a [MediaLibraryService] instance, typically a
- * [MusicService] or one of its subclasses.
+ * [MyMediaSessionService] or one of its subclasses.
  *
  * Typically it's best to construct/inject dependencies either using DI or, as UAMP does,
  * using [InjectorUtils] in the app module. There are a few difficulties for that here:

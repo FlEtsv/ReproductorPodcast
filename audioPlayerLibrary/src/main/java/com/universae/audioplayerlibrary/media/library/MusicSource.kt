@@ -22,11 +22,11 @@ import android.provider.MediaStore
 import android.util.Log
 import androidx.annotation.IntDef
 import androidx.media3.common.MediaItem
-import com.universae.audioplayerlibrary.media.MusicService
+import com.universae.audioplayerlibrary.media.MyMediaSessionService
 import com.universae.audioplayerlibrary.media.extensiones.containsCaseInsensitive
 
 /**
- * Interface used by [MusicService] for looking up [MediaMetadataCompat] objects.
+ * Interface used by [MyMediaSessionService] for looking up [MediaMetadataCompat] objects.
  *
  * Because Kotlin provides methods such as [Iterable.find] and [Iterable.filter],
  * this is a convenient interface to have on sources.

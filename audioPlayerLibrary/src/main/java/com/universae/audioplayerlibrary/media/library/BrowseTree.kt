@@ -23,10 +23,10 @@ import androidx.media3.common.MediaItem
 import androidx.media3.common.MediaMetadata
 import es.universae.audioplayerlibrary.R
 import com.universae.audioplayerlibrary.media.extensiones.urlEncoded
-import com.universae.audioplayerlibrary.media.MusicService
+import com.universae.audioplayerlibrary.media.MyMediaSessionService
 
 /**
- * Represents a tree of media that's used by [MusicService.onLoadChildren].
+ * Represents a tree of media that's used by [MyMediaSessionService.onLoadChildren].
  *
  * [BrowseTree] maps a media id (see: [MediaMetadataCompat.METADATA_KEY_MEDIA_ID]) to one (or
  * more) [MediaMetadataCompat] objects, which are children of that media id.

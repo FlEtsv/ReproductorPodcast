@@ -36,7 +36,7 @@
             paquete de la aplicación) pueden iniciar el servicio.
         -->
         <service
-            android:name="com.universae.audioplayerlibrary.MyMediaSessionService"
+            android:name="com.universae.audioplayerlibrary.media.MyMediaSessionService"
             android:enabled="true"
             android:exported="true"
             android:foregroundServiceType="mediaPlayback">

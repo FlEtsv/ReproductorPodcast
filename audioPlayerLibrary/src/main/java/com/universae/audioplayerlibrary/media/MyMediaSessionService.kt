@@ -54,14 +54,14 @@ import kotlin.math.max
  * and other apps that wish to play music via UAMP (for example, Android Auto or
  * the Google Assistant).
  *
- * Browsing begins with the method [MusicService.MusicServiceCallback.onGetLibraryRoot], and
- * continues in the callback [MusicService.MusicServiceCallback.onGetChildren].
+ * Browsing begins with the method [MyMediaSessionService.MusicServiceCallback.onGetLibraryRoot], and
+ * continues in the callback [MyMediaSessionService.MusicServiceCallback.onGetChildren].
  *
  * This class also handles playback for Cast sessions. When a Cast session is active, playback
  * commands are passed to a [CastPlayer].
  */
 @OptIn(UnstableApi::class)
-open class MusicService : MediaLibraryService() {
+open class MyMediaSessionService : MediaLibraryService() {
 
     private val serviceJob = SupervisorJob()
     private val serviceScope = CoroutineScope(Dispatchers.Main + serviceJob)
@@ -175,7 +175,7 @@ open class MusicService : MediaLibraryService() {
             packageManager?.getLaunchIntentForPackage(packageName)?.let { sessionIntent ->
                 setSessionActivity(
                     PendingIntent.getActivity(
-                        /* context= */ this@MusicService,
+                        /* context= */ this@MyMediaSessionService,
                         /* requestCode= */ 0,
                         sessionIntent,
                         if (Build.VERSION.SDK_INT >= 23) FLAG_IMMUTABLE
