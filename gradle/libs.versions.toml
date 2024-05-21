@@ -21,6 +21,7 @@ navigationCompose = "2.7.7"
 composeUi = "1.6.7"
 gson = "2.10"
 glide = "4.12.0"
+guava = "1.6.4"
 
 [libraries]
 androidx-activity = { module = "androidx.activity:activity", version.ref = "activity" }
@@ -55,6 +56,7 @@ androidx-media3-cast = { group = "androidx.media3", name = "media3-cast", versio
 gson = { group = "com.google.code.gson", name = "gson", version.ref = "gson" }
 glide = { group = "com.github.bumptech.glide", name = "glide", version.ref = "glide" }
 glideCompiler = { group = "com.github.bumptech.glide", name = "compiler", version.ref = "glide" }
+kotlinx-coroutines-guava = { group = "org.jetbrains.kotlinx", name = "kotlinx-coroutines-guava", version.ref = "guava" }
 
 [plugins]
 android-application = { id = "com.android.application", version.ref = "agp" }

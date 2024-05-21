@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package com.universae.audioplayerlibrary.library
+package com.universae.audioplayerlibrary.media.library
 
 import android.content.ContentProvider
 import android.content.ContentResolver
@@ -27,6 +27,7 @@ import java.io.File
 import java.io.FileNotFoundException
 import java.util.concurrent.TimeUnit
 
+// TODO: check todo esto
 // The amount of time to wait for the album art file to download before timing out.
 const val DOWNLOAD_TIMEOUT_SECONDS = 30L
 

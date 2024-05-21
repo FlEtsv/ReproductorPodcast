@@ -9,12 +9,17 @@
 
     <application>
         <!-- Services and receivers if any -->
-        <service
-            android:name=".MyMediaSessionService"
+        <receiver android:name="androidx.media.session.MediaButtonReceiver"
             android:exported="true">
             <intent-filter>
-                <action android:name="android.media.browse.MediaBrowserService" />
+                <action android:name="android.intent.action.MEDIA_BUTTON" />
             </intent-filter>
-        </service>
+        </receiver>
+
+        <provider
+            android:name=".media.library.AlbumArtContentProvider"
+            android:authorities="com.universae.audioplayerlibrary"
+            android:exported="true" />
+
     </application>
 </manifest>

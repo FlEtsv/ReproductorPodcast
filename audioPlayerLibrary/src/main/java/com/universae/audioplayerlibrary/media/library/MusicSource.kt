@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package com.universae.audioplayerlibrary.library
+package com.universae.audioplayerlibrary.media.library
 
 import android.os.Build
 import android.os.Bundle
@@ -22,8 +22,8 @@ import android.provider.MediaStore
 import android.util.Log
 import androidx.annotation.IntDef
 import androidx.media3.common.MediaItem
-import com.universae.audioplayerlibrary.MusicService
-import com.universae.audioplayerlibrary.extensiones.containsCaseInsensitive
+import com.universae.audioplayerlibrary.media.MusicService
+import com.universae.audioplayerlibrary.media.extensiones.containsCaseInsensitive
 
 /**
  * Interface used by [MusicService] for looking up [MediaMetadataCompat] objects.

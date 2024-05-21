@@ -1,4 +1,4 @@
-package com.universae.audioplayerlibrary
+package com.universae.audioplayerlibrary.media
 
 import android.content.Context
 import android.content.SharedPreferences

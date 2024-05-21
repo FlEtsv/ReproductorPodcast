@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package com.universae.audioplayerlibrary.extensiones
+package com.universae.audioplayerlibrary.media.extensiones
 
 import androidx.media3.common.Player
 

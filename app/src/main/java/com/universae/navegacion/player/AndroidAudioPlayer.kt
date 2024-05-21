@@ -147,10 +147,3 @@ class AndroidAudioPlayer(private val context: Context) : AudioPlayerUseCases {
         }
     }
 }
-
-@Composable
-fun AndroidAudioPlayerComposable(audioPlayer: AndroidAudioPlayer) {
-    val controller = com.universae.navegacion.player.rememberMediaController()
-
-    audioPlayer.controller = controller.value
-}

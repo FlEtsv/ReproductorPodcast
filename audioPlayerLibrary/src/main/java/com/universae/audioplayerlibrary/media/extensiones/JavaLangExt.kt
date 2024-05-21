@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package com.universae.audioplayerlibrary.extensiones
+package com.universae.audioplayerlibrary.media.extensiones
 
 import java.net.URLEncoder
 import java.nio.charset.Charset

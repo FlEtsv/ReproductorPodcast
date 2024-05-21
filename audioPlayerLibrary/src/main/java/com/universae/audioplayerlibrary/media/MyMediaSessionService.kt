@@ -1,4 +1,4 @@
-package com.universae.audioplayerlibrary
+package com.universae.audioplayerlibrary.media
 
 import android.app.PendingIntent
 import android.app.PendingIntent.FLAG_IMMUTABLE
@@ -30,12 +30,12 @@ import androidx.media3.session.MediaLibraryService
 import androidx.media3.session.MediaSession
 import androidx.media3.session.SessionCommand
 import androidx.media3.session.SessionResult
-import com.universae.audioplayerlibrary.library.BrowseTree
-import com.universae.audioplayerlibrary.library.JsonSource
-import com.universae.audioplayerlibrary.library.MEDIA_SEARCH_SUPPORTED
-import com.universae.audioplayerlibrary.library.MusicSource
-import com.universae.audioplayerlibrary.library.REPRODUCTOR_BROWSABLE_ROOT
-import com.universae.audioplayerlibrary.library.UAMP_RECENT_ROOT
+import com.universae.audioplayerlibrary.media.library.BrowseTree
+import com.universae.audioplayerlibrary.media.library.JsonSource
+import com.universae.audioplayerlibrary.media.library.MEDIA_SEARCH_SUPPORTED
+import com.universae.audioplayerlibrary.media.library.MusicSource
+import com.universae.audioplayerlibrary.media.library.REPRODUCTOR_BROWSABLE_ROOT
+import com.universae.audioplayerlibrary.media.library.UAMP_RECENT_ROOT
 import com.google.android.gms.cast.framework.CastContext
 import com.google.common.collect.ImmutableList
 import com.google.common.util.concurrent.Futures
@@ -146,7 +146,8 @@ open class MusicService : MediaLibraryService() {
             // calling `CastContext.getSharedInstance` can throw various exceptions, all of which
             // indicate that Cast is unavailable.
             // Related internal bug b/68009560.
-            Log.i(TAG, "Cast is not available on this device. " +
+            Log.i(
+                TAG, "Cast is not available on this device. " +
                     "Exception thrown when attempting to obtain CastContext. " + e.message)
             null
         }

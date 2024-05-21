@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package com.universae.audioplayerlibrary.library
+package com.universae.audioplayerlibrary.media.library
 
 import android.content.Context
 import android.net.Uri
@@ -22,8 +22,8 @@ import android.util.Log
 import androidx.media3.common.MediaItem
 import androidx.media3.common.MediaMetadata
 import es.universae.audioplayerlibrary.R
-import com.universae.audioplayerlibrary.extensiones.urlEncoded
-import com.universae.audioplayerlibrary.MusicService
+import com.universae.audioplayerlibrary.media.extensiones.urlEncoded
+import com.universae.audioplayerlibrary.media.MusicService
 
 /**
  * Represents a tree of media that's used by [MusicService.onLoadChildren].

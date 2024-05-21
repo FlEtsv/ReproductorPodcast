@@ -1,4 +1,4 @@
-package com.universae.audioplayerlibrary
+package com.universae.audioplayerlibrary.media
 
 import android.Manifest.permission.MEDIA_CONTENT_CONTROL
 import android.annotation.SuppressLint

@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package com.universae.audioplayerlibrary.library
+package com.universae.audioplayerlibrary.media.library
 
 import android.net.Uri
 import android.os.Bundle

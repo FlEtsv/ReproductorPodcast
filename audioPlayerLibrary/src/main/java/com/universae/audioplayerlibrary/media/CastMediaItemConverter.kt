@@ -1,4 +1,4 @@
-package com.universae.audioplayerlibrary
+package com.universae.audioplayerlibrary.media
 
 import android.net.Uri
 import android.support.v4.media.MediaMetadataCompat
@@ -8,7 +8,7 @@ import androidx.media3.cast.MediaItemConverter
 import androidx.media3.common.MediaItem
 import androidx.media3.common.MimeTypes
 import androidx.media3.common.util.UnstableApi
-import com.universae.audioplayerlibrary.library.JsonSource
+import com.universae.audioplayerlibrary.media.library.JsonSource
 import com.google.android.gms.cast.MediaInfo
 import com.google.android.gms.cast.MediaMetadata
 import com.google.android.gms.cast.MediaQueueItem

@@ -36,6 +36,8 @@ android {
 dependencies {
     implementation(project(":Common"))
 
+    implementation(libs.kotlinx.coroutines.guava)
+
     // Glide dependecies
     api(libs.glide)
     kapt(libs.glideCompiler)
