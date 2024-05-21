@@ -25,7 +25,8 @@ import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.media3.session.SessionResult
-import com.example.android.uamp.common.MusicServiceConnection
+import com.universae.audioplayerlibrary.common.MusicServiceConnection
+import es.universae.auto.R
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch

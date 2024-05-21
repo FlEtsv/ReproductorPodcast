@@ -24,6 +24,7 @@ import androidx.core.text.HtmlCompat
 import androidx.fragment.app.Fragment
 import com.bumptech.glide.Glide
 import com.example.android.uamp.automotive.databinding.QrSignInBinding
+import es.universae.auto.R
 
 /**
  * Fragment that is used to facilitate QR code sign-in. Users scan a QR code rendered by this

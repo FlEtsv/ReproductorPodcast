@@ -42,6 +42,7 @@ import com.google.android.gms.common.api.ApiException
 import com.google.android.gms.tasks.Task
 import com.google.android.material.textfield.TextInputEditText
 import com.google.android.material.textfield.TextInputLayout
+import es.universae.auto.R
 
 const val RC_SIGN_IN = 9001
 const val PLAY_SERVICES_RESOLUTION_REQUEST = 9000

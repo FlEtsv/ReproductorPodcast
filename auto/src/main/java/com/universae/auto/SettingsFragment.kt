@@ -24,8 +24,8 @@ import androidx.lifecycle.LifecycleObserver
 import androidx.lifecycle.ViewModelProvider
 import androidx.preference.Preference
 import androidx.preference.PreferenceFragmentCompat
-import com.example.android.uamp.common.MusicServiceConnection
-import com.example.android.uamp.media.MusicService
+import com.universae.audioplayerlibrary.common.MusicServiceConnection
+import es.universae.auto.R
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.SupervisorJob

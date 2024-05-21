@@ -26,6 +26,7 @@ import androidx.core.text.HtmlCompat
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
 import com.example.android.uamp.automotive.databinding.PinSignInBinding
+import es.universae.auto.R
 
 /**
  * Fragment that is used to facilitate PIN code sign-in. This fragment displayed a configurable

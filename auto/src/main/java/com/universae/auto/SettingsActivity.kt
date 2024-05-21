@@ -18,7 +18,8 @@ package com.example.android.uamp.automotive
 
 import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
-import com.example.android.uamp.automotive.databinding.ActivitySettingsBinding
+import com.universae.auto.databinding.ActivitySettingsBinding
+import es.universae.auto.R
 
 /**
  * This class exposes application settings

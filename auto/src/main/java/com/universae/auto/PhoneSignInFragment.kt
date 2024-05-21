@@ -22,7 +22,7 @@ import android.view.View
 import androidx.core.content.ContextCompat
 import androidx.core.text.HtmlCompat
 import androidx.fragment.app.Fragment
-import com.example.android.uamp.automotive.databinding.PhoneSignInBinding
+import es.universae.auto.R
 
 /**
  * Fragment that is used to facilitate phone sign-in. The fragment allows users to choose between
