@@ -1,4 +1,4 @@
-package es.universae.audioplayerlibrary
+package com.universae.audioplayerlibrary
 
 import org.junit.Test
 

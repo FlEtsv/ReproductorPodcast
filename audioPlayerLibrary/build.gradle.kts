@@ -1,6 +1,7 @@
 plugins {
     alias(libs.plugins.android.library)
     alias(libs.plugins.jetbrains.kotlin.android)
+    kotlin("kapt")
 }
 
 android {
@@ -35,12 +36,20 @@ android {
 dependencies {
     implementation(project(":Common"))
 
+    // Glide dependecies
+    api(libs.glide)
+    kapt(libs.glideCompiler)
+
+    // GSON for JsonSource
+    api(libs.gson)
+
     // for Composable
     implementation(libs.androidx.compose.ui)
 
     // Media3
     implementation(libs.androidx.media3.session)
     implementation(libs.androidx.media3.exoplayer)
+    implementation(libs.androidx.media3.cast)
 
 
     implementation(libs.androidx.core.ktx)

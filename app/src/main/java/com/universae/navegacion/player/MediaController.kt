@@ -17,7 +17,7 @@ import androidx.media3.session.MediaController
 import androidx.media3.session.SessionToken
 import com.google.common.util.concurrent.ListenableFuture
 import com.google.common.util.concurrent.MoreExecutors
-import es.universae.audioplayerlibrary.MyMediaSessionService
+import com.universae.audioplayerlibrary.MyMediaSessionService
 
 @Composable
 fun rememberMediaController(
