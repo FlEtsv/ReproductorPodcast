@@ -41,6 +41,10 @@ import com.google.common.collect.ImmutableList
 import com.google.common.util.concurrent.Futures
 import com.google.common.util.concurrent.ListenableFuture
 import com.google.common.util.concurrent.MoreExecutors
+import com.universae.audioplayerlibrary.media.libreria.CustomMusicSource
+import com.universae.audioplayerlibrary.media.libreria.DomainMediaSource
+import com.universae.audioplayerlibrary.media.libreria.sesionToMediaItems
+import com.universae.domain.Sesion
 import es.universae.audioplayerlibrary.R
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -185,11 +189,23 @@ open class MyMediaSessionService : MediaLibraryService() {
             }
             build()
         }
-
+        /* TODO: check que esto se puede borrar
         // The media library is built from a remote JSON file. We start loading asynchronously here.
         // Use [callWhenMusicSourceReady] to execute code that needs the source load being
         // completed.
         musicSource = JsonSource(source = remoteJsonSource)
+
+         */
+
+        // Aquí, en lugar de cargar musicSource desde un JSON, cargarías tu sesión y usarías sesionToMediaItems
+        val sesionActual = obtenerSesionActual() // Implementa esta función según tu lógica de aplicación
+        // Inicializa DomainMediaSource y carga los MediaItem desde la sesión actual
+        val domainMediaSource = DomainMediaSource()
+        domainMediaSource.loadFromSession(sesionActual)
+        // Utiliza domainMediaSource como musicSource
+        musicSource = domainMediaSource
+
+
         serviceScope.launch {
             musicSource.load()
         }
@@ -463,3 +479,8 @@ private const val CONTENT_STYLE_GRID = 2
 const val MEDIA_DESCRIPTION_EXTRAS_START_PLAYBACK_POSITION_MS = "playback_start_position_ms"
 
 private const val TAG = "MusicService"
+
+// Esta es una versión simplificada y necesitarás adaptarla según tu implementación específica
+fun obtenerSesionActual(): Sesion {
+    return Sesion
+}
