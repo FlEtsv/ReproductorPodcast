@@ -55,7 +55,7 @@ import kotlin.coroutines.CoroutineContext
  * Class that manages a connection to a [MediaLibraryService] instance, typically a
  * [MyMediaSessionService] or one of its subclasses.
  *
- * Typically it's best to construct/inject dependencies either using DI or, as UAMP does,
+ * Typically it's best to construct/inject dependencies either using DI or, as navegacion does,
  * using [InjectorUtils] in the app module. There are a few difficulties for that here:
  * - [MediaBrowser] is a final class, so mocking it directly is difficult.
  * - A [MediaBrowserConnectionCallback] is a parameter into the construction of

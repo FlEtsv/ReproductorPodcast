@@ -9,10 +9,11 @@ android {
     compileSdk = 34
 
     defaultConfig {
-        minSdk = 24
 
+        minSdk = 21
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
         consumerProguardFiles("consumer-rules.pro")
+        targetSdk = 34
     }
 
     buildTypes {
@@ -34,7 +35,7 @@ android {
 }
 
 dependencies {
-    implementation(project(":Common"))
+    implementation(project(":comun"))
 
     implementation(libs.kotlinx.coroutines.guava)
 

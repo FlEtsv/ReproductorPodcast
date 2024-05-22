@@ -1,0 +1,4 @@
+<resources>
+    <string name="app_name">automotive</string>
+    <string name="login_button_label">buttonLabel</string>
+</resources>

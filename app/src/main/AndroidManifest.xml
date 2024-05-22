@@ -27,6 +27,10 @@
                 <action android:name="android.intent.action.MAIN" />
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
+
+            <intent-filter>
+                <action android:name="android.media.action.MEDIA_PLAY_FROM_SEARCH" />
+            </intent-filter>
         </activity>
 
         <!--
@@ -45,7 +49,8 @@
                 En este caso, el servicio puede recibir intenciones con la acción androidx.media3.session.MediaSessionService.
             -->
             <intent-filter>
-                <action android:name="androidx.media3.session.MediaSessionService" />
+                <action android:name="androidx.media3.session.MediaLibraryService"/>
+                <action android:name="android.media.browse.MediaBrowserService" />
             </intent-filter>
         </service>
 
@@ -54,9 +59,11 @@
             En este caso, se proporciona una descripción de la aplicación para Google Play Services para automóviles.
             El recurso @xml/automotive_app_desc debe ser un archivo XML que contiene la descripción de la aplicación.
         -->
+        <!--
         <meta-data
             android:name="com.google.android.gms.car.application"
             android:resource="@xml/automotive_app_desc" />
+        -->
 
     </application>
 

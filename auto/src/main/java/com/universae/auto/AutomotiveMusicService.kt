@@ -1,4 +1,4 @@
-package com.example.android.uamp.automotive
+package com.universae.auto
 
 import android.app.PendingIntent
 import android.content.Context
@@ -22,14 +22,14 @@ import com.google.common.util.concurrent.ListenableFuture
 import com.universae.audioplayerlibrary.media.MyMediaSessionService
 import es.universae.auto.R
 
-/** UAMP specific command for logging into the service. */
-const val LOGIN = "com.example.android.uamp.automotive.COMMAND.LOGIN"
+/** Navegacion specific command for logging into the service. */
+const val LOGIN = "com.universae.auto.COMMAND.LOGIN"
 
-/** UAMP specific command for logging out of the service. */
-const val LOGOUT = "com.example.android.uamp.automotive.COMMAND.LOGOUT"
+/** Navegacion specific command for logging out of the service. */
+const val LOGOUT = "com.universae.auto.COMMAND.LOGOUT"
 
-const val LOGIN_EMAIL = "com.example.android.uamp.automotive.ARGS.LOGIN_EMAIL"
-const val LOGIN_PASSWORD = "com.example.android.uamp.automotive.ARGS.LOGIN_PASSWORD"
+const val LOGIN_EMAIL = "com.universae.auto.ARGS.LOGIN_EMAIL"
+const val LOGIN_PASSWORD = "com.universae.auto.ARGS.LOGIN_PASSWORD"
 
 class AutomotiveMusicService: MyMediaSessionService() {
 
@@ -134,15 +134,9 @@ class AutomotiveMusicService: MyMediaSessionService() {
             it.putString(
                 EXTRAS_KEY_ERROR_RESOLUTION_ACTION_LABEL_COMPAT,
                 getString(R.string.login_button_label))
-            val signInIntent = Intent(this, SignInActivity::class.java)
-            @OptIn(UnstableApi::class)
-            val flags = if (Util.SDK_INT >= 23) PendingIntent.FLAG_IMMUTABLE else 0
-            it.putParcelable(
-                EXTRAS_KEY_ERROR_RESOLUTION_ACTION_INTENT_COMPAT,
-                PendingIntent.getActivity(this, /* requestCode= */ 0, signInIntent, flags))
         }
     }
 }
 
 private const val TAG = "AutomotiveMusicService"
-private const val USER_TOKEN = "com.example.android.uamp.automotive.PREFS.USER_TOKEN"
+private const val USER_TOKEN = "com.universae.auto.PREFS.USER_TOKEN"

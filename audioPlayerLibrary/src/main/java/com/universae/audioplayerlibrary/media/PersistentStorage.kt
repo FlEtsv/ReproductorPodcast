@@ -78,7 +78,7 @@ internal class PersistentStorage private constructor(val context: Context) {
 
 const val NOTIFICATION_LARGE_ICON_SIZE = 144 // px
 
-private const val PREFERENCES_NAME = "uamp"
+private const val PREFERENCES_NAME = "reproductor"
 private const val RECENT_SONG_MEDIA_ID_KEY = "recent_song_media_id"
 private const val RECENT_SONG_TITLE_KEY = "recent_song_title"
 private const val RECENT_SONG_SUBTITLE_KEY = "recent_song_subtitle"

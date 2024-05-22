@@ -1,7 +1,7 @@
 plugins {
     id("com.android.application")
     kotlin("android")
-    kotlin("kapt")
+    id("com.google.devtools.ksp")
 }
 
 android {
@@ -10,7 +10,7 @@ android {
 
     defaultConfig {
         applicationId = "com.universae.auto"
-        minSdk = 24
+        minSdk = 21
         targetSdk = 34
         versionCode = 1
         versionName = "1.0"
@@ -42,7 +42,7 @@ android {
 }
 
 dependencies {
-    implementation(project(":Common"))
+    implementation(project(":comun"))
     implementation(project(":audioPlayerLibrary"))
 
     implementation(libs.androidx.core.ktx)
@@ -73,4 +73,8 @@ dependencies {
     androidTestImplementation("androidx.test.espresso:espresso-core:3.5.1")
 
     implementation("androidx.activity:activity-ktx:1.4.0")
+
+    ksp("androidx.room:room-compiler:2.5.0")
+
+    implementation("androidx.constraintlayout:constraintlayout:2.1.3")
 }

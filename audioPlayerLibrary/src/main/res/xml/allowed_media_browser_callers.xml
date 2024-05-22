@@ -36,7 +36,7 @@ Format (v2):
 
 Format (v1 : legacy support only/deprecated):
 
-  It is still possible to use the 'signing_certificate's of the previous version of UAMP here. In
+  It is still possible to use the 'signing_certificate's of the previous version of navegacion here. In
   which case the format is:
 
   <signing_certificate name="App Name" release="true" package="app.package.name">

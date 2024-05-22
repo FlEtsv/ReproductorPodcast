@@ -35,7 +35,7 @@ import com.universae.audioplayerlibrary.media.library.JsonSource
 import com.universae.audioplayerlibrary.media.library.MEDIA_SEARCH_SUPPORTED
 import com.universae.audioplayerlibrary.media.library.MusicSource
 import com.universae.audioplayerlibrary.media.library.REPRODUCTOR_BROWSABLE_ROOT
-import com.universae.audioplayerlibrary.media.library.UAMP_RECENT_ROOT
+import com.universae.audioplayerlibrary.media.library.REPRODUCTOR_RECENT_ROOT
 import com.google.android.gms.cast.framework.CastContext
 import com.google.common.collect.ImmutableList
 import com.google.common.util.concurrent.Futures
@@ -55,7 +55,7 @@ import kotlin.math.max
 
 /**
  * Service for browsing the catalogue and and receiving a [MediaController] from the app's UI
- * and other apps that wish to play music via UAMP (for example, Android Auto or
+ * and other apps that wish to play music via reproductor (for example, Android Auto or
  * the Google Assistant).
  *
  * Browsing begins with the method [MyMediaSessionService.MusicServiceCallback.onGetLibraryRoot], and
@@ -87,7 +87,7 @@ open class MyMediaSessionService : MediaLibraryService() {
 
     private val recentRootMediaItem: MediaItem by lazy {
         MediaItem.Builder()
-            .setMediaId(UAMP_RECENT_ROOT)
+            .setMediaId(REPRODUCTOR_RECENT_ROOT)
             .setMediaMetadata(
                 MediaMetadata.Builder()
                     .setFolderType(MediaMetadata.FOLDER_TYPE_ALBUMS)
@@ -131,7 +131,7 @@ open class MyMediaSessionService : MediaLibraryService() {
             setHandleAudioBecomingNoisy(true)
             addListener(playerListener)
         }
-        player.addAnalyticsListener(EventLogger(null, "exoplayer-uamp"))
+        player.addAnalyticsListener(EventLogger(null, "exoplayer-reproductor"))
         player
     }
 

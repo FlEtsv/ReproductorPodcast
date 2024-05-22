@@ -61,7 +61,7 @@ class BrowseTree(
 
     /**
      * In this example, there's a single root node (identified by the constant
-     * [UAMP_BROWSABLE_ROOT]). The root's children are each album included in the
+     * [REPRODUCTOR_BROWSABLE_ROOT]). The root's children are each album included in the
      * [MusicSource], and the children of each album are the songs on that album.
      * (See [BrowseTree.buildAlbumRoot] for more details.)
      *
@@ -82,7 +82,7 @@ class BrowseTree(
             setIsPlayable(false)
         }.build()
         rootList += MediaItem.Builder().apply {
-            setMediaId(UAMP_RECOMMENDED_ROOT)
+            setMediaId(REPRODUCTOR_RECOMMENDED_ROOT)
             setMediaMetadata(recommendedCategory)
         }.build()
 
@@ -111,15 +111,15 @@ class BrowseTree(
             Log.d("BrowseTree", "loading catalogue for " + mediaItem.mediaId)
             // Add the first track of each album to the 'Recommended' category
             if (mediaItem.mediaMetadata.trackNumber == 1) {
-                val recommendedChildren = mediaIdToChildren[UAMP_RECOMMENDED_ROOT]
+                val recommendedChildren = mediaIdToChildren[REPRODUCTOR_RECOMMENDED_ROOT]
                     ?: mutableListOf()
                 recommendedChildren += mediaItem
-                mediaIdToChildren[UAMP_RECOMMENDED_ROOT] = recommendedChildren
+                mediaIdToChildren[REPRODUCTOR_RECOMMENDED_ROOT] = recommendedChildren
             }
 
             // If this was recently played, add it to the recent root.
             if (mediaItem.mediaId == recentMediaId) {
-                mediaIdToChildren[UAMP_RECENT_ROOT] = mutableListOf(mediaItem)
+                mediaIdToChildren[REPRODUCTOR_RECENT_ROOT] = mutableListOf(mediaItem)
             }
             mediaIdToMediaItem[mediaItem.mediaId] = mediaItem
         }
@@ -127,7 +127,7 @@ class BrowseTree(
 
     /**
      * Provides access to the list of children with the `get` operator.
-     * i.e.: `browseTree\[UAMP_BROWSABLE_ROOT\]`
+     * i.e.: `browseTree\[REPRODUCTOR_BROWSABLE_ROOT\]`
      */
     operator fun get(mediaId: String) = mediaIdToChildren[mediaId]
 
@@ -163,10 +163,10 @@ class BrowseTree(
 }
 
 const val REPRODUCTOR_BROWSABLE_ROOT = "/"
-const val UAMP_EMPTY_ROOT = "@empty@"
-const val UAMP_RECOMMENDED_ROOT = "__RECOMMENDED__"
+const val REPRODUCTOR_EMPTY_ROOT = "@empty@"
+const val REPRODUCTOR_RECOMMENDED_ROOT = "__RECOMMENDED__"
 const val TEMAS_ROOT = "__ALBUMS__"
-const val UAMP_RECENT_ROOT = "__RECENT__"
+const val REPRODUCTOR_RECENT_ROOT = "__RECENT__"
 
 const val MEDIA_SEARCH_SUPPORTED = "android.media.browse.SEARCH_SUPPORTED"
 

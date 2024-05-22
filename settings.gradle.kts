@@ -31,6 +31,6 @@ dependencyResolutionManagement {
 
 rootProject.name = "Navegacion"
 include(":app")
-include(":auto")
-include(":Common")
+include(":comun")
 include(":audioPlayerLibrary")
+include(":myauto")

@@ -22,7 +22,7 @@ import com.google.android.gms.common.images.WebImage
  * [MediaMetadata.MEDIA_TYPE_MUSIC_TRACK].
  *
  * To create an artwork for Cast we can't use the standard [MediaItem#mediaMetadata#artworkUri]
- * because UAMP uses a content provider to serve cached bitmaps. The URIs starting with `content://`
+ * because navegacion uses a content provider to serve cached bitmaps. The URIs starting with `content://`
  * are useless on a Cast device, so we need to use the original HTTP URI that the [JsonSource]
  * stores in the metadata extra with key `JsonSource.ORIGINAL_ARTWORK_URI_KEY`.
  */
@@ -33,7 +33,7 @@ internal class CastMediaItemConverter : MediaItemConverter {
 
     override fun toMediaQueueItem(mediaItem: MediaItem): MediaQueueItem {
         val castMediaMetadata = MediaMetadata(MediaMetadata.MEDIA_TYPE_MUSIC_TRACK)
-        castMediaMetadata.putString("uamp.mediaid", mediaItem.mediaId)
+        castMediaMetadata.putString("reproductor.mediaid", mediaItem.mediaId)
         mediaItem.mediaMetadata.title?.let {
             castMediaMetadata.putString(MediaMetadata.KEY_TITLE, it.toString() )
         }

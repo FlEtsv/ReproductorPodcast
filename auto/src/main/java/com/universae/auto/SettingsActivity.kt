@@ -14,12 +14,12 @@
  * limitations under the License.
  */
 
-package com.example.android.uamp.automotive
+package com.universae.auto
 
 import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
-import com.universae.auto.databinding.ActivitySettingsBinding
 import es.universae.auto.R
+import es.universae.auto.databinding.ActivitySettingsBinding
 
 /**
  * This class exposes application settings
