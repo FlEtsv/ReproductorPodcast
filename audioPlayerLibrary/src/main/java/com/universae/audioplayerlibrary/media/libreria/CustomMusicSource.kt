@@ -4,34 +4,98 @@ import android.os.Build
 import android.os.Bundle
 import android.provider.MediaStore
 import android.util.Log
+import androidx.annotation.IntDef
 import androidx.media3.common.MediaItem
+import com.universae.audioplayerlibrary.media.MyMediaSessionService
 import com.universae.audioplayerlibrary.media.extensiones.containsCaseInsensitive
-import com.universae.audioplayerlibrary.media.library.MusicSource
-import com.universae.audioplayerlibrary.media.library.isArtist
+
+
+/**
+ * Interface used by [MyMediaSessionService] for looking up [MediaMetadataCompat] objects.
+ *
+ * Because Kotlin provides methods such as [Iterable.find] and [Iterable.filter],
+ * this is a convenient interface to have on sources.
+ */
+interface MusicSource : Iterable<MediaItem> {
+
+    /**
+     * Begins loading the data for this music source.
+     */
+    suspend fun load()
+
+    /**
+     * Method which will perform a given action after this [MusicSource] is ready to be used.
+     *
+     * @param performAction A lambda expression to be called with a boolean parameter when
+     * the source is ready. `true` indicates the source was successfully prepared, `false`
+     * indicates an error occurred.
+     * @return True if the music source is ready to be read, false if it still loading.
+     */
+    fun whenReady(performAction: (Boolean) -> Unit): Boolean
+
+    fun search(query: String, extras: Bundle): List<MediaItem>
+}
+
+@IntDef(
+    STATE_CREATED,
+    STATE_INITIALIZING,
+    STATE_INITIALIZED,
+    STATE_ERROR
+)
+@Retention(AnnotationRetention.SOURCE)
+annotation class State
+
+/**
+ * State indicating the source was created, but no initialization has performed.
+ */
+const val STATE_CREATED = 1
+
+/**
+ * State indicating initialization of the source is in progress.
+ */
+const val STATE_INITIALIZING = 2
+
+/**
+ * State indicating the source has been initialized and is ready to be used.
+ */
+const val STATE_INITIALIZED = 3
+
+/**
+ * State indicating an error has occurred.
+ */
+const val STATE_ERROR = 4
 
 abstract class CustomMusicSource : MusicSource {
 
-    private var state: Int = STATE_CREATED
+    @State
+    var state: Int = STATE_CREATED
+        set(value) {
+            if (value == com.universae.audioplayerlibrary.media.library.STATE_INITIALIZED || value == com.universae.audioplayerlibrary.media.library.STATE_ERROR) {
+                synchronized(onReadyListeners) {
+                    field = value
+                    onReadyListeners.forEach { listener ->
+                        listener(state == com.universae.audioplayerlibrary.media.library.STATE_INITIALIZED)
+                    }
+                }
+            } else {
+                field = value
+            }
+        }
+
     private val onReadyListeners = mutableListOf<(Boolean) -> Unit>()
 
-    override suspend fun load() {
-        state = STATE_INITIALIZED
-        notifyWhenReady(state == STATE_INITIALIZED)
-    }
-
-    override fun whenReady(performAction: (Boolean) -> Unit): Boolean {
-        if (state == STATE_INITIALIZED || state == STATE_ERROR) {
-            performAction(state == STATE_INITIALIZED)
-            return true
-        } else {
-            onReadyListeners.add(performAction)
-            return false
+    override fun whenReady(performAction: (Boolean) -> Unit): Boolean =
+        when (state) {
+            STATE_CREATED, STATE_INITIALIZING -> {
+                onReadyListeners += performAction
+                false
+            }
+            else -> {
+                performAction(state != STATE_ERROR)
+                true
+            }
         }
-    }
 
-    private fun notifyWhenReady(ready: Boolean) {
-        onReadyListeners.forEach { it(ready) }
-    }
 
 //TODO("Repasar la busqueda de mediaItems. Cual es el metadata que tenemos y queremos buscar??")
     /**
@@ -118,12 +182,11 @@ abstract class CustomMusicSource : MusicSource {
             "android.intent.extra.genre"
         }
 
-    companion object {
-        const val STATE_CREATED = 0
-        const val STATE_INITIALIZING = 1
-        const val STATE_INITIALIZED = 2
-        const val STATE_ERROR = 3
-    }
+}
+
+fun isArtist(mediaItem: MediaItem, artist: Any?): Boolean {
+    return mediaItem.mediaMetadata.artist?.toString() == artist
+            || mediaItem.mediaMetadata.albumArtist?.toString() == artist
 }
 
 private const val TAG = "MusicSource"

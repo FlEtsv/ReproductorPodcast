@@ -33,7 +33,7 @@ import androidx.media3.session.SessionResult
 import com.universae.audioplayerlibrary.media.library.BrowseTree
 import com.universae.audioplayerlibrary.media.library.JsonSource
 import com.universae.audioplayerlibrary.media.library.MEDIA_SEARCH_SUPPORTED
-import com.universae.audioplayerlibrary.media.library.MusicSource
+import com.universae.audioplayerlibrary.media.libreria.MusicSource
 import com.universae.audioplayerlibrary.media.library.REPRODUCTOR_BROWSABLE_ROOT
 import com.universae.audioplayerlibrary.media.library.REPRODUCTOR_RECENT_ROOT
 import com.google.android.gms.cast.framework.CastContext
@@ -204,7 +204,7 @@ open class MyMediaSessionService : MediaLibraryService(), SesionObserver {
         // Aquí, en lugar de cargar musicSource desde un JSON, cargarías tu sesión y usarías sesionToMediaItems
         val sesionActual = obtenerSesionActual() // Implementa esta función según tu lógica de aplicación
         // Inicializa DomainMediaSource y carga los MediaItem desde la sesión actual
-        val domainMediaSource = DomainMediaSource()
+        val domainMediaSource = DomainMediaSource(sesionActual)
         domainMediaSource.loadFromSession(sesionActual)
         // Utiliza domainMediaSource como musicSource
         musicSource = domainMediaSource
@@ -223,7 +223,7 @@ open class MyMediaSessionService : MediaLibraryService(), SesionObserver {
         // Aquí actualizamos domainMediaSource con la sesión actual
         // Esto podría implicar recargar los MediaItem basados en la nueva sesión
         val sesionActual = obtenerSesionActual() // Esta función ya existe en tu servicio
-        val domainMediaSource = DomainMediaSource()
+        val domainMediaSource = DomainMediaSource(sesionActual)
         domainMediaSource.loadFromSession(sesionActual)
         musicSource = domainMediaSource
 

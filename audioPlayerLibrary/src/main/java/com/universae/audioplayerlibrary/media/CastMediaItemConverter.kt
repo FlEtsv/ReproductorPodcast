@@ -66,7 +66,7 @@ internal class CastMediaItemConverter : MediaItemConverter {
         }
         mediaItem.mediaMetadata.extras?.let { bundle ->
             // Use the original artwork URI for Cast.
-            bundle.getString(JsonSource.ORIGINAL_ARTWORK_URI_KEY)?.let {
+            bundle.getString(JsonSource.ORIGINAL_ARTWORK_URI_KEY)?.let { //TODO: Check this, accediendo a JsonSource no es correcto
                 castMediaMetadata.addImage(WebImage(Uri.parse(it)))
             }
             mediaInfo.setStreamDuration(bundle.getLong(MediaMetadataCompat.METADATA_KEY_DURATION,0))
