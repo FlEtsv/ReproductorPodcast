@@ -45,6 +45,7 @@ import com.universae.audioplayerlibrary.media.libreria.CustomMusicSource
 import com.universae.audioplayerlibrary.media.libreria.DomainMediaSource
 import com.universae.audioplayerlibrary.media.libreria.sesionToMediaItems
 import com.universae.domain.Sesion
+import com.universae.domain.SesionObserver
 import es.universae.audioplayerlibrary.R
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -65,7 +66,7 @@ import kotlin.math.max
  * commands are passed to a [CastPlayer].
  */
 @OptIn(UnstableApi::class)
-open class MyMediaSessionService : MediaLibraryService() {
+open class MyMediaSessionService : MediaLibraryService(), SesionObserver {
 
     private val serviceJob = SupervisorJob()
     private val serviceScope = CoroutineScope(Dispatchers.Main + serviceJob)
@@ -169,6 +170,9 @@ open class MyMediaSessionService : MediaLibraryService() {
     override fun onCreate() {
         super.onCreate()
 
+        // Registrar el servicio como observador de Sesion
+        Sesion.addObserver(this)
+
         if (castPlayer?.isCastSessionAvailable == true) {
             replaceableForwardingPlayer.setPlayer(castPlayer!!)
         }
@@ -214,6 +218,20 @@ open class MyMediaSessionService : MediaLibraryService() {
         storage = PersistentStorage.getInstance(applicationContext)
     }
 
+    // Implementación del método onSesionUpdated de SesionObserver
+    override fun onSesionUpdated() {
+        // Aquí actualizamos domainMediaSource con la sesión actual
+        // Esto podría implicar recargar los MediaItem basados en la nueva sesión
+        val sesionActual = obtenerSesionActual() // Esta función ya existe en tu servicio
+        val domainMediaSource = DomainMediaSource()
+        domainMediaSource.loadFromSession(sesionActual)
+        musicSource = domainMediaSource
+
+        serviceScope.launch {
+            musicSource.load()
+        }
+    }
+
     override fun onGetSession(controllerInfo: MediaSession.ControllerInfo): MediaLibrarySession? {
         return if ("android.media.session.MediaController" == controllerInfo.packageName
             || packageValidator.isKnownCaller(controllerInfo.packageName, controllerInfo.uid)) {
@@ -233,6 +251,9 @@ open class MyMediaSessionService : MediaLibraryService() {
 
     override fun onDestroy() {
         super.onDestroy()
+        // Desregistrar el servicio como observador de Sesion
+        Sesion.removeObserver(this)
+
         releaseMediaSession()
     }
 

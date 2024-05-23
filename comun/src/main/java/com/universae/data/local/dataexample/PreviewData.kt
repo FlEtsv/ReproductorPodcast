@@ -105,39 +105,116 @@ val PreviewTemas = listOf(
         240.toDuration(DurationUnit.SECONDS),
         urlAudio
     ),
+    Tema(
+        TemaId(14),
+        "Tema 14",
+        "descripcion14",
+        250.toDuration(DurationUnit.SECONDS),
+        urlAudio
+    ),
+    Tema(
+        TemaId(15),
+        "Tema 15",
+        "descripcion15",
+        260.toDuration(DurationUnit.SECONDS),
+        urlAudio
+    ),
+    Tema(
+        TemaId(16),
+        "Tema 16",
+        "descripcion16",
+        270.toDuration(DurationUnit.SECONDS),
+        urlAudio
+    ),
+    Tema(
+        TemaId(17),
+        "Tema 17",
+        "descripcion17",
+        280.toDuration(DurationUnit.SECONDS),
+        urlAudio
+    ),
+    Tema(
+        TemaId(18),
+        "Tema 18",
+        "descripcion18",
+        290.toDuration(DurationUnit.SECONDS),
+        urlAudio
+    ),
+    Tema(
+        TemaId(19),
+        "Tema 19",
+        "descripcion19",
+        300.toDuration(DurationUnit.SECONDS),
+        urlAudio
+    ),
+    Tema(
+        TemaId(20),
+        "Tema 20",
+        "descripcion20",
+        310.toDuration(DurationUnit.SECONDS),
+        urlAudio
+    ),
+    Tema(
+        TemaId(31),
+        "Tema 21",
+        "descripcion21",
+        320.toDuration(DurationUnit.SECONDS),
+        urlAudio
+    ),
+    Tema(
+        TemaId(32),
+        "Tema 22",
+        "descripcion22",
+        330.toDuration(DurationUnit.SECONDS),
+        urlAudio
+    ),
+    Tema(
+        TemaId(33),
+        "Tema 23",
+        "descripcion23",
+        340.toDuration(DurationUnit.SECONDS),
+        urlAudio
+    ),
+    Tema(
+        TemaId(34),
+        "Tema 24",
+        "descripcion24",
+        350.toDuration(DurationUnit.SECONDS),
+        urlAudio
+    ),
 )
 
 val PreviewTemasFOL = listOf(
     Tema(
-        TemaId(1),
+        TemaId(21),
         "Tema 1 FOL",
         "descripcion1",
         120.toDuration(DurationUnit.SECONDS),
         urlAudio
     ),
     Tema(
-        TemaId(2),
+        TemaId(22),
         "Tema 2 FOL",
         "descripcion2",
         13000.toDuration(DurationUnit.SECONDS),
         urlAudio
     ),
     Tema(
-        TemaId(3),
+        TemaId(23),
         "Tema 3 FOL",
         "descripcion3",
         140.toDuration(DurationUnit.SECONDS),
         urlAudio
     ),
     Tema(
-        TemaId(4),
+        TemaId(24),
         "Tema 4 FOL",
         "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris ",
         150.toDuration(DurationUnit.SECONDS),
         urlAudio
     ),
     Tema(
-        TemaId(5),
+        TemaId(25),
         "Tema 5 FOL",
         "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum",
         160.toDuration(DurationUnit.SECONDS),
@@ -147,19 +224,19 @@ val PreviewTemasFOL = listOf(
 
 val PreviewAsignaturas = listOf(
     Asignatura(AsignaturaId(1), "Asignatura 1", PreviewTemas.filter{it.temaId.id <= 3}, "icon"),
-    Asignatura(AsignaturaId(2), "Asignatura 2", PreviewTemas.filter{it.temaId.id in 4..7}, "icon"),
+    Asignatura(AsignaturaId(2), "Asignatura 2", PreviewTemas.filter{it.temaId.id in 4..5}, "icon"),
     Asignatura(AsignaturaId(3), "Asignatura 3", PreviewTemas.filter{it.temaId.id in 6..8}, "icon"),
-    Asignatura(AsignaturaId(4), "Asignatura 4", PreviewTemas.filter{it.temaId.id in 4..6}, "icon"),
-    Asignatura(AsignaturaId(5), "Asignatura 5", PreviewTemas.filter{it.temaId.id in 2..7}, "icon"),
-    Asignatura(AsignaturaId(6), "Asignatura 6", PreviewTemas.filter{it.temaId.id in 1..4}, "icon"),
-    Asignatura(AsignaturaId(7), "Asignatura 7", PreviewTemas.filter{it.temaId.id in 9..12}, "icon"),
-    Asignatura(AsignaturaId(8), "Asignatura 8", PreviewTemas.filter{it.temaId.id in 2..5}, "icon"),
-    Asignatura(AsignaturaId(9), "Asignatura 9", PreviewTemas.filter{it.temaId.id in 3..6}, "icon"),
-    Asignatura(AsignaturaId(10), "Asignatura 10", PreviewTemas.filter{it.temaId.id in 9..13}, "icon"),
-    Asignatura(AsignaturaId(11), "Asignatura 11", PreviewTemas.filter{it.temaId.id in 2..6}, "icon"),
-    Asignatura(AsignaturaId(12), "Asignatura 12", PreviewTemas.filter{it.temaId.id in 1..13}, "icon"),
+    Asignatura(AsignaturaId(4), "Asignatura 4", PreviewTemas.filter{it.temaId.id in 9..10}, "icon"),
+    Asignatura(AsignaturaId(5), "Asignatura 5", PreviewTemas.filter{it.temaId.id in 11..11}, "icon"),
+    Asignatura(AsignaturaId(6), "Asignatura 6", PreviewTemas.filter{it.temaId.id in 12..12}, "icon"),
+    Asignatura(AsignaturaId(7), "Asignatura 7", PreviewTemas.filter{it.temaId.id in 13..13}, "icon"),
+    Asignatura(AsignaturaId(8), "Asignatura 8", PreviewTemas.filter{it.temaId.id in 14..14}, "icon"),
+    Asignatura(AsignaturaId(9), "Asignatura 9", PreviewTemas.filter{it.temaId.id in 15..16}, "icon"),
+    Asignatura(AsignaturaId(10), "Asignatura 10", PreviewTemas.filter{it.temaId.id in 17..17}, "icon"),
+    Asignatura(AsignaturaId(11), "Asignatura 11", PreviewTemas.filter{it.temaId.id in 18..18}, "icon"),
+    Asignatura(AsignaturaId(12), "Asignatura 12", PreviewTemas.filter{it.temaId.id in 19..20}, "icon"),
     Asignatura(AsignaturaId(98), "FOL", PreviewTemasFOL, "icon"),
-    Asignatura(AsignaturaId(99), "EMPRESA", PreviewTemas.filter{it.temaId.id in 8..11}, "icon"),
+    Asignatura(AsignaturaId(99), "EMPRESA", PreviewTemas.filter{it.temaId.id in 31..34}, "icon"),
 )
 
 val PreviewGrados = listOf(

@@ -61,7 +61,7 @@ fun ReproductorPodcast(navController: NavController, tituloTema: String) {
     // Replace with your actual Tema instance
     //TODO("Reemplazar con tu instancia real de Tema")
     val tema = Tema(
-        temaId = TemaId(1),
+        temaId = TemaId(21),
         nombreTema = "nombreTema",
         descripcionTema = "descripciontema",
         duracionAudio = 120.toDuration(DurationUnit.SECONDS),

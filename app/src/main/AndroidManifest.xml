@@ -27,10 +27,6 @@
                 <action android:name="android.intent.action.MAIN" />
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
-
-            <intent-filter>
-                <action android:name="android.media.action.MEDIA_PLAY_FROM_SEARCH" />
-            </intent-filter>
         </activity>
 
         <!--
@@ -43,7 +39,8 @@
             android:name="com.universae.audioplayerlibrary.media.MyMediaSessionService"
             android:enabled="true"
             android:exported="true"
-            android:foregroundServiceType="mediaPlayback">
+            android:foregroundServiceType="mediaPlayback"
+            tools:ignore="ForegroundServicePermission">
             <!--
                 Este es un filtro de intención que especifica el tipo de intenciones que el servicio puede recibir.
                 En este caso, el servicio puede recibir intenciones con la acción androidx.media3.session.MediaSessionService.
@@ -52,6 +49,12 @@
                 <action android:name="androidx.media3.session.MediaLibraryService"/>
                 <action android:name="android.media.browse.MediaBrowserService" />
             </intent-filter>
+            <meta-data
+                android:name="android.media.browse.CONTENT_STYLE_PLAYABLE_HINT"
+                android:resource="@xml/media_browser_service_content_style" />
+            <meta-data
+                android:name="androidx.car.app.minCarApiLevel"
+                android:value="1" />
         </service>
 
         <!--
@@ -59,11 +62,9 @@
             En este caso, se proporciona una descripción de la aplicación para Google Play Services para automóviles.
             El recurso @xml/automotive_app_desc debe ser un archivo XML que contiene la descripción de la aplicación.
         -->
-        <!--
         <meta-data
             android:name="com.google.android.gms.car.application"
             android:resource="@xml/automotive_app_desc" />
-        -->
 
     </application>
 

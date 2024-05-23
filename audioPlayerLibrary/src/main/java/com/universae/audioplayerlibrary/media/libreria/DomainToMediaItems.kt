@@ -1,5 +1,6 @@
 package com.universae.audioplayerlibrary.media.libreria
 
+import android.net.Uri
 import androidx.media3.common.MediaItem
 import androidx.media3.common.MediaMetadata
 import com.universae.domain.Sesion
@@ -13,7 +14,7 @@ internal class DomainMediaSource: CustomMusicSource() {
     override fun iterator(): Iterator<MediaItem> = mediaItems.iterator()
 
     fun loadFromSession(sesion: Sesion) {
-        mediaItems = sesionToMediaItems(sesion)
+        mediaItems = sesionToMediaItems(sesion) //TODO: cambiar a sesion iniciado en app.
     }
 
     fun getMediaItems(): List<MediaItem> = mediaItems
@@ -30,6 +31,7 @@ fun sesionToMediaItems(sesion: Sesion): List<MediaItem> {
                     .setAlbumTitle(asignatura.nombreAsignatura)
                     .setGenre(grado.nombreModulo)
                     .setDescription(tema.descripcionTema) // Opcional, dependiendo de los detalles que quieras incluir
+                    .setArtworkUri(Uri.parse("https://estaticos-cdn.prensaiberica.es/epi/public/file/2023/0804/12/universae-f534810.png")) // TODO: Cambiar por la URL de la imagen del tema
                     .build()
 
                 val mediaItem = MediaItem.Builder()

@@ -11,6 +11,18 @@ import com.universae.reproductor.domain.entities.tema.TemaId
 import java.security.MessageDigest
 
 object Sesion {
+    private val observers = mutableListOf<SesionObserver>()
+    fun addObserver(observer: SesionObserver) {
+        observers.add(observer)
+    }
+
+    fun removeObserver(observer: SesionObserver) {
+        observers.remove(observer)
+    }
+
+    private fun notifyObservers() {
+        observers.forEach { it.onSesionUpdated() }
+    }
     val sesionIniciada: Boolean
         get() = Sesion::alumno.isInitialized
     lateinit var alumno: Alumno
@@ -35,6 +47,7 @@ object Sesion {
                 temasCompletados[tema.temaId] = tema.terminado
             }
         }
+        notifyObservers()
         return sesionIniciada
     }
 
@@ -45,11 +58,13 @@ object Sesion {
             temasCompletados[temaId] = true
             return resultado
         }
+        notifyObservers()
         return resultado
     }
 
     fun guardarPuntoParada(temaId: TemaId, puntoParada: Int): Int {
         //TODO("mirar que esta llamada a DB no bloquea el hilo main de la app")
+        notifyObservers()
         return TemaRepositoryImpl.guardarPuntoParada(alumno.alumnoId, temaId, puntoParada)
     }
 
@@ -68,6 +83,7 @@ object Sesion {
     //TODO("implementar mostrar progreso de la asignatura y del grado")
 
     fun cerrarSesion() {
+        notifyObservers()
         //TODO("implementar la funcion cerrarSesion")
     }
 
