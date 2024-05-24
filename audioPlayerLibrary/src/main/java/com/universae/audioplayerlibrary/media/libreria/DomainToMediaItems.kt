@@ -56,8 +56,8 @@ fun sesionToMediaItems(sesion: Sesion): List<MediaItem> {
                     .setAlbumTitle(asignatura.nombreAsignatura)
                     .setGenre(grado.nombreModulo)
                     .setDescription(tema.descripcionTema) // Opcional, dependiendo de los detalles que quieras incluir
-                    .setArtworkUri(Uri.parse("https://estaticos-cdn.prensaiberica.es/epi/public/file/2023/0804/12/universae-f534810.png")) // TODO: Cambiar por la URL de la imagen del tema
-                    .setTrackNumber(tema.temaId.id)
+                    .setArtworkUri(Uri.parse(tema.imagenUrl))
+                    .setTrackNumber(tema.trackNumber)
                     .setIsPlayable(true)
                     .setIsBrowsable(false)
                     .build()

@@ -8,6 +8,8 @@ class Tema(
     val descripcionTema: String,
     val duracionAudio: Duration,
     val audioUrl: String, // URL de la fuente de audio
+    val imagenUrl: String, // URL de la imagen del tema
+    val trackNumber: Int,
 ) {
 
     var puntoParada: Int = 0 // intentar dato duration en milisegundos

@@ -11,215 +11,274 @@ import com.universae.reproductor.domain.entities.tema.TemaId
 import kotlin.time.DurationUnit
 import kotlin.time.toDuration
 
-var urlAudio = "https://file-examples.com/storage/fe83e1f11c664c2259506f1/2017/11/file_example_MP3_700KB.mp3"
+val urlAudio = "https://file-examples.com/storage/fe83e1f11c664c2259506f1/2017/11/file_example_MP3_700KB.mp3"
+val urlImagen = "https://estaticos-cdn.prensaiberica.es/epi/public/file/2023/0804/12/universae-f534810.png"
 
 val PreviewTemas = listOf(
     Tema(
-        TemaId(1),
-        "Tema 1",
-        "descripcion1",
-        120.toDuration(DurationUnit.SECONDS),
-        urlAudio
+        temaId = TemaId(1),
+        nombreTema = "Tema 1",
+        descripcionTema = "descripcion1",
+        duracionAudio = 120.toDuration(DurationUnit.SECONDS),
+        audioUrl = urlAudio,
+        imagenUrl = urlImagen,
+        trackNumber = 1
     ),
     Tema(
-        TemaId(2),
-        "Tema 2",
-        "descripcion2",
-        13000.toDuration(DurationUnit.SECONDS),
-        urlAudio
+        temaId = TemaId(2),
+        nombreTema = "Tema 2",
+        descripcionTema = "descripcion2",
+        duracionAudio = 130.toDuration(DurationUnit.SECONDS),
+        audioUrl = urlAudio,
+        imagenUrl = urlImagen,
+        trackNumber = 2
     ),
     Tema(
-        TemaId(3),
-        "Tema 3",
-        "descripcion3",
-        140.toDuration(DurationUnit.SECONDS),
-        urlAudio
+        temaId = TemaId(3),
+        nombreTema = "Tema 3",
+        descripcionTema = "descripcion3",
+        duracionAudio = 140.toDuration(DurationUnit.SECONDS),
+        audioUrl = urlAudio,
+        imagenUrl = urlImagen,
+        trackNumber = 3
     ),
     Tema(
-        TemaId(4),
-        "Tema 4",
-        "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris ",
-        150.toDuration(DurationUnit.SECONDS),
-        urlAudio
+        temaId = TemaId(4),
+        nombreTema = "Tema 4",
+        descripcionTema = "descripcion4",
+        duracionAudio = 150.toDuration(DurationUnit.SECONDS),
+        audioUrl = urlAudio,
+        imagenUrl = urlImagen,
+        trackNumber = 1
     ),
     Tema(
-        TemaId(5),
-        "Tema 5",
-        "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum",
-        160.toDuration(DurationUnit.SECONDS),
-        urlAudio
+        temaId = TemaId(5),
+        nombreTema = "Tema 5",
+        descripcionTema = "descripcion5",
+        duracionAudio = 160.toDuration(DurationUnit.SECONDS),
+        audioUrl = urlAudio,
+        imagenUrl = urlImagen,
+        trackNumber = 2
     ),
     Tema(
-        TemaId(6),
-        "Tema 6",
-        "descripcion6",
-        170.toDuration(DurationUnit.SECONDS),
-        urlAudio
+        temaId = TemaId(6),
+        nombreTema = "Tema 6",
+        descripcionTema = "descripcion6",
+        duracionAudio = 170.toDuration(DurationUnit.SECONDS),
+        audioUrl = urlAudio,
+        imagenUrl = urlImagen,
+        trackNumber = 1
     ),
     Tema(
-        TemaId(7),
-        "Tema 7",
-        "descripcion7",
-        180.toDuration(DurationUnit.SECONDS),
-        urlAudio
+        temaId = TemaId(7),
+        nombreTema = "Tema 7",
+        descripcionTema = "descripcion7",
+        duracionAudio = 180.toDuration(DurationUnit.SECONDS),
+        audioUrl = urlAudio,
+        imagenUrl = urlImagen,
+        trackNumber = 2
     ),
     Tema(
-        TemaId(8),
-        "Tema 8",
-        "descripcion8",
-        190.toDuration(DurationUnit.SECONDS),
-        urlAudio
+        temaId = TemaId(8),
+        nombreTema = "Tema 8",
+        descripcionTema = "descripcion8",
+        duracionAudio = 190.toDuration(DurationUnit.SECONDS),
+        audioUrl = urlAudio,
+        imagenUrl = urlImagen,
+        trackNumber = 3
     ),
     Tema(
-        TemaId(9),
-        "Tema 9",
-        "descripcion9",
-        200.toDuration(DurationUnit.SECONDS),
-        urlAudio
+        temaId = TemaId(9),
+        nombreTema = "Tema 9",
+        descripcionTema = "descripcion9",
+        duracionAudio = 200.toDuration(DurationUnit.SECONDS),
+        audioUrl = urlAudio,
+        imagenUrl = urlImagen,
+        trackNumber = 1
     ),
     Tema(
-        TemaId(10),
-        "Tema 10",
-        "descripcion10",
-        210.toDuration(DurationUnit.SECONDS),
-        urlAudio
+        temaId = TemaId(10),
+        nombreTema = "Tema 10",
+        descripcionTema = "descripcion10",
+        duracionAudio = 210.toDuration(DurationUnit.SECONDS),
+        audioUrl = urlAudio,
+        imagenUrl = urlImagen,
+        trackNumber = 2
     ),
     Tema(
-        TemaId(11),
-        "Tema 11",
-        "descripcion11",
-        220.toDuration(DurationUnit.SECONDS),
-        urlAudio
+        temaId = TemaId(11),
+        nombreTema = "Tema 11",
+        descripcionTema = "descripcion11",
+        duracionAudio = 220.toDuration(DurationUnit.SECONDS),
+        audioUrl = urlAudio,
+        imagenUrl = urlImagen,
+        trackNumber = 1
     ),
     Tema(
-        TemaId(12),
-        "Tema 12",
-        "descripcion12",
-        230.toDuration(DurationUnit.SECONDS),
-        urlAudio
+        temaId = TemaId(12),
+        nombreTema = "Tema 12",
+        descripcionTema = "descripcion12",
+        duracionAudio = 230.toDuration(DurationUnit.SECONDS),
+        audioUrl = urlAudio,
+        imagenUrl = urlImagen,
+        trackNumber = 1
     ),
     Tema(
-        TemaId(13),
-        "Tema 13",
-        "descripcion13",
-        240.toDuration(DurationUnit.SECONDS),
-        urlAudio
+        temaId = TemaId(13),
+        nombreTema = "Tema 13",
+        descripcionTema = "descripcion13",
+        duracionAudio = 240.toDuration(DurationUnit.SECONDS),
+        audioUrl = urlAudio,
+        imagenUrl = urlImagen,
+        trackNumber = 1
     ),
     Tema(
-        TemaId(14),
-        "Tema 14",
-        "descripcion14",
-        250.toDuration(DurationUnit.SECONDS),
-        urlAudio
+        temaId = TemaId(14),
+        nombreTema = "Tema 14",
+        descripcionTema = "descripcion14",
+        duracionAudio = 250.toDuration(DurationUnit.SECONDS),
+        audioUrl = urlAudio,
+        imagenUrl = urlImagen,
+        trackNumber = 1
     ),
     Tema(
-        TemaId(15),
-        "Tema 15",
-        "descripcion15",
-        260.toDuration(DurationUnit.SECONDS),
-        urlAudio
+        temaId = TemaId(15),
+        nombreTema = "Tema 15",
+        descripcionTema = "descripcion15",
+        duracionAudio = 260.toDuration(DurationUnit.SECONDS),
+        audioUrl = urlAudio,
+        imagenUrl = urlImagen,
+        trackNumber = 1
     ),
     Tema(
-        TemaId(16),
-        "Tema 16",
-        "descripcion16",
-        270.toDuration(DurationUnit.SECONDS),
-        urlAudio
+        temaId = TemaId(16),
+        nombreTema = "Tema 16",
+        descripcionTema = "descripcion16",
+        duracionAudio = 270.toDuration(DurationUnit.SECONDS),
+        audioUrl = urlAudio,
+        imagenUrl = urlImagen,
+        trackNumber = 2
     ),
     Tema(
-        TemaId(17),
-        "Tema 17",
-        "descripcion17",
-        280.toDuration(DurationUnit.SECONDS),
-        urlAudio
+        temaId = TemaId(17),
+        nombreTema = "Tema 17",
+        descripcionTema = "descripcion17",
+        duracionAudio = 280.toDuration(DurationUnit.SECONDS),
+        audioUrl = urlAudio,
+        imagenUrl = urlImagen,
+        trackNumber = 1
     ),
     Tema(
-        TemaId(18),
-        "Tema 18",
-        "descripcion18",
-        290.toDuration(DurationUnit.SECONDS),
-        urlAudio
+        temaId = TemaId(18),
+        nombreTema = "Tema 18",
+        descripcionTema = "descripcion18",
+        duracionAudio = 290.toDuration(DurationUnit.SECONDS),
+        audioUrl = urlAudio,
+        imagenUrl = urlImagen,
+        trackNumber = 1
     ),
     Tema(
-        TemaId(19),
-        "Tema 19",
-        "descripcion19",
-        300.toDuration(DurationUnit.SECONDS),
-        urlAudio
+        temaId = TemaId(19),
+        nombreTema = "Tema 19",
+        descripcionTema = "descripcion19",
+        duracionAudio = 300.toDuration(DurationUnit.SECONDS),
+        audioUrl = urlAudio,
+        imagenUrl = urlImagen,
+        trackNumber = 1
     ),
     Tema(
-        TemaId(20),
-        "Tema 20",
-        "descripcion20",
-        310.toDuration(DurationUnit.SECONDS),
-        urlAudio
+        temaId = TemaId(20),
+        nombreTema = "Tema 20",
+        descripcionTema = "descripcion20",
+        duracionAudio = 310.toDuration(DurationUnit.SECONDS),
+        audioUrl = urlAudio,
+        imagenUrl = urlImagen,
+        trackNumber = 2
     ),
     Tema(
-        TemaId(31),
-        "Tema 21",
-        "descripcion21",
-        320.toDuration(DurationUnit.SECONDS),
-        urlAudio
+        temaId = TemaId(31),
+        nombreTema = "Tema 31",
+        descripcionTema = "descripcion31",
+        duracionAudio = 320.toDuration(DurationUnit.SECONDS),
+        audioUrl = urlAudio,
+        imagenUrl = urlImagen,
+        trackNumber = 1
     ),
     Tema(
-        TemaId(32),
-        "Tema 22",
-        "descripcion22",
-        330.toDuration(DurationUnit.SECONDS),
-        urlAudio
+        temaId = TemaId(32),
+        nombreTema = "Tema 32",
+        descripcionTema = "descripcion32",
+        duracionAudio = 330.toDuration(DurationUnit.SECONDS),
+        audioUrl = urlAudio,
+        imagenUrl = urlImagen,
+        trackNumber = 2
     ),
     Tema(
-        TemaId(33),
-        "Tema 23",
-        "descripcion23",
-        340.toDuration(DurationUnit.SECONDS),
-        urlAudio
+        temaId = TemaId(33),
+        nombreTema = "Tema 33",
+        descripcionTema = "descripcion33",
+        duracionAudio = 340.toDuration(DurationUnit.SECONDS),
+        audioUrl = urlAudio,
+        imagenUrl = urlImagen,
+        trackNumber = 3
     ),
     Tema(
-        TemaId(34),
-        "Tema 24",
-        "descripcion24",
-        350.toDuration(DurationUnit.SECONDS),
-        urlAudio
-    ),
+        temaId = TemaId(34),
+        nombreTema = "Tema 34",
+        descripcionTema = "descripcion34",
+        duracionAudio = 350.toDuration(DurationUnit.SECONDS),
+        audioUrl = urlAudio,
+        imagenUrl = urlImagen,
+        trackNumber = 4
+    )
 )
 
 val PreviewTemasFOL = listOf(
     Tema(
-        TemaId(21),
-        "Tema 1 FOL",
-        "descripcion1",
-        120.toDuration(DurationUnit.SECONDS),
-        urlAudio
+        temaId = TemaId(21),
+        nombreTema = "Tema 1 FOL",
+        descripcionTema = "descripcion1 FOL",
+        duracionAudio = 120.toDuration(DurationUnit.SECONDS),
+        audioUrl = urlAudio,
+        imagenUrl = urlImagen,
+        trackNumber = 1
     ),
     Tema(
-        TemaId(22),
-        "Tema 2 FOL",
-        "descripcion2",
-        13000.toDuration(DurationUnit.SECONDS),
-        urlAudio
+        temaId = TemaId(22),
+        nombreTema = "Tema 2 FOL",
+        descripcionTema = "descripcion2 FOL",
+        duracionAudio = 130.toDuration(DurationUnit.SECONDS),
+        audioUrl = urlAudio,
+        imagenUrl = urlImagen,
+        trackNumber = 2
     ),
     Tema(
-        TemaId(23),
-        "Tema 3 FOL",
-        "descripcion3",
-        140.toDuration(DurationUnit.SECONDS),
-        urlAudio
+        temaId = TemaId(23),
+        nombreTema = "Tema 3 FOL",
+        descripcionTema = "descripcion3 FOL",
+        duracionAudio = 140.toDuration(DurationUnit.SECONDS),
+        audioUrl = urlAudio,
+        imagenUrl = urlImagen,
+        trackNumber = 3
     ),
     Tema(
-        TemaId(24),
-        "Tema 4 FOL",
-        "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris ",
-        150.toDuration(DurationUnit.SECONDS),
-        urlAudio
+        temaId = TemaId(24),
+        nombreTema = "Tema 4 FOL",
+        descripcionTema = "descripcion4 FOL",
+        duracionAudio = 150.toDuration(DurationUnit.SECONDS),
+        audioUrl = urlAudio,
+        imagenUrl = urlImagen,
+        trackNumber = 4
     ),
     Tema(
-        TemaId(25),
-        "Tema 5 FOL",
-        "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum",
-        160.toDuration(DurationUnit.SECONDS),
-        urlAudio
-    )
+        temaId = TemaId(25),
+        nombreTema = "Tema 5 FOL",
+        descripcionTema = "descripcion5 FOL",
+        duracionAudio = 160.toDuration(DurationUnit.SECONDS),
+        audioUrl = urlAudio,
+        imagenUrl = urlImagen,
+        trackNumber = 5
+    ),
 )
 
 val PreviewAsignaturas = listOf(
