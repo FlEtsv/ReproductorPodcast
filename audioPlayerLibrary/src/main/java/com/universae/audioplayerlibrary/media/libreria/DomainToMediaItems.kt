@@ -59,6 +59,7 @@ fun sesionToMediaItems(sesion: Sesion): List<MediaItem> {
                     .setArtworkUri(Uri.parse("https://estaticos-cdn.prensaiberica.es/epi/public/file/2023/0804/12/universae-f534810.png")) // TODO: Cambiar por la URL de la imagen del tema
                     .setTrackNumber(tema.temaId.id)
                     .setIsPlayable(true)
+                    .setIsBrowsable(false)
                     .build()
 
                 val mediaItem = MediaItem.Builder()

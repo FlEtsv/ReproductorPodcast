@@ -28,5 +28,5 @@
 
     <!-- Árbol de Navegación -->
     <string name="recommended_title">Recomendados</string>
-    <string name="temas_titulo">Temas</string>
+    <string name="albums_title">Albums</string>
 </resources>

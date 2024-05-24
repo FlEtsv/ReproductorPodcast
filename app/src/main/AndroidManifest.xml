@@ -51,7 +51,7 @@
             </intent-filter>
             <meta-data
                 android:name="android.media.browse.CONTENT_STYLE_PLAYABLE_HINT"
-                android:resource="@xml/media_browser_service_content_style" />
+                android:resource="@xml/automotive_app_desc" />
             <meta-data
                 android:name="androidx.car.app.minCarApiLevel"
                 android:value="1" />

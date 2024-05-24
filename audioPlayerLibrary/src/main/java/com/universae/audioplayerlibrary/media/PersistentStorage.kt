@@ -6,6 +6,7 @@ import android.net.Uri
 import android.os.Bundle
 import androidx.media3.common.MediaItem
 import androidx.media3.common.MediaMetadata
+import com.google.common.net.MediaType
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 
@@ -62,7 +63,8 @@ internal class PersistentStorage private constructor(val context: Context) {
             val metadataBuilder = with(MediaMetadata.Builder()) {
                 setTitle(preferences.getString(RECENT_SONG_TITLE_KEY, ""))
                 setSubtitle(preferences.getString(RECENT_SONG_SUBTITLE_KEY, ""))
-                setFolderType(MediaMetadata.FOLDER_TYPE_NONE)
+                setMediaType(MediaMetadata.MEDIA_TYPE_MUSIC)
+                setIsBrowsable(false)
                 setIsPlayable(true)
                 setArtworkUri(Uri.parse(preferences.getString(RECENT_SONG_ICON_URI_KEY, "")))
                 setExtras(extras)

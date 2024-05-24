@@ -15,7 +15,7 @@ import kotlinx.coroutines.launch
 
 class AndroidAudioPlayer(private val context: Context) : AudioPlayerUseCases {
     private val serviceComponent = ComponentName(context, MyMediaSessionService::class.java)
-    private val musicServiceConnection = MusicServiceConnection(context, serviceComponent)
+    private val musicServiceConnection = MusicServiceConnection.getInstance(context, serviceComponent)
 
     override fun reproducir(tema: Tema) {
         val mediaId = tema.temaId.id.toString()
