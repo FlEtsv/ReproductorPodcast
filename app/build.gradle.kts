@@ -11,7 +11,7 @@ android {
 
     defaultConfig {
         applicationId = "com.universae.navegacion"
-        minSdk = 21
+        minSdk = 24
         targetSdk = 34
         versionCode = 1
         versionName = "1.0"
@@ -54,7 +54,8 @@ android {
 
 dependencies {
     implementation(project(":comun"))
-    implementation(project(":audioPlayerLibrary"))
+    //implementation(project(":audioPlayerLibrary")) //TODO: Uncomment this line to use the audioPlayerLibrary module
+    implementation(project(":mylibrary"))
 
     implementation(libs.kotlinx.coroutines.guava)
 

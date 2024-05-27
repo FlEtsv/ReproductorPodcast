@@ -1,5 +1,6 @@
 package com.universae.navegacion.player
 
+import android.content.Context
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -32,7 +33,6 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import androidx.media3.common.Player
 import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
 import com.android.navegacion.components.iconArrowBack
@@ -54,7 +54,7 @@ fun ReproductorPodcast(navController: NavController, tituloTema: String) {
     var reproduciendo by remember { mutableStateOf(false) }
     val progress = remember { mutableStateOf(0.0f) }
     // crea instancia audioPlayer e inicializa el controlador de reproducción mediante el composable AndroidAudioPlayerComposable
-    val context = LocalContext.current
+    val context: Context = LocalContext.current
     val audioPlayer = remember { AndroidAudioPlayer(context) }
 
 
@@ -65,7 +65,9 @@ fun ReproductorPodcast(navController: NavController, tituloTema: String) {
         nombreTema = "nombreTema",
         descripcionTema = "descripciontema",
         duracionAudio = 120.toDuration(DurationUnit.SECONDS),
-        audioUrl = "https://file-examples.com/storage/fe54a1a6c9664b5d793d4bf/2017/11/file_example_MP3_700KB.mp3"
+        audioUrl = "https://file-examples.com/storage/fe54a1a6c9664b5d793d4bf/2017/11/file_example_MP3_700KB.mp3",
+        imagenUrl = "https://file-examples.com/wp-content/uploads/2017/10/file_example_JPG_100kB.jpg",
+        trackNumber = 1
     )
 
 
@@ -119,7 +121,7 @@ fun ReproductorPodcast(navController: NavController, tituloTema: String) {
             reproduciendo = reproduciendo,
             onReproduccionPausaToggle = {
                 if (reproduciendo) {
-                    audioPlayer.pausa()
+                    audioPlayer.reproducir(tema)
                 } else {
                     /*
                     if (audioPlayer.controller?.playbackState == Player.STATE_READY && audioPlayer.controller?.playWhenReady?.not() == true) {
@@ -127,7 +129,7 @@ fun ReproductorPodcast(navController: NavController, tituloTema: String) {
                     } else {
 
                      */
-                        audioPlayer.reproducir(tema)
+                    audioPlayer.reproducir(tema)
                     //}
                 }
                 reproduciendo = !reproduciendo

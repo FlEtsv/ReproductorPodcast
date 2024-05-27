@@ -1,5 +1,5 @@
 package es.universae.myauto
-
+/*
 import java.util.ArrayList
 import android.app.PendingIntent
 import android.content.Context
@@ -140,3 +140,5 @@ class AutomotiveMusicService: MyMediaSessionService() {
 
 private const val TAG = "AutomotiveMusicService"
 private const val USER_TOKEN = "com.universae.myauto.PREFS.USER_TOKEN"
+
+ */

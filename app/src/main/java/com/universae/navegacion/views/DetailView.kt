@@ -38,11 +38,9 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.style.TextOverflow
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
-import androidx.navigation.compose.rememberNavController
 import com.android.navegacion.R
 import com.android.navegacion.components.iconArrowBack
 import com.universae.domain.entities.asignatura.AsignaturaId
@@ -50,7 +48,6 @@ import com.universae.reproductor.domain.entities.tema.Tema
 import com.universae.reproductor.domain.usecases.AsignaturaUseCasesImpl
 import com.universae.reproductor.ui.theme.AzulDark
 import com.universae.reproductor.ui.theme.AzulOscuro
-import com.universae.reproductor.ui.theme.ReproductorTheme
 import com.universae.reproductor.ui.theme.gradientBackground
 import com.universae.reproductor.ui.theme.ralewayFamily
 import androidx.compose.foundation.layout.Box as Box1
@@ -96,7 +93,7 @@ fun BarraSuperior(navController: NavController) {
 @Composable
 fun ContentDetailView(navController: NavController, idAsignatura: Int) {
     BoxWithConstraints {//con esta funcion ya se puede sacar altura
-         val asignatura = AsignaturaUseCasesImpl.getAsignatura(AsignaturaId(idAsignatura))
+        val asignatura = AsignaturaUseCasesImpl.getAsignatura(AsignaturaId(idAsignatura))
         val nombreAsignatura = asignatura?.nombreAsignatura
         val screenHeight = maxHeight
         val islandHeight = screenHeight * 0.25f  // Calcular el 25% de la altura
@@ -113,9 +110,10 @@ fun ContentDetailView(navController: NavController, idAsignatura: Int) {
             }
             item {
 
-                AsignaturaUseCasesImpl.getAsignatura(AsignaturaId(idAsignatura))?.let { asignatura ->
-                    MostrarTemas(asignatura.temas, navController)
-                }
+                AsignaturaUseCasesImpl.getAsignatura(AsignaturaId(idAsignatura))
+                    ?.let { asignatura ->
+                        MostrarTemas(asignatura.temas, navController)
+                    }
 
             }
         }

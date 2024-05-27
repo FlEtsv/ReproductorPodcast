@@ -1,19 +1,3 @@
-/*
- * Copyright 2017 Google Inc. All rights reserved.
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- *     http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- */
-
 package com.universae.audioplayerlibrary.media.library
 
 import android.os.Build
@@ -24,6 +8,7 @@ import androidx.annotation.IntDef
 import androidx.media3.common.MediaItem
 import com.universae.audioplayerlibrary.media.MyMediaSessionService
 import com.universae.audioplayerlibrary.media.extensiones.containsCaseInsensitive
+
 
 /**
  * Interface used by [MyMediaSessionService] for looking up [MediaMetadataCompat] objects.
@@ -80,10 +65,8 @@ const val STATE_INITIALIZED = 3
  */
 const val STATE_ERROR = 4
 
-/**
- * Base class for music sources in UAMP.
- */
-abstract class AbstractMusicSource : MusicSource {
+abstract class CustomMusicSource : MusicSource {
+
     @State
     var state: Int = STATE_CREATED
         set(value) {
@@ -101,12 +84,6 @@ abstract class AbstractMusicSource : MusicSource {
 
     private val onReadyListeners = mutableListOf<(Boolean) -> Unit>()
 
-    /**
-     * Performs an action when this MusicSource is ready.
-     *
-     * This method is *not* threadsafe. Ensure actions and state changes are only performed
-     * on a single thread.
-     */
     override fun whenReady(performAction: (Boolean) -> Unit): Boolean =
         when (state) {
             STATE_CREATED, STATE_INITIALIZING -> {
@@ -119,7 +96,8 @@ abstract class AbstractMusicSource : MusicSource {
             }
         }
 
-    //TODO("Repasar la busqueda de mediaItems. Cual es el metadata que tenemos y queremos buscar??")
+
+//TODO("Repasar la busqueda de mediaItems. Cual es el metadata que tenemos y queremos buscar??")
     /**
      * Handles searching a [MusicSource] from a focused voice search, often coming
      * from the Google Assistant.
@@ -193,7 +171,6 @@ abstract class AbstractMusicSource : MusicSource {
             return focusSearchResult
         }
     }
-
     /**
      * [MediaStore.EXTRA_MEDIA_GENRE] is missing on API 19. Hide this fact by using our
      * own version of it.
@@ -204,6 +181,7 @@ abstract class AbstractMusicSource : MusicSource {
         } else {
             "android.intent.extra.genre"
         }
+
 }
 
 fun isArtist(mediaItem: MediaItem, artist: Any?): Boolean {

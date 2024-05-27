@@ -14,13 +14,16 @@
  * limitations under the License.
  */
 
-package com.universae.audioplayerlibrary.media.library
+package com.example.android.uamp
 
 import android.net.Uri
 import android.os.Bundle
+import androidx.annotation.OptIn
 import androidx.media3.common.MediaItem
 import androidx.media3.common.MediaMetadata
 import androidx.media3.common.MimeTypes
+import androidx.media3.common.util.Log
+import androidx.media3.common.util.UnstableApi
 import com.google.gson.Gson
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
@@ -29,7 +32,7 @@ import java.io.IOException
 import java.io.InputStreamReader
 import java.net.URL
 import java.util.concurrent.TimeUnit
-// TODO: check todo esto
+
 /**
  * Source of [MediaMetadataCompat] objects created from a basic JSON stream.
  *
@@ -50,34 +53,36 @@ internal class JsonSource(private val source: Uri) : AbstractMusicSource() {
 
     override fun iterator(): Iterator<MediaItem> = catalog.iterator()
 
-    override suspend fun load() {
+    @OptIn(UnstableApi::class) override suspend fun load() {
+        Log.d("JsonSource", "Starting to load catalog")
         updateCatalog(source)?.let { updatedCatalog ->
             catalog = updatedCatalog
             state = STATE_INITIALIZED
+            Log.d("JsonSource", "Catalog loaded successfully")
         } ?: run {
             catalog = emptyList()
             state = STATE_ERROR
+            Log.e("JsonSource", "Failed to load catalog")
         }
     }
+
 
     /**
      * Function to connect to a remote URI and download/process the JSON file that corresponds to
      * [MediaMetadataCompat] objects.
      */
-    private suspend fun updateCatalog(catalogUri: Uri): List<MediaItem>? {
+    @OptIn(UnstableApi::class) private suspend fun updateCatalog(catalogUri: Uri): List<MediaItem>? {
         return withContext(Dispatchers.IO) {
             val musicCat = try {
                 downloadJson(catalogUri)
             } catch (ioException: IOException) {
+                Log.e("JsonSource", "Error downloading JSON", ioException)
                 return@withContext null
             }
 
-            // Get the base URI to fix up relative references later.
             val baseUri = catalogUri.toString().removeSuffix(catalogUri.lastPathSegment ?: "")
 
             musicCat.music.map { song ->
-                // The JSON may have paths that are relative to the source of the JSON
-                // itself. We need to fix them up here to turn them into absolute paths.
                 catalogUri.scheme?.let { scheme ->
                     if (!song.source.startsWith(scheme)) {
                         song.source = baseUri + song.source
@@ -92,8 +97,7 @@ internal class JsonSource(private val source: Uri) : AbstractMusicSource() {
                 val mediaMetadata = MediaMetadata.Builder()
                     .from(song)
                     .apply {
-                        setArtworkUri(imageUri) // Used by ExoPlayer and Notification
-                        // Keep the original artwork URI for being included in Cast metadata object.
+                        setArtworkUri(imageUri)
                         val extras = Bundle()
                         extras.putString(ORIGINAL_ARTWORK_URI_KEY, jsonImageUri.toString())
                         setExtras(extras)
@@ -109,6 +113,7 @@ internal class JsonSource(private val source: Uri) : AbstractMusicSource() {
             }.toList()
         }
     }
+
 
 
     /**
@@ -138,7 +143,7 @@ fun MediaMetadata.Builder.from(jsonMusic: JsonMusic): MediaMetadata.Builder {
     setArtworkUri(Uri.parse(jsonMusic.image))
     setTrackNumber(jsonMusic.trackNumber.toInt())
     setTotalTrackCount(jsonMusic.totalTrackCount.toInt())
-    setMediaType(MediaMetadata.MEDIA_TYPE_MUSIC)
+    setFolderType(MediaMetadata.FOLDER_TYPE_NONE)
     setIsPlayable(true)
     // The duration from the JSON is given in seconds, but the rest of the code works in
     // milliseconds. Here's where we convert to the proper units.

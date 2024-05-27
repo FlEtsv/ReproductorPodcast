@@ -1,17 +1,17 @@
-package com.universae.audioplayerlibrary.media.libreria
+package com.universae.audioplayerlibrary.media.library
 
 import android.net.Uri
+import android.os.Bundle
 import androidx.media3.common.MediaItem
 import androidx.media3.common.MediaMetadata
 import androidx.media3.common.MimeTypes
 import com.universae.domain.Sesion
-import com.universae.domain.entities.asignatura.Asignatura
-import com.universae.reproductor.domain.entities.grado.Grado
-import com.universae.reproductor.domain.entities.tema.Tema
-import kotlinx.coroutines.withContext
-import kotlinx.coroutines.Dispatchers
 
 internal class DomainMediaSource(private val source: Sesion): CustomMusicSource() {
+
+    companion object {
+        const val ORIGINAL_ARTWORK_URI_KEY = "com.universae.navegacion.JSON_ARTWORK_URI"
+    }
 
     private var mediaItems: List<MediaItem> = emptyList()
 
@@ -37,18 +37,23 @@ internal class DomainMediaSource(private val source: Sesion): CustomMusicSource(
     }
 
     fun loadFromSession(sesion: Sesion) {
-        mediaItems = sesionToMediaItems(sesion) //TODO: cambiar a sesion iniciado en app.
+        mediaItems = sesionToMediaItems(sesion)
     }
 
     fun getMediaItems(): List<MediaItem> = mediaItems
 }
-fun sesionToMediaItems(sesion: Sesion): List<MediaItem> {
+private fun sesionToMediaItems(sesion: Sesion): List<MediaItem> {
     val mediaItems = mutableListOf<MediaItem>()
 
     sesion.grados.forEach { grado ->
         grado.asignaturasId.forEach { asignaturaId ->
             val asignatura = sesion.asignaturas.find { it.asignaturaId.id == asignaturaId.id }
+            val totalTemas: Int? = asignatura?.temas?.size
             asignatura?.temas?.forEach { tema ->
+                val temaImageUri = Uri.parse(tema.imagenUrl)
+                val imageUri = AlbumArtContentProvider.mapUri(temaImageUri)
+                val extras = Bundle()
+                extras.putString(DomainMediaSource.ORIGINAL_ARTWORK_URI_KEY, tema.imagenUrl)
                 val mediaMetadata = MediaMetadata.Builder()
                     .setTitle(tema.nombreTema)
                     .setDisplayTitle(tema.nombreTema)
@@ -56,10 +61,13 @@ fun sesionToMediaItems(sesion: Sesion): List<MediaItem> {
                     .setAlbumTitle(asignatura.nombreAsignatura)
                     .setGenre(grado.nombreModulo)
                     .setDescription(tema.descripcionTema) // Opcional, dependiendo de los detalles que quieras incluir
-                    .setArtworkUri(Uri.parse(tema.imagenUrl))
+                    .setArtworkUri(temaImageUri)
                     .setTrackNumber(tema.trackNumber)
+                    .setTotalTrackCount(totalTemas)
                     .setIsPlayable(true)
                     .setIsBrowsable(false)
+                    .setMediaType(MediaMetadata.MEDIA_TYPE_AUDIO_BOOK_CHAPTER)
+                    .setExtras(extras)
                     .build()
 
                 val mediaItem = MediaItem.Builder()

@@ -146,12 +146,10 @@ fun Login(navController: NavController) {
                  */
 
 
-
                 //focusedBorderColor = Color.White,
                 unfocusedBorderColor = Color.White,
                 disabledBorderColor = Color.White,
                 errorBorderColor = MaterialTheme.colorScheme.error,
-
 
 
                 /*

@@ -23,7 +23,7 @@ import androidx.media3.common.MediaItem
 import androidx.media3.common.MediaMetadata
 import com.universae.audioplayerlibrary.media.extensiones.urlEncoded
 import es.universae.audioplayerlibrary.R
-import com.universae.audioplayerlibrary.media.libreria.MusicSource
+import com.universae.audioplayerlibrary.media.library.MusicSource
 
 /**
  * Represents a tree of media that's used by [MusicService.onLoadChildren].
@@ -98,7 +98,7 @@ class BrowseTree(
                 )
             )
             setIsPlayable(false)
-            setMediaType(MediaMetadata.MEDIA_TYPE_FOLDER_ALBUMS)
+            setMediaType(MediaMetadata.MEDIA_TYPE_AUDIO_BOOK)
             setIsBrowsable(true)
         }.build()
         rootList.add(MediaItem.Builder().apply {
@@ -159,7 +159,8 @@ class BrowseTree(
         val rootList = mediaIdToChildren[UAMP_ALBUMS_ROOT] ?: mutableListOf()
         // Create the album and add it to the 'Albums' category.
         val albumMetadata = mediaItem.mediaMetadata.buildUpon().apply {
-            setMediaType(MediaMetadata.MEDIA_TYPE_FOLDER_ALBUMS)
+            setTitle(mediaItem.mediaMetadata.albumTitle)
+            setMediaType(MediaMetadata.MEDIA_TYPE_AUDIO_BOOK)
             setIsBrowsable(true)
             setIsPlayable(false)
         }.build()
@@ -167,7 +168,7 @@ class BrowseTree(
             setMediaId(albumMetadata.albumTitle.toString().urlEncoded)
             setMediaMetadata(albumMetadata)
         }.build()
-        rootList += albumMediaItem
+        rootList.add(albumMediaItem)
         // Set the album root list for look up later,
         mediaIdToChildren[UAMP_ALBUMS_ROOT] = rootList
         // Insert the album's root with an empty list for its children, and return the list.
@@ -177,6 +178,7 @@ class BrowseTree(
     }
 }
 
+// TODO: cambiar lo de UAMP
 const val UAMP_BROWSABLE_ROOT = "/"
 const val UAMP_EMPTY_ROOT = "@empty@"
 const val UAMP_RECOMMENDED_ROOT = "__RECOMMENDED__"
@@ -185,4 +187,4 @@ const val UAMP_RECENT_ROOT = "__RECENT__"
 
 const val MEDIA_SEARCH_SUPPORTED = "android.media.browse.SEARCH_SUPPORTED"
 
-const val RESOURCE_ROOT_URI = "android.resource://com.example.android.uamp.next/drawable/"
+const val RESOURCE_ROOT_URI = "android.resource://com.universae.navegacion/drawable/" // TODO: check esta url

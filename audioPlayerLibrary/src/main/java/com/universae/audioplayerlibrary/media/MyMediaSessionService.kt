@@ -17,7 +17,6 @@ import androidx.media3.common.AudioAttributes
 import androidx.media3.common.C
 import androidx.media3.common.MediaItem
 import androidx.media3.common.MediaMetadata
-import androidx.media3.common.MimeTypes
 import androidx.media3.common.PlaybackException
 import androidx.media3.common.Player
 import androidx.media3.common.Player.EVENT_MEDIA_ITEM_TRANSITION
@@ -27,14 +26,14 @@ import androidx.media3.common.util.UnstableApi
 import androidx.media3.exoplayer.ExoPlayer
 import androidx.media3.exoplayer.util.EventLogger
 import androidx.media3.session.LibraryResult
+import androidx.media3.session.MediaConstants
 import androidx.media3.session.MediaLibraryService
 import androidx.media3.session.MediaSession
 import androidx.media3.session.SessionCommand
 import androidx.media3.session.SessionResult
 import com.universae.audioplayerlibrary.media.library.BrowseTree
-import com.universae.audioplayerlibrary.media.library.JsonSource
 import com.universae.audioplayerlibrary.media.library.MEDIA_SEARCH_SUPPORTED
-import com.universae.audioplayerlibrary.media.libreria.MusicSource
+import com.universae.audioplayerlibrary.media.library.MusicSource
 import com.google.android.gms.cast.framework.CastContext
 import com.google.common.collect.ImmutableList
 import com.google.common.util.concurrent.Futures
@@ -42,9 +41,7 @@ import com.google.common.util.concurrent.ListenableFuture
 import com.google.common.util.concurrent.MoreExecutors
 import com.universae.audioplayerlibrary.media.library.UAMP_BROWSABLE_ROOT
 import com.universae.audioplayerlibrary.media.library.UAMP_RECENT_ROOT
-import com.universae.audioplayerlibrary.media.libreria.CustomMusicSource
-import com.universae.audioplayerlibrary.media.libreria.DomainMediaSource
-import com.universae.audioplayerlibrary.media.libreria.sesionToMediaItems
+import com.universae.audioplayerlibrary.media.library.DomainMediaSource
 import com.universae.domain.Sesion
 import com.universae.domain.SesionObserver
 import es.universae.audioplayerlibrary.R
@@ -54,7 +51,6 @@ import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.launch
 import java.util.concurrent.Executors
 import kotlin.math.max
-import kotlin.random.Random
 
 /**
  * Service for browsing the catalogue and and receiving a [MediaController] from the app's UI
@@ -115,9 +111,6 @@ open class MyMediaSessionService : MediaLibraryService(), SesionObserver {
     private val executorService by lazy {
         MoreExecutors.listeningDecorator(Executors.newSingleThreadExecutor())
     }
-
-    private val remoteJsonSource: Uri =
-        Uri.parse("https://storage.googleapis.com/uamp/catalog.json")
 
     private val uAmpAudioAttributes = AudioAttributes.Builder()
         .setContentType(C.AUDIO_CONTENT_TYPE_MUSIC)
@@ -197,16 +190,9 @@ open class MyMediaSessionService : MediaLibraryService(), SesionObserver {
             }
             build()
         }
-        /* TODO: check que esto se puede borrar
-        // The media library is built from a remote JSON file. We start loading asynchronously here.
-        // Use [callWhenMusicSourceReady] to execute code that needs the source load being
-        // completed.
-        musicSource = JsonSource(source = remoteJsonSource)
-
-         */
 
         // Aquí, en lugar de cargar musicSource desde un JSON, cargarías tu sesión y usarías sesionToMediaItems
-        val sesionActual = obtenerSesionActual() // Implementa esta función según tu lógica de aplicación
+        val sesionActual = obtenerSesionActual()
         // Inicializa DomainMediaSource y carga los MediaItem desde la sesión actual
         val domainMediaSource = DomainMediaSource(sesionActual)
         domainMediaSource.loadFromSession(sesionActual)
@@ -226,7 +212,7 @@ open class MyMediaSessionService : MediaLibraryService(), SesionObserver {
     override fun onSesionUpdated() {
         // Aquí actualizamos domainMediaSource con la sesión actual
         // Esto podría implicar recargar los MediaItem basados en la nueva sesión
-        val sesionActual = obtenerSesionActual() // Esta función ya existe en tu servicio
+        val sesionActual = obtenerSesionActual()
         val domainMediaSource = DomainMediaSource(sesionActual)
         domainMediaSource.loadFromSession(sesionActual)
         musicSource = domainMediaSource
@@ -354,7 +340,10 @@ open class MyMediaSessionService : MediaLibraryService(), SesionObserver {
                     isKnownCaller || browseTree.searchableByUnknownCaller
                 )
                 putBoolean(CONTENT_STYLE_SUPPORTED, true)
-                putInt(CONTENT_STYLE_BROWSABLE_HINT, CONTENT_STYLE_GRID)
+                putInt(
+                    MediaConstants.EXTRAS_KEY_CONTENT_STYLE_BROWSABLE,
+                    MediaConstants.EXTRAS_VALUE_CONTENT_STYLE_GRID_ITEM
+                )
                 putInt(CONTENT_STYLE_PLAYABLE_HINT, CONTENT_STYLE_LIST)
             }
             val libraryParams = LibraryParams.Builder().setExtras(rootExtras).build()
@@ -418,20 +407,31 @@ open class MyMediaSessionService : MediaLibraryService(), SesionObserver {
             }
             Log.e(
                 "CHECKCHECKCHECK", "CHECK CHECK CHECK. " +
+                        "estamos onGetItem\n" +
                         "sesion: $session \n browser: $browser \n mediaId: $mediaId") //TODO: check por que llega "/" como mediaId???
             return callWhenMusicSourceReady {
                 if (mediaId == "/") {
                     // Si el mediaId es "/", devolvemos el elemento raíz
                     LibraryResult.ofItem(catalogueRootMediaItem, LibraryParams.Builder().build())
                 } else {
+                    val mediaItem = browseTree.getMediaItemByMediaId(mediaId)
+                    if (mediaItem != null) {
+                        LibraryResult.ofItem(mediaItem, LibraryParams.Builder().build())
+                    } else {
+                        // Si no se encuentra el MediaItem, devolvemos un error
+                        LibraryResult.ofError(LibraryResult.RESULT_ERROR_NOT_SUPPORTED)
+                    }
+                    /*
                     // Si no, buscamos el MediaItem correspondiente
-                    LibraryResult.ofItem(
-                        browseTree.getMediaItemByMediaId(mediaId) ?: MediaItem.EMPTY,
+                    LibraryResult.ofItem(browseTree.getMediaItemByMediaId(mediaId) ?: MediaItem.EMPTY,
                         LibraryParams.Builder().build())
+
+                     */
                 }
             }
         }
 
+        /*
         override fun onSearch(
             session: MediaLibrarySession,
             browser: MediaSession.ControllerInfo,
@@ -443,7 +443,7 @@ open class MyMediaSessionService : MediaLibraryService(), SesionObserver {
                 mediaSession.notifySearchResultChanged(browser, query, searchResult.size, params)
                 LibraryResult.ofVoid()
             }
-        }
+        }*/
 
         override fun onGetSearchResult(
             session: MediaLibrarySession,

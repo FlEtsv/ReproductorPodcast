@@ -80,6 +80,7 @@ fun ReproductorTheme(
         content = content
     )
 }
+
 fun Modifier.gradientBackground(): Modifier {
     return this.background(
         brush = Brush.linearGradient(

@@ -1,4 +1,3 @@
-
 import android.annotation.SuppressLint
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
@@ -19,8 +18,8 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import com.android.navegacion.components.*
-import com.universae.reproductor.domain.entities.alumno.Alumno
 import com.universae.domain.entities.asignatura.Asignatura
+import com.universae.reproductor.domain.entities.alumno.Alumno
 import com.universae.reproductor.domain.entities.grado.Grado
 import com.universae.reproductor.domain.entities.grado.GradoId
 import com.universae.reproductor.domain.usecases.AlumnoUseCaseImpl
@@ -42,8 +41,9 @@ import kotlinx.coroutines.withContext
 @Composable
 fun HomeView(navController: NavController, alumnoId: Int) {
 
-    val alumno: Alumno = AlumnoUseCaseImpl.getAlumnoById(alumnoId)!! // Si llegamos a esta view es porque el alumno existe y siempre retorna un alumno
-    val grado : Grado? = GradoUseCaseImpl.getGrado(alumno.gradosId.first())
+    val alumno: Alumno =
+        AlumnoUseCaseImpl.getAlumnoById(alumnoId)!! // Si llegamos a esta view es porque el alumno existe y siempre retorna un alumno
+    val grado: Grado? = GradoUseCaseImpl.getGrado(alumno.gradosId.first())
     val nombreReal = alumno.nombreReal
 
     //val alumno: Alumno = AlumnoUseCaseImpl.gatAlumnoById(alumnoId)!! // Si llegamos a esta view es porque el alumno existe y siempre retorna un alumno
@@ -59,35 +59,37 @@ fun HomeView(navController: NavController, alumnoId: Int) {
     }
 
     var listadoReal: Set<Asignatura> = listaAsignaturas.sortedBy { it.asignaturaId.id }.toSet()
-    
+
     // Estructura básica con barra superior y botón flotante
     Scaffold(
         floatingActionButton = { ActionButton() }
     ) { innerPadding ->
         // Columna Lazy que se ajusta al padding proporcionado por el Scaffold
         LazyColumn(
-            modifier = Modifier.gradientBackground()
+            modifier = Modifier
+                .gradientBackground()
                 .padding(innerPadding)
                 .fillMaxSize(),
             verticalArrangement = Arrangement.Top,
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
             if (hayCola) {
-                item {Spacer(modifier = Modifier.height(10.dp)) }
-                item { TituloIzquierda(texto = "${nombreReal}, ¿Quieres continuar escuchando...?",) }
-                item {Spacer(modifier = Modifier.height(10.dp)) }
+                item { Spacer(modifier = Modifier.height(10.dp)) }
+                item { TituloIzquierda(texto = "${nombreReal}, ¿Quieres continuar escuchando...?") }
+                item { Spacer(modifier = Modifier.height(10.dp)) }
                 item { FilaTituloCola() }// Todo("hacer despues de todo listo")
                 item { Spacer(modifier = Modifier.height(20.dp)) }
-            }else{
-                item {Spacer(modifier = Modifier.height(10.dp)) }
+            } else {
+                item { Spacer(modifier = Modifier.height(10.dp)) }
                 item { TituloIzquierda(texto = "Bienvenido ${nombreReal} nos escanta volver a verte!") }
-                item {Spacer(modifier = Modifier.height(20.dp))}
-                item {FilaTituloNoCola(grado) }
                 item { Spacer(modifier = Modifier.height(20.dp)) }
-                }
+                item { FilaTituloNoCola(grado) }
+                item { Spacer(modifier = Modifier.height(20.dp)) }
+            }
 
             item {
-                    TituloMedianoCentralLeft(texto = "Asignaturas...") }
+                TituloMedianoCentralLeft(texto = "Asignaturas...")
+            }
 
 
             item { Spacer(modifier = Modifier.height(5.dp)) }
@@ -150,7 +152,7 @@ fun FilaTituloCola() {
  * */
 
 @Composable
-fun FilaTituloNoCola(grado : Grado?) {
+fun FilaTituloNoCola(grado: Grado?) {
 
     Row(
         modifier = Modifier

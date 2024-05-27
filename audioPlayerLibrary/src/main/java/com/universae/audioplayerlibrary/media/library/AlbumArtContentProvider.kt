@@ -38,9 +38,10 @@ internal class AlbumArtContentProvider : ContentProvider() {
 
         fun mapUri(uri: Uri): Uri {
             val path = uri.encodedPath?.substring(1)?.replace('/', ':') ?: return Uri.EMPTY
+            val CONTENT_PROVIDER_AUTHORITY = "" //TODO: mirar cual tiene que ser este valor
             val contentUri = Uri.Builder()
                 .scheme(ContentResolver.SCHEME_CONTENT)
-                .authority("com.example.android.uamp")
+                .authority(CONTENT_PROVIDER_AUTHORITY)
                 .path(path)
                 .build()
             uriMap[contentUri] = uri

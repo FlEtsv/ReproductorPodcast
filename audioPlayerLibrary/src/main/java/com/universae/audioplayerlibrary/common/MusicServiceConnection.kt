@@ -106,6 +106,18 @@ class MusicServiceConnection(context: Context, serviceComponent: ComponentName) 
             }, null).apply {
             connect()
         }
+        scope.launch {
+            val newBrowser =
+                MediaBrowser.Builder(context, SessionToken(context, serviceComponent))
+                    .setListener(BrowserListener())
+                    .buildAsync()
+                    .await()
+            newBrowser.addListener(playerListener)
+            browser = newBrowser
+            rootMediaItem.postValue(
+                newBrowser.getLibraryRoot(/* params= */ null).await().value
+            )
+        }
     }
 
     suspend fun getChildren(parentId: String): ImmutableList<MediaItem> {
@@ -128,6 +140,10 @@ class MusicServiceConnection(context: Context, serviceComponent: ComponentName) 
         true
     } else {
         false
+    }
+
+    suspend fun getMediaItemByMediaId(mediaId: String): MediaItem? {
+        return browser?.getItem(mediaId)?.await()?.value
     }
 
     fun release() {

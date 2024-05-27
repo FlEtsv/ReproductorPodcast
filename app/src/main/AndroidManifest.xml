@@ -36,7 +36,7 @@
             paquete de la aplicación) pueden iniciar el servicio.
         -->
         <service
-            android:name="com.universae.audioplayerlibrary.media.MyMediaSessionService"
+            android:name="com.example.android.uamp.MusicService"
             android:enabled="true"
             android:exported="true"
             android:foregroundServiceType="mediaPlayback"
@@ -46,9 +46,10 @@
                 En este caso, el servicio puede recibir intenciones con la acción androidx.media3.session.MediaSessionService.
             -->
             <intent-filter>
-                <action android:name="androidx.media3.session.MediaLibraryService"/>
+                <action android:name="androidx.media3.session.MediaLibraryService" />
                 <action android:name="android.media.browse.MediaBrowserService" />
             </intent-filter>
+
             <meta-data
                 android:name="android.media.browse.CONTENT_STYLE_PLAYABLE_HINT"
                 android:resource="@xml/automotive_app_desc" />

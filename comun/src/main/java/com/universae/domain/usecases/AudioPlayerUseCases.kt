@@ -3,7 +3,10 @@ package com.universae.reproductor.domain.usecases
 import com.universae.reproductor.domain.entities.tema.Tema
 
 interface AudioPlayerUseCases {
-    fun reproducir(tema: Tema) // Reproduce un tema
+    fun reproducir(tema: Tema,
+    pauseThenPlaying: Boolean = true,
+    parentMediaId: String? = null
+    ) // Reproduce un tema
     fun reproducir(temas: List<Tema>) // Reproduce una lista de temas (playlist)
     fun stop() // Detiene la reproducción
     fun pausa() // Pausa la reproducción

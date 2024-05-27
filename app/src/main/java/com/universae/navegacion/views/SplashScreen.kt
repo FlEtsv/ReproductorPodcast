@@ -32,7 +32,7 @@ import kotlinx.coroutines.withContext
 import kotlinx.coroutines.withTimeout
 
 @Composable
-fun SplashScreen(navController: NavController, usuario : String, pass : String) {
+fun SplashScreen(navController: NavController, usuario: String, pass: String) {
     val coroutineScope = rememberCoroutineScope()
 
     LaunchedEffect(key1 = true) {
@@ -55,8 +55,8 @@ fun SplashScreen(navController: NavController, usuario : String, pass : String) 
             }
             var alumno: Alumno? = null
 
-            if (usuarioEncontrado){
-                alumno = PreviewAlumno.filter { it.nombreUsuario == usuario}[0]
+            if (usuarioEncontrado) {
+                alumno = PreviewAlumno.filter { it.nombreUsuario == usuario }[0]
             }
 
             if (alumno != null) {
@@ -71,9 +71,12 @@ fun SplashScreen(navController: NavController, usuario : String, pass : String) 
             }
         }
     }
-    Column(modifier = Modifier.fillMaxSize().gradientBackground(),
-    verticalArrangement = Arrangement.Center,
-    horizontalAlignment = Alignment.CenterHorizontally
+    Column(
+        modifier = Modifier
+            .fillMaxSize()
+            .gradientBackground(),
+        verticalArrangement = Arrangement.Center,
+        horizontalAlignment = Alignment.CenterHorizontally
     ) {
         Image(
             painter = painterResource(id = R.mipmap.logo_universae),

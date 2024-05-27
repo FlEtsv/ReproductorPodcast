@@ -41,7 +41,8 @@ dependencies {
     implementation(libs.androidx.appcompat)
     implementation(libs.androidx.media)
     implementation(libs.androidx.media3.common)
-    implementation(project(":audioPlayerLibrary"))
+    //implementation(project(":audioPlayerLibrary")) //TODO: Uncomment this line to use the audioPlayerLibrary module
+    implementation(project(":mylibrary"))
     implementation(libs.androidx.media3.session)
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)

@@ -58,23 +58,27 @@ import com.universae.reproductor.ui.theme.GrisOscuro
 import com.universae.reproductor.ui.theme.Negro
 
 @Composable
-fun TitleView(name : String){
+fun TitleView(name: String) {
     Text(text = name, fontSize = 40.sp, fontWeight = FontWeight.Bold)
 }
+
 @Composable
-fun Space(){
+fun Space() {
     Spacer(modifier = Modifier.height(10.dp))
 }
 
 @Composable
-fun MainButton(name : String, backColor : Color, color : Color, onClick:() -> Unit){
-    Button(onClick = onClick, colors = ButtonDefaults.buttonColors(
-        containerColor     = backColor,
-        contentColor  = color
-    )) {
+fun MainButton(name: String, backColor: Color, color: Color, onClick: () -> Unit) {
+    Button(
+        onClick = onClick, colors = ButtonDefaults.buttonColors(
+            containerColor = backColor,
+            contentColor = color
+        )
+    ) {
         Text(text = "Prueba")
     }
 }
+
 /**
  * Muestra una fila de tarjetas para cada tema de podcast proporcionado.
  * @param podcasts Lista de nombres de podcasts para mostrar.
@@ -109,7 +113,7 @@ fun PodcastsAsignaturasTemas(podcasts: List<Asignatura>, navController: NavContr
                         navController.navigate("Detail/${podcast.asignaturaId.id}")
                     } else {
                         focusedAsignaturaId = podcast.asignaturaId.id
-                        temaMarcado = "Temas de "+podcast.nombreAsignatura
+                        temaMarcado = "Temas de " + podcast.nombreAsignatura
                     }
                 }
                 PodcastTopicCard(
@@ -141,7 +145,6 @@ fun PodcastsAsignaturasTemas(podcasts: List<Asignatura>, navController: NavContr
 }
 
 
-
 /**
  * Muestra una tarjeta para un tema de podcast específico.
  * @param topic Tema del podcast a mostrar.
@@ -153,7 +156,10 @@ fun PodcastTopicCard(isFocused: Boolean, titulo: String, onCardClick: () -> Unit
             .width(200.dp)
             .height(120.dp)
             .clickable(onClick = onCardClick)
-            .shadow(8.dp, shape = RoundedCornerShape(16.dp)), // Sombra más pronunciada y bordes redondeados
+            .shadow(
+                8.dp,
+                shape = RoundedCornerShape(16.dp)
+            ), // Sombra más pronunciada y bordes redondeados
         shape = RoundedCornerShape(16.dp),
         elevation = CardDefaults.cardElevation(
             defaultElevation = 8.dp
@@ -197,60 +203,60 @@ fun PodcastTopicCard(isFocused: Boolean, titulo: String, onCardClick: () -> Unit
 }
 
 
-
-
-
-
 @Composable
-fun cardTema(titulo : String, onClick: () -> Unit) {
+fun cardTema(titulo: String, onClick: () -> Unit) {
 
     Card(
         modifier = Modifier
             .width(200.dp)
             .height(120.dp)
             .clickable(onClick = onClick)
-            .shadow(8.dp, shape = RoundedCornerShape(16.dp)), // Sombra más pronunciada y bordes redondeados
-shape = RoundedCornerShape(16.dp),
-elevation = CardDefaults.cardElevation(
-defaultElevation = 8.dp
-)
-) {
-    Box(
-        modifier = Modifier
-            .fillMaxSize()
-            .background(
-                Brush.linearGradient(
-                    colors = listOf(
-                        AzulClaro,
-                        Blanco,
-                        GrisClaro
-                    )
-                )
-            )
+            .shadow(
+                8.dp,
+                shape = RoundedCornerShape(16.dp)
+            ), // Sombra más pronunciada y bordes redondeados
+        shape = RoundedCornerShape(16.dp),
+        elevation = CardDefaults.cardElevation(
+            defaultElevation = 8.dp
+        )
     ) {
-        Column(
+        Box(
             modifier = Modifier
                 .fillMaxSize()
-                .padding(8.dp),
-            verticalArrangement = Arrangement.Center,
-            horizontalAlignment = Alignment.CenterHorizontally
+                .background(
+                    Brush.linearGradient(
+                        colors = listOf(
+                            AzulClaro,
+                            Blanco,
+                            GrisClaro
+                        )
+                    )
+                )
         ) {
-            Icon(
-                imageVector = Icons.Default.Star,
-                contentDescription = "Decorative Icon",
-                modifier = Modifier.size(22.dp),
-                tint = Blanco
-            )
-            Spacer(modifier = Modifier.height(8.dp))
-            Text(
-                text = titulo,
-                style = MaterialTheme.typography.bodyLarge.copy(color = Negro),
-                modifier = Modifier.padding(horizontal = 16.dp)
-            )
+            Column(
+                modifier = Modifier
+                    .fillMaxSize()
+                    .padding(8.dp),
+                verticalArrangement = Arrangement.Center,
+                horizontalAlignment = Alignment.CenterHorizontally
+            ) {
+                Icon(
+                    imageVector = Icons.Default.Star,
+                    contentDescription = "Decorative Icon",
+                    modifier = Modifier.size(22.dp),
+                    tint = Blanco
+                )
+                Spacer(modifier = Modifier.height(8.dp))
+                Text(
+                    text = titulo,
+                    style = MaterialTheme.typography.bodyLarge.copy(color = Negro),
+                    modifier = Modifier.padding(horizontal = 16.dp)
+                )
+            }
         }
     }
 }
-}
+
 /**
  * Muestra un título grande con estilo imponente.
  * @param texto El contenido del texto a mostrar.
@@ -268,6 +274,7 @@ fun TituloPrincipal(texto: String) {
         ).merge(MaterialTheme.typography.displayLarge) // Combina con un estilo de display grande de MaterialTheme
     )
 }
+
 /**
  * Muestra un título grande con estilo imponente, alineado a la izquierda.
  * @param texto El contenido del texto a mostrar.
@@ -304,6 +311,7 @@ fun TituloIzquierda(texto: String) {
         }
     }
 }
+
 /**
  * Muestra un título Grande con estilo personalizado.
  * @param texto El contenido del texto a mostrar.
@@ -321,7 +329,9 @@ fun TituloGrande(texto: String) {
 
         ).merge(MaterialTheme.typography.bodyLarge) // Combina con los estilos predeterminados de MaterialTheme
     )
-}/**
+}
+
+/**
  * Muestra un título mediano con estilo personalizado.
  * @param texto El contenido del texto a mostrar.
  */
@@ -377,6 +387,7 @@ fun DynamicCircularProgressBar(progress: MutableState<Float>) {
         strokeWidth = 8.dp,
     )
 }
+
 @Composable
 fun iconCast(): ImageVector {
     val imageVector = ImageVector.vectorResource(id = R.drawable.cast)
@@ -386,6 +397,7 @@ fun iconCast(): ImageVector {
     )
     return imageVector
 }
+
 @Composable
 fun iconPause(): ImageVector {
     val imageVector = ImageVector.vectorResource(id = R.drawable.pause)
@@ -395,6 +407,7 @@ fun iconPause(): ImageVector {
     )
     return imageVector
 }
+
 @Composable
 fun iconPlay(): ImageVector {
     val imageVector = ImageVector.vectorResource(id = R.drawable.play)
@@ -404,6 +417,7 @@ fun iconPlay(): ImageVector {
     )
     return imageVector
 }
+
 @Composable
 fun iconArrowBack(): ImageVector {
     val imageVector = ImageVector.vectorResource(id = R.drawable.arroyback)
@@ -423,6 +437,7 @@ fun iconFastReward(): ImageVector {
     )
     return imageVector
 }
+
 @Composable
 fun iconFastForward(): ImageVector {
     val imageVector = ImageVector.vectorResource(id = R.drawable.fastfoward)
@@ -432,6 +447,7 @@ fun iconFastForward(): ImageVector {
     )
     return imageVector
 }
+
 @Composable
 fun iconArrowForward(): ImageVector {
     val imageVector = ImageVector.vectorResource(id = R.drawable.arrowforward)
