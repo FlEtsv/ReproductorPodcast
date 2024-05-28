@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package com.example.android.uamp
+package com.example.android.uamp.media
 
 import android.app.PendingIntent
 import android.app.PendingIntent.FLAG_IMMUTABLE
@@ -46,7 +46,12 @@ import androidx.media3.session.MediaLibraryService
 import androidx.media3.session.MediaSession
 import androidx.media3.session.SessionCommand
 import androidx.media3.session.SessionResult
-import com.example.android.uamp.media.R
+import com.example.android.uamp.media.library.BrowseTree
+import com.example.android.uamp.media.library.JsonSource
+import com.example.android.uamp.media.library.MEDIA_SEARCH_SUPPORTED
+import com.example.android.uamp.media.library.MusicSource
+import com.example.android.uamp.media.library.UAMP_BROWSABLE_ROOT
+import com.example.android.uamp.media.library.UAMP_RECENT_ROOT
 import com.google.android.gms.cast.framework.CastContext
 import com.google.common.collect.ImmutableList
 import com.google.common.util.concurrent.Futures

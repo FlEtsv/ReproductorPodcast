@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package com.example.android.uamp
+package com.example.android.uamp.media
 
 import android.content.Context
 import android.content.SharedPreferences

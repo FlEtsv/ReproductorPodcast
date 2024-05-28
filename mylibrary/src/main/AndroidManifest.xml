@@ -22,7 +22,7 @@
         </receiver>
 
         <provider
-            android:name="com.example.android.uamp.AlbumArtContentProvider"
+            android:name=".library.AlbumArtContentProvider"
             android:authorities="com.example.android.uamp"
             android:exported="true" />
 

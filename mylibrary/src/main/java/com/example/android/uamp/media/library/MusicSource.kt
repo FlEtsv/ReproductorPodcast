@@ -1,4 +1,4 @@
-package com.example.android.uamp
+package com.example.android.uamp.media.library
 
 import android.os.Build
 import android.os.Bundle

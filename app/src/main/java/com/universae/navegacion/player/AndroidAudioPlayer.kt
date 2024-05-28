@@ -7,7 +7,7 @@ import androidx.media3.common.C
 import androidx.media3.common.MediaItem
 import androidx.media3.common.Player
 import com.example.android.uamp.common.MusicServiceConnection
-import com.example.android.uamp.MusicService
+import com.example.android.uamp.media.MusicService
 import com.example.android.uamp.media.extensions.isEnded
 import com.example.android.uamp.media.extensions.isPlayEnabled
 import com.universae.reproductor.domain.entities.tema.Tema
