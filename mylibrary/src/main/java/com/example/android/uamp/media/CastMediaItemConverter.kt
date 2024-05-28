@@ -8,7 +8,7 @@ import androidx.media3.cast.MediaItemConverter
 import androidx.media3.common.MediaItem
 import androidx.media3.common.MimeTypes
 import androidx.media3.common.util.UnstableApi
-import com.example.android.uamp.media.library.JsonSource
+import com.example.android.uamp.media.library.DomainMediaSource
 import com.google.android.gms.cast.MediaInfo
 import com.google.android.gms.cast.MediaMetadata
 import com.google.android.gms.cast.MediaQueueItem
@@ -22,7 +22,7 @@ import com.google.android.gms.common.images.WebImage
  *
  * To create an artwork for Cast we can't use the standard [MediaItem#mediaMetadata#artworkUri]
  * because UAMP uses a content provider to serve cached bitmaps. The URIs starting with `content://`
- * are useless on a Cast device, so we need to use the original HTTP URI that the [JsonSource]
+ * are useless on a Cast device, so we need to use the original HTTP URI that the [DomainMediaSource]
  * stores in the metadata extra with key `JsonSource.ORIGINAL_ARTWORK_URI_KEY`.
  */
 @OptIn(UnstableApi::class)
@@ -65,7 +65,7 @@ internal class CastMediaItemConverter : MediaItemConverter {
         }
         mediaItem.mediaMetadata.extras?.let { bundle ->
             // Use the original artwork URI for Cast.
-            bundle.getString(JsonSource.ORIGINAL_ARTWORK_URI_KEY)?.let {
+            bundle.getString(DomainMediaSource.ORIGINAL_ARTWORK_URI_KEY)?.let {
                 castMediaMetadata.addImage(WebImage(Uri.parse(it)))
             }
             mediaInfo.setStreamDuration(bundle.getLong(MediaMetadataCompat.METADATA_KEY_DURATION,0))
