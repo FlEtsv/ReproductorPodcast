@@ -63,6 +63,7 @@ import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.launch
 import java.util.concurrent.Executors
 import kotlin.math.max
+import kotlin.math.min
 
 /**
  * Service for browsing the catalogue and and receiving a [MediaController] from the app's UI
@@ -437,8 +438,8 @@ open class MusicService : MediaLibraryService() {
         ): ListenableFuture<LibraryResult<ImmutableList<MediaItem>>> {
             return callWhenMusicSourceReady {
                 val searchResult = musicSource.search(query, params?.extras ?: Bundle())
-                val fromIndex = max((page - 1) * pageSize, searchResult.size - 1)
-                val toIndex = max(fromIndex + pageSize, searchResult.size)
+                val fromIndex = max((page - 1) * pageSize, 0)
+                val toIndex = min(fromIndex + pageSize, searchResult.size)
                 LibraryResult.ofItemList(searchResult.subList(fromIndex, toIndex), params)
             }
         }
