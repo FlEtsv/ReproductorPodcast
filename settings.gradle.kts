@@ -33,5 +33,4 @@ rootProject.name = "Navegacion"
 include(":app")
 include(":comun")
 //include(":audioPlayerLibrary")
-include(":myauto")
 include(":mylibrary")
