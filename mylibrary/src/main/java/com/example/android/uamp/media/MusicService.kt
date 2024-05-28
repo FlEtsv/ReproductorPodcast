@@ -47,7 +47,7 @@ import androidx.media3.session.MediaSession
 import androidx.media3.session.SessionCommand
 import androidx.media3.session.SessionResult
 import com.example.android.uamp.media.library.BrowseTree
-import com.example.android.uamp.media.library.JsonSource
+import com.example.android.uamp.media.library.DomainMediaSource
 import com.example.android.uamp.media.library.MEDIA_SEARCH_SUPPORTED
 import com.example.android.uamp.media.library.MusicSource
 import com.example.android.uamp.media.library.UAMP_BROWSABLE_ROOT
@@ -57,6 +57,8 @@ import com.google.common.collect.ImmutableList
 import com.google.common.util.concurrent.Futures
 import com.google.common.util.concurrent.ListenableFuture
 import com.google.common.util.concurrent.MoreExecutors
+import com.universae.domain.Sesion
+import com.universae.domain.SesionObserver
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.SupervisorJob
@@ -77,7 +79,7 @@ import kotlin.math.min
  * commands are passed to a [CastPlayer].
  */
 @OptIn(UnstableApi::class)
-open class MusicService : MediaLibraryService() {
+open class MusicService : MediaLibraryService(), SesionObserver {
 
     private val serviceJob = SupervisorJob()
     private val serviceScope = CoroutineScope(Dispatchers.Main + serviceJob)
@@ -203,7 +205,8 @@ open class MusicService : MediaLibraryService() {
         }
 
         try {
-            musicSource = JsonSource(source = remoteJsonSource)
+            //musicSource = JsonSource(source = remoteJsonSource)
+            musicSource = DomainMediaSource(Sesion)
             serviceScope.launch {
                 musicSource.load()
             }
@@ -214,18 +217,8 @@ open class MusicService : MediaLibraryService() {
         packageValidator = PackageValidator(this, R.xml.allowed_media_browser_callers)
         storage = PersistentStorage.getInstance(applicationContext)
 
-
-
-        // The media library is built from a remote JSON file. We start loading asynchronously here.
-        // Use [callWhenMusicSourceReady] to execute code that needs the source load being
-        // completed.
-        musicSource = JsonSource(source = remoteJsonSource)
-        serviceScope.launch {
-            musicSource.load()
-        }
-
-        packageValidator = PackageValidator(this, R.xml.allowed_media_browser_callers)
-        storage = PersistentStorage.getInstance(applicationContext)
+        // Register as an observer of Sesion
+        Sesion.addObserver(this)
     }
 
     override fun onGetSession(controllerInfo: MediaSession.ControllerInfo): MediaLibrarySession? {
@@ -505,6 +498,15 @@ open class MusicService : MediaLibraryService() {
                 message,
                 Toast.LENGTH_LONG
             ).show()
+        }
+    }
+
+    override fun onSesionUpdated() {
+        // Reload musicSource and BrowseTree
+        serviceScope.launch {
+            musicSource.load()
+            // Reload BrowseTree
+            browseTree.reload()
         }
     }
 }

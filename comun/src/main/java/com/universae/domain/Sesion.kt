@@ -6,6 +6,7 @@ import com.universae.data.local.GradoRepositoryImpl
 import com.universae.reproductor.data.remote.TemaRepositoryImpl
 import com.universae.reproductor.domain.entities.alumno.Alumno
 import com.universae.domain.entities.asignatura.Asignatura
+import com.universae.reproductor.domain.entities.alumno.AlumnoId
 import com.universae.reproductor.domain.entities.grado.Grado
 import com.universae.reproductor.domain.entities.tema.TemaId
 import java.security.MessageDigest
@@ -31,24 +32,26 @@ object Sesion {
     val temasCompletados: MutableMap<TemaId, Boolean> = mutableMapOf()
 
     fun iniciarSesion(nombreAlumno: String, clave: String): Boolean {
-        if (sesionIniciada) return true
-
-        val conexionAlumno: Alumno? = GetAlumno(nombreAlumno, clave)
-        if (conexionAlumno != null) {
-            alumno = conexionAlumno
-            grados = alumno.gradosId.mapNotNull { gradoId ->
-                GradoRepositoryImpl.getGrado(gradoId)
+        if (sesionIniciada && nombreAlumno.equals(alumno.nombreUsuario)) return true
+        else {
+            cerrarSesion()
+            val conexionAlumno: Alumno? = GetAlumno(nombreAlumno, clave)
+            if (conexionAlumno != null) {
+                alumno = conexionAlumno
+                grados = alumno.gradosId.mapNotNull { gradoId ->
+                    GradoRepositoryImpl.getGrado(gradoId)
+                }
+                asignaturas = grados.flatMap { it.asignaturasId }.mapNotNull { asignaturaId ->
+                    AsignaturaRepositoryImpl.getAsignatura(asignaturaId)
+                }.toSet().toList()
+                temasCompletados.clear()
+                asignaturas.flatMap { it.temas }.forEach { tema ->
+                    temasCompletados[tema.temaId] = tema.terminado
+                }
             }
-            asignaturas = grados.flatMap { it.asignaturasId }.mapNotNull { asignaturaId ->
-                AsignaturaRepositoryImpl.getAsignatura(asignaturaId)
-            }.toSet().toList()
-            temasCompletados.clear()
-            asignaturas.flatMap { it.temas }.forEach { tema ->
-                temasCompletados[tema.temaId] = tema.terminado
-            }
+            notifyObservers()
+            return sesionIniciada
         }
-        notifyObservers()
-        return sesionIniciada
     }
 
     fun marcarTemaComoCompletado(temaId: TemaId): Int {
@@ -83,8 +86,11 @@ object Sesion {
     //TODO("implementar mostrar progreso de la asignatura y del grado")
 
     fun cerrarSesion() {
+        alumno = Alumno(nombreUsuario = "", nombreReal = "", alumnoId = AlumnoId(-1), gradosId = emptyList())
+        grados = emptyList()
+        asignaturas = emptyList()
+        temasCompletados.clear()
         notifyObservers()
-        //TODO("implementar la funcion cerrarSesion")
     }
 
 }

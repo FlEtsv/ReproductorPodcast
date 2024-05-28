@@ -161,6 +161,69 @@ class BrowseTree(
             mediaIdToChildren[albumMediaItem.mediaId] = it
         }
     }
+
+    fun reload() {
+        // Clear existing data
+        mediaIdToChildren.clear()
+        mediaIdToMediaItem.clear()
+
+        // Reinitialize BrowseTree
+        val rootList = mediaIdToChildren[UAMP_BROWSABLE_ROOT] ?: mutableListOf()
+
+        val recommendedCategory = MediaMetadata.Builder().apply {
+            setTitle(context.getString(R.string.recommended_title))
+            setArtworkUri(
+                Uri.parse(
+                    RESOURCE_ROOT_URI +
+                            context.resources.getResourceEntryName(R.drawable.ic_recommended)
+                )
+            )
+            setFolderType(MediaMetadata.FOLDER_TYPE_MIXED)
+            setIsPlayable(false)
+        }.build()
+        rootList += MediaItem.Builder().apply {
+            setMediaId(UAMP_RECOMMENDED_ROOT)
+            setMediaMetadata(recommendedCategory)
+        }.build()
+
+        val albumsMetadata = MediaMetadata.Builder().apply {
+            setTitle(context.getString(R.string.albums_title))
+            setArtworkUri(
+                Uri.parse(
+                    RESOURCE_ROOT_URI +
+                            context.resources.getResourceEntryName(R.drawable.ic_album)
+                )
+            )
+            setIsPlayable(false)
+            setFolderType(MediaMetadata.FOLDER_TYPE_ALBUMS)
+        }.build()
+        rootList += MediaItem.Builder().apply {
+            setMediaId(UAMP_ALBUMS_ROOT)
+            setMediaMetadata(albumsMetadata)
+        }.build()
+
+        mediaIdToChildren[UAMP_BROWSABLE_ROOT] = rootList
+        musicSource.forEach { mediaItem ->
+            val albumMediaId = mediaItem.mediaMetadata.albumTitle.toString().urlEncoded
+            val albumChildren = mediaIdToChildren[albumMediaId] ?: buildAlbumRoot(mediaItem)
+            albumChildren += mediaItem
+
+            Log.d("BrowseTree", "loading catalogue for " + mediaItem.mediaId)
+            // Add the first track of each album to the 'Recommended' category
+            if (mediaItem.mediaMetadata.trackNumber == 1) {
+                val recommendedChildren = mediaIdToChildren[UAMP_RECOMMENDED_ROOT]
+                    ?: mutableListOf()
+                recommendedChildren += mediaItem
+                mediaIdToChildren[UAMP_RECOMMENDED_ROOT] = recommendedChildren
+            }
+
+            // If this was recently played, add it to the recent root.
+            if (mediaItem.mediaId == recentMediaId) {
+                mediaIdToChildren[UAMP_RECENT_ROOT] = mutableListOf(mediaItem)
+            }
+            mediaIdToMediaItem[mediaItem.mediaId] = mediaItem
+        }
+    }
 }
 
 const val UAMP_BROWSABLE_ROOT = "/"

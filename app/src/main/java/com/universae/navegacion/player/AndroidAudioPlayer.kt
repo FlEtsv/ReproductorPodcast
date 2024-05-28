@@ -30,7 +30,7 @@ class AndroidAudioPlayer(private val context: Context) : AudioPlayerUseCases {
         val player = musicServiceConnection.player ?: return
 
         val isPrepared = player.playbackState != Player.STATE_IDLE
-        if (isPrepared && "wake_up_03" == nowPlaying?.mediaId) { //TODO: Cambiar wake_up_03 por tema.temaId.id.toString()
+        if (isPrepared && tema.temaId.id.toString() == nowPlaying?.mediaId) {
             when {
                 player.isPlaying ->
                     if (pauseThenPlaying) player.pause() else Unit
@@ -40,7 +40,7 @@ class AndroidAudioPlayer(private val context: Context) : AudioPlayerUseCases {
                 else -> {
                     Log.w(
                         TAG, "Playable item clicked but neither play nor pause are enabled!" +
-                                " (temaId= wake_up_03)" +
+                                " (temaId= ${tema.temaId.id})" +
                                 " (nombreTema=${tema.nombreTema})"
                     )
                 }
@@ -48,7 +48,7 @@ class AndroidAudioPlayer(private val context: Context) : AudioPlayerUseCases {
         } else {
             CoroutineScope(Dispatchers.Main).launch {
                 val mediaItem: MediaItem =
-                    musicServiceConnection.getMediaItemByMediaId("wake_up_03")!! //TODO: Cambiar wake_up_03 por tema.temaId.id.toString()
+                    musicServiceConnection.getMediaItemByMediaId(tema.temaId.id.toString())!!
                 var playlist: MutableList<MediaItem> = arrayListOf()
                 // load the children of the parent if requested
                 parentMediaId?.let {
