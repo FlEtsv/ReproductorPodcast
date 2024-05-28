@@ -104,9 +104,10 @@ abstract class AbstractMusicSource : MusicSource {
         if (focusSearchResult.isEmpty()) {
             return if (query.isNotBlank()) {
                 Log.d(TAG, "Búsqueda no enfocada por '$query'")
-                filter { song ->
+                filter { song -> // TODO: agregar los casos de busqueda deseados. Ahora busca por titulo, genero y album
                     song.mediaMetadata.title?.toString().containsCaseInsensitive(query)
                             || song.mediaMetadata.genre?.toString().containsCaseInsensitive(query)
+                            || song.mediaMetadata.albumTitle?.toString().containsCaseInsensitive(query)
                 }
             } else {
                 Log.d(TAG, "Búsqueda no enfocada sin palabra clave")
