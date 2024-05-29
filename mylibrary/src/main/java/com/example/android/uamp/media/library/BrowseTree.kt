@@ -133,92 +133,104 @@ class BrowseTree(
     }
 
     private fun buildMediaHierarchy(mediaItem: MediaItem) {
+        // Extraer el género y el título del álbum del mediaItem y codificarlos como URL seguras
         val genre = mediaItem.mediaMetadata.genre.toString()
         val albumTitle = mediaItem.mediaMetadata.albumTitle.toString()
         val genreMediaId = genre.urlEncoded
         val albumMediaId = albumTitle.urlEncoded
 
-        // Build Genre hierarchy
+        // Construir la jerarquía de Géneros
         val genreRootList = mediaIdToChildren[GRADO_ASIGNATURA_ROOT] ?: mutableListOf()
+        // Si el género no está ya en la lista, lo agrego
         if (!genreRootList.any { it.mediaId == genreMediaId }) {
             val genreMetadata = MediaMetadata.Builder().apply {
-                setTitle(genre)
-                setFolderType(MediaMetadata.FOLDER_TYPE_GENRES)
-                setIsPlayable(false)
+                setTitle(genre) // Establezco el título del género
+                setFolderType(MediaMetadata.FOLDER_TYPE_GENRES) // Indico que es una carpeta de géneros
+                setIsPlayable(false) // Indico que no es reproducible
                 setArtworkUri(
-                    mediaItem.mediaMetadata.artworkUri
+                    Uri.parse(
+                        RESOURCE_ROOT_URI + context.resources.getResourceEntryName(R.drawable.ic_album)
+                    ) // Establezco la imagen del género (misma que la de los álbumes)
                 )
             }.build()
             val genreMediaItem = MediaItem.Builder().apply {
-                setMediaId(genreMediaId)
-                setMediaMetadata(genreMetadata)
+                setMediaId(genreMediaId) // Establezco el ID del género
+                setMediaMetadata(genreMetadata) // Establezco los metadatos del género
             }.build()
-            genreRootList += genreMediaItem
-            mediaIdToChildren[GRADO_ASIGNATURA_ROOT] = genreRootList
-            mediaIdToChildren[genreMediaId] = mutableListOf()
+            genreRootList += genreMediaItem // Agrego el género a la lista de géneros
+            mediaIdToChildren[GRADO_ASIGNATURA_ROOT] = genreRootList // Actualizo el mapa con la lista de géneros
+            mediaIdToChildren[genreMediaId] = mutableListOf() // Inicializo una lista vacía de álbumes para este género
         }
 
-        // Build Album under Genre
+        // Construir la jerarquía de Álbumes bajo el Género
         val albumsList = mediaIdToChildren[genreMediaId] ?: mutableListOf()
+        // Si el álbum no está ya en la lista, lo agrego
         if (!albumsList.any { it.mediaId == albumMediaId }) {
             val albumMetadata = MediaMetadata.Builder().apply {
-                setTitle(albumTitle)
-                setFolderType(MediaMetadata.FOLDER_TYPE_ALBUMS)
-                setIsPlayable(false)
-                setArtworkUri(mediaItem.mediaMetadata.artworkUri
+                setTitle(albumTitle) // Establezco el título del álbum
+                setFolderType(MediaMetadata.FOLDER_TYPE_ALBUMS) // Indico que es una carpeta de álbumes
+                setIsPlayable(false) // Indico que no es reproducible
+                setArtworkUri(
+                    Uri.parse(
+                        RESOURCE_ROOT_URI + context.resources.getResourceEntryName(R.drawable.ic_album)
+                    ) // Establezco la imagen del álbum
                 )
             }.build()
             val albumMediaItem = MediaItem.Builder().apply {
-                setMediaId(albumMediaId)
-                setMediaMetadata(albumMetadata)
+                setMediaId(albumMediaId) // Establezco el ID del álbum
+                setMediaMetadata(albumMetadata) // Establezco los metadatos del álbum
             }.build()
-            albumsList += albumMediaItem
-            mediaIdToChildren[genreMediaId] = albumsList
+            albumsList += albumMediaItem // Agrego el álbum a la lista de álbumes
+            mediaIdToChildren[genreMediaId] = albumsList // Actualizo el mapa con la lista de álbumes bajo el género
         }
 
-        // Build Tracks under Album in Genre hierarchy
+        // Construir la jerarquía de Pistas bajo el Álbum en la jerarquía de Géneros
         val tracksListInGenre = mediaIdToChildren[albumMediaId] ?: mutableListOf()
         val trackMetadataInGenre = mediaItem.mediaMetadata.buildUpon().apply {
-            setFolderType(MediaMetadata.FOLDER_TYPE_NONE)
-            setIsPlayable(true)
+            setFolderType(MediaMetadata.FOLDER_TYPE_NONE) // Indico que no es una carpeta
+            setIsPlayable(true) // Indico que es reproducible
         }.build()
         val trackMediaItemInGenre = mediaItem.buildUpon().apply {
-            setMediaId(mediaItem.mediaId)
-            setMediaMetadata(trackMetadataInGenre)
+            setMediaId(mediaItem.mediaId) // Establezco el ID de la pista
+            setMediaMetadata(trackMetadataInGenre) // Establezco los metadatos de la pista
         }.build()
-        tracksListInGenre += trackMediaItemInGenre
-        mediaIdToChildren[albumMediaId] = tracksListInGenre
+        tracksListInGenre += trackMediaItemInGenre // Agrego la pista a la lista de pistas
+        mediaIdToChildren[albumMediaId] = tracksListInGenre // Actualizo el mapa con la lista de pistas bajo el álbum
 
-        // Build Album hierarchy directly under Albums Root
+        // Construir la jerarquía de Álbumes directamente bajo el root de Álbumes
         val albumsRootList = mediaIdToChildren[UAMP_ALBUMS_ROOT] ?: mutableListOf()
+        // Si el álbum no está ya en la lista, lo agrego
         if (!albumsRootList.any { it.mediaId == albumMediaId }) {
             val albumMetadata = MediaMetadata.Builder().apply {
-                setTitle(albumTitle)
-                setFolderType(MediaMetadata.FOLDER_TYPE_ALBUMS)
-                setIsPlayable(false)
-                setArtworkUri(mediaItem.mediaMetadata.artworkUri
+                setTitle(albumTitle) // Establezco el título del álbum
+                setFolderType(MediaMetadata.FOLDER_TYPE_ALBUMS) // Indico que es una carpeta de álbumes
+                setIsPlayable(false) // Indico que no es reproducible
+                setArtworkUri(
+                    Uri.parse(
+                        RESOURCE_ROOT_URI + context.resources.getResourceEntryName(R.drawable.ic_album)
+                    ) // Establezco la imagen del álbum
                 )
             }.build()
             val albumMediaItem = MediaItem.Builder().apply {
-                setMediaId(albumMediaId)
-                setMediaMetadata(albumMetadata)
+                setMediaId(albumMediaId) // Establezco el ID del álbum
+                setMediaMetadata(albumMetadata) // Establezco los metadatos del álbum
             }.build()
-            albumsRootList += albumMediaItem
-            mediaIdToChildren[UAMP_ALBUMS_ROOT] = albumsRootList
+            albumsRootList += albumMediaItem // Agrego el álbum a la lista de álbumes
+            mediaIdToChildren[UAMP_ALBUMS_ROOT] = albumsRootList // Actualizo el mapa con la lista de álbumes bajo el root de álbumes
         }
 
-        // Build Tracks under Album in Albums Root hierarchy
+        // Construir la jerarquía de Pistas bajo el Álbum en la jerarquía del root de Álbumes
         val tracksListInAlbumsRoot = mediaIdToChildren[albumMediaId] ?: mutableListOf()
         val trackMetadataInAlbumsRoot = mediaItem.mediaMetadata.buildUpon().apply {
-            setFolderType(MediaMetadata.FOLDER_TYPE_NONE)
-            setIsPlayable(true)
+            setFolderType(MediaMetadata.FOLDER_TYPE_NONE) // Indico que no es una carpeta
+            setIsPlayable(true) // Indico que es reproducible
         }.build()
         val trackMediaItemInAlbumsRoot = mediaItem.buildUpon().apply {
-            setMediaId(mediaItem.mediaId)
-            setMediaMetadata(trackMetadataInAlbumsRoot)
+            setMediaId(mediaItem.mediaId) // Establezco el ID de la pista
+            setMediaMetadata(trackMetadataInAlbumsRoot) // Establezco los metadatos de la pista
         }.build()
-        tracksListInAlbumsRoot += trackMediaItemInAlbumsRoot
-        mediaIdToChildren[albumMediaId] = tracksListInAlbumsRoot
+        tracksListInAlbumsRoot += trackMediaItemInAlbumsRoot // Agrego la pista a la lista de pistas
+        mediaIdToChildren[albumMediaId] = tracksListInAlbumsRoot // Actualizo el mapa con la lista de pistas bajo el álbum
     }
 
     /**
