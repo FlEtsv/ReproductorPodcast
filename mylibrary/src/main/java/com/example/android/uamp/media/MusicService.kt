@@ -166,7 +166,7 @@ open class MusicService : MediaLibraryService(), SesionObserver {
             // Related internal bug b/68009560.
             Log.i(
                 TAG, "Cast is not available on this device. " +
-                    "Exception thrown when attempting to obtain CastContext. " + e.message)
+                        "Exception thrown when attempting to obtain CastContext. " + e.message)
             null
         }
     }
@@ -356,7 +356,7 @@ open class MusicService : MediaLibraryService(), SesionObserver {
                 return Futures.immediateFuture(
                     LibraryResult.ofItemList(
                         storage.loadRecentSong()?.let {
-                            song -> listOf(song)
+                                song -> listOf(song)
                         }!!,
                         LibraryParams.Builder().build()
                     )

@@ -60,6 +60,14 @@ class BrowseTree(
      */
     val searchableByUnknownCaller = true
 
+    /**
+     * In this example, there's a single root node (identified by the constant
+     * [UAMP_BROWSABLE_ROOT]). The root's children are each album included in the
+     * [MusicSource], and the children of each album are the songs on that album.
+     * (See [BrowseTree.buildAlbumRoot] for more details.)
+     *
+     * TODO: Expand to allow more browsing types.
+     */
     init {
         val rootList = mediaIdToChildren[UAMP_BROWSABLE_ROOT] ?: mutableListOf()
 
@@ -113,7 +121,12 @@ class BrowseTree(
         mediaIdToChildren[UAMP_BROWSABLE_ROOT] = rootList
 
         musicSource.forEach { mediaItem ->
-            buildMediaHierarchy(mediaItem)
+            val albumMediaId = mediaItem.mediaMetadata.albumTitle.toString().urlEncoded
+            val albumChildren = mediaIdToChildren[albumMediaId] ?: buildAlbumRoot(mediaItem)
+            albumChildren += mediaItem
+
+            val gradoAsignaturaMediaId = mediaItem.mediaMetadata.genre.toString().urlEncoded
+            val gradoAsignaturaChildren = mediaIdToChildren[gradoAsignaturaMediaId] ?: buildGeneroRoot(mediaItem)
 
             Log.d("BrowseTree", "loading catalogue for " + mediaItem.mediaId)
             // Add the first track of each album to the 'Recommended' category
@@ -132,94 +145,7 @@ class BrowseTree(
         }
     }
 
-    private fun buildMediaHierarchy(mediaItem: MediaItem) {
-        val genre = mediaItem.mediaMetadata.genre.toString()
-        val albumTitle = mediaItem.mediaMetadata.albumTitle.toString()
-        val genreMediaId = genre.urlEncoded
-        val albumMediaId = albumTitle.urlEncoded
 
-        // Build Genre hierarchy
-        val genreRootList = mediaIdToChildren[GRADO_ASIGNATURA_ROOT] ?: mutableListOf()
-        if (!genreRootList.any { it.mediaId == genreMediaId }) {
-            val genreMetadata = MediaMetadata.Builder().apply {
-                setTitle(genre)
-                setFolderType(MediaMetadata.FOLDER_TYPE_GENRES)
-                setIsPlayable(false)
-                setArtworkUri(
-                    mediaItem.mediaMetadata.artworkUri
-                )
-            }.build()
-            val genreMediaItem = MediaItem.Builder().apply {
-                setMediaId(genreMediaId)
-                setMediaMetadata(genreMetadata)
-            }.build()
-            genreRootList += genreMediaItem
-            mediaIdToChildren[GRADO_ASIGNATURA_ROOT] = genreRootList
-            mediaIdToChildren[genreMediaId] = mutableListOf()
-        }
-
-        // Build Album under Genre
-        val albumsList = mediaIdToChildren[genreMediaId] ?: mutableListOf()
-        if (!albumsList.any { it.mediaId == albumMediaId }) {
-            val albumMetadata = MediaMetadata.Builder().apply {
-                setTitle(albumTitle)
-                setFolderType(MediaMetadata.FOLDER_TYPE_ALBUMS)
-                setIsPlayable(false)
-                setArtworkUri(mediaItem.mediaMetadata.artworkUri
-                )
-            }.build()
-            val albumMediaItem = MediaItem.Builder().apply {
-                setMediaId(albumMediaId)
-                setMediaMetadata(albumMetadata)
-            }.build()
-            albumsList += albumMediaItem
-            mediaIdToChildren[genreMediaId] = albumsList
-        }
-
-        // Build Tracks under Album in Genre hierarchy
-        val tracksListInGenre = mediaIdToChildren[albumMediaId] ?: mutableListOf()
-        val trackMetadataInGenre = mediaItem.mediaMetadata.buildUpon().apply {
-            setFolderType(MediaMetadata.FOLDER_TYPE_NONE)
-            setIsPlayable(true)
-        }.build()
-        val trackMediaItemInGenre = mediaItem.buildUpon().apply {
-            setMediaId(mediaItem.mediaId)
-            setMediaMetadata(trackMetadataInGenre)
-        }.build()
-        tracksListInGenre += trackMediaItemInGenre
-        mediaIdToChildren[albumMediaId] = tracksListInGenre
-
-        // Build Album hierarchy directly under Albums Root
-        val albumsRootList = mediaIdToChildren[UAMP_ALBUMS_ROOT] ?: mutableListOf()
-        if (!albumsRootList.any { it.mediaId == albumMediaId }) {
-            val albumMetadata = MediaMetadata.Builder().apply {
-                setTitle(albumTitle)
-                setFolderType(MediaMetadata.FOLDER_TYPE_ALBUMS)
-                setIsPlayable(false)
-                setArtworkUri(mediaItem.mediaMetadata.artworkUri
-                )
-            }.build()
-            val albumMediaItem = MediaItem.Builder().apply {
-                setMediaId(albumMediaId)
-                setMediaMetadata(albumMetadata)
-            }.build()
-            albumsRootList += albumMediaItem
-            mediaIdToChildren[UAMP_ALBUMS_ROOT] = albumsRootList
-        }
-
-        // Build Tracks under Album in Albums Root hierarchy
-        val tracksListInAlbumsRoot = mediaIdToChildren[albumMediaId] ?: mutableListOf()
-        val trackMetadataInAlbumsRoot = mediaItem.mediaMetadata.buildUpon().apply {
-            setFolderType(MediaMetadata.FOLDER_TYPE_NONE)
-            setIsPlayable(true)
-        }.build()
-        val trackMediaItemInAlbumsRoot = mediaItem.buildUpon().apply {
-            setMediaId(mediaItem.mediaId)
-            setMediaMetadata(trackMetadataInAlbumsRoot)
-        }.build()
-        tracksListInAlbumsRoot += trackMediaItemInAlbumsRoot
-        mediaIdToChildren[albumMediaId] = tracksListInAlbumsRoot
-    }
 
     /**
      * Provides access to the list of children with the `get` operator.
@@ -229,6 +155,84 @@ class BrowseTree(
 
     /** Provides access to the media items by media id. */
     fun getMediaItemByMediaId(mediaId: String) = mediaIdToMediaItem[mediaId]
+
+    /**
+     * Builds a node, under the root, that represents an album, given
+     * a [MediaItem] object that's one of the songs on that album,
+     * marking the item as [MediaMetadata.FOLDER_TYPE_ALBUMS], since it will have child
+     * node(s) AKA at least 1 song.
+     */
+    private fun buildAlbumRoot(mediaItem: MediaItem): MutableList<MediaItem> {
+        // Get or create the albums Category list.
+        val rootList = mediaIdToChildren[UAMP_ALBUMS_ROOT] ?: mutableListOf()
+        // Create the album and add it to the 'Albums' category.
+        val albumMetadata = mediaItem.mediaMetadata.buildUpon().apply {
+            setFolderType(MediaMetadata.FOLDER_TYPE_ALBUMS)
+            setIsPlayable(false)
+        }.build()
+        val albumMediaItem= mediaItem.buildUpon().apply {
+            setMediaId(albumMetadata.albumTitle.toString().urlEncoded)
+            setMediaMetadata(albumMetadata)
+        }.build()
+        rootList += albumMediaItem
+        // Set the album root list for look up later,
+        mediaIdToChildren[UAMP_ALBUMS_ROOT] = rootList
+        // Insert the album's root with an empty list for its children, and return the list.
+        return mutableListOf<MediaItem>().also {
+            mediaIdToChildren[albumMediaItem.mediaId] = it
+        }
+    }
+    private fun buildGeneroRoot(mediaItem: MediaItem): MutableList<MediaItem> {
+        val rootList = mediaIdToChildren[GRADO_ASIGNATURA_ROOT] ?: mutableListOf()
+
+        val generoMetadata = mediaItem.mediaMetadata.buildUpon().apply {
+            setTitle(mediaItem.mediaMetadata.genre) // Utiliza el nombre del género aquí
+            setFolderType(MediaMetadata.FOLDER_TYPE_GENRES)
+            setIsPlayable(false)
+        }.build()
+        val generoMediaItem = mediaItem.buildUpon().apply {
+            setMediaId(generoMetadata.title.toString().urlEncoded) // Utiliza el nombre del género aquí
+            setMediaMetadata(generoMetadata)
+        }.build()
+        rootList += generoMediaItem
+        mediaIdToChildren[GRADO_ASIGNATURA_ROOT] = rootList
+
+        // Crear una lista de álbumes para este género
+        val albumsList = mutableListOf<MediaItem>()
+
+        // Agregar todos los álbumes a la lista de álbumes
+        musicSource.filter { it.mediaMetadata.genre == mediaItem.mediaMetadata.genre }
+            .map { it.mediaMetadata.albumTitle }
+            .distinct()
+            .forEach { albumTitle ->
+                val albumMetadata = MediaMetadata.Builder().apply {
+                    setTitle(albumTitle)
+                    setFolderType(MediaMetadata.FOLDER_TYPE_ALBUMS)
+                    setIsPlayable(false)
+                }.build()
+                val albumMediaItem = MediaItem.Builder().apply {
+                    setMediaId(albumTitle.toString().urlEncoded)
+                    setMediaMetadata(albumMetadata)
+                }.build()
+                albumsList += albumMediaItem
+            }
+
+        // Agregar la lista de álbumes a los hijos del género
+        mediaIdToChildren[generoMediaItem.mediaId] = albumsList
+
+        // Para cada álbum, crear una lista de tracks y agregarla a los hijos del álbum
+        albumsList.forEach { albumMediaItem ->
+            val tracksList = musicSource.filter {
+                it.mediaMetadata.albumTitle == albumMediaItem.mediaMetadata.title
+            }.toMutableList()
+            mediaIdToChildren[albumMediaItem.mediaId] = tracksList
+        }
+
+        return rootList
+    }
+
+
+
 
     fun reload() {
         // Clear existing data
@@ -270,25 +274,11 @@ class BrowseTree(
             setMediaMetadata(albumsMetadata)
         }.build()
 
-        val gradoAsignaturaMetadata = MediaMetadata.Builder().apply {
-            setTitle(context.getString(R.string.grados_title))
-            setArtworkUri(
-                Uri.parse(
-                    RESOURCE_ROOT_URI +
-                            context.resources.getResourceEntryName(R.drawable.ic_album)
-                )
-            )
-            setIsPlayable(false)
-            setFolderType(MediaMetadata.FOLDER_TYPE_GENRES)
-        }.build()
-        rootList += MediaItem.Builder().apply {
-            setMediaId(GRADO_ASIGNATURA_ROOT)
-            setMediaMetadata(gradoAsignaturaMetadata)
-        }.build()
         mediaIdToChildren[UAMP_BROWSABLE_ROOT] = rootList
-
         musicSource.forEach { mediaItem ->
-            buildMediaHierarchy(mediaItem)
+            val albumMediaId = mediaItem.mediaMetadata.albumTitle.toString().urlEncoded
+            val albumChildren = mediaIdToChildren[albumMediaId] ?: buildAlbumRoot(mediaItem)
+            albumChildren += mediaItem
 
             Log.d("BrowseTree", "loading catalogue for " + mediaItem.mediaId)
             // Add the first track of each album to the 'Recommended' category

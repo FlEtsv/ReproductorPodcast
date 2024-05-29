@@ -56,6 +56,7 @@ fun SplashScreen(navController: NavController, usuario: String, pass: String) {
             var alumno: Alumno? = null
 
             if (usuarioEncontrado) {
+                usuarioEncontrado = false
                 alumno = PreviewAlumno.filter { it.nombreUsuario == usuario }[0]
             }
 
