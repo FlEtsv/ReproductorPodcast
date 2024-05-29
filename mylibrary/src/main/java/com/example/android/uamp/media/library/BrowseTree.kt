@@ -39,7 +39,24 @@ import com.example.android.uamp.media.extensions.urlEncoded
  *  ...
  *  +-- Artists
  *  ...
- *
+ * root
+ * +-- Recomendados
+ * |    +-- Tema_1
+ * |    +-- Tema_2
+ * ...
+ * +-- Grados
+ * /    +-- Grado_1
+ * /    |    +-- Asignatura_1
+ * /    |    |    +-- Tema_1
+ * /    |    |    |     Song_1
+ * /    |    |    +-- Tema_2
+ * /    |    |    |     Song_2
+ * /    |    +-- Asignatura_2
+ * ...
+ * +-- Albums
+ * |    +-- Album_A
+ * |    |    +-- Song_1
+ * ...
  *  Requesting `browseTree["root"]` would return a list that included "Albums", "Artists", and
  *  any other direct children. Taking the media ID of "Albums" ("Albums" in this example),
  *  `browseTree["Albums"]` would return a single item list "Album_A", and, finally,
