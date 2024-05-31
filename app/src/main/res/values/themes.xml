@@ -1,5 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-
+    <!-- Define un tema personalizado -->
+    <style name="CustomTheme" parent="Theme.AppCompat.Light.DarkActionBar">
+        <item name="android:textColorPrimary">@color/white</item>
+        <item name="android:textColorSecondary">@color/white</item>
+        <item name="android:fontFamily">@font/raleway_italic</item>
+        <item name="android:windowBackground">@color/purple_700</item> <!-- Fondo de pantalla -->
+    </style>
     <style name="Theme.Reproductor" parent="android:Theme.Material.Light.NoActionBar" />
 </resources>
