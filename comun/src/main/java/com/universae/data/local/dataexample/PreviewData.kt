@@ -11,7 +11,7 @@ import com.universae.reproductor.domain.entities.tema.TemaId
 import kotlin.time.DurationUnit
 import kotlin.time.toDuration
 
-val urlAudio = "https://file-examples.com/storage/fe15076da466528199d9c5a/2017/11/file_example_MP3_1MG.mp3"
+val urlAudio = "https://file-examples.com/storage/fe9037cdb6665870598c2d1/2017/11/file_example_MP3_5MG.mp3"
 val urlImagen = "https://estaticos-cdn.prensaiberica.es/epi/public/file/2023/0804/12/universae-f534810.png"
 
 val PreviewTemas = listOf(
@@ -22,7 +22,8 @@ val PreviewTemas = listOf(
         duracionAudio = 120.toDuration(DurationUnit.SECONDS),
         audioUrl = urlAudio,
         imagenUrl = urlImagen,
-        trackNumber = 1
+        trackNumber = 1,
+        terminado = true
     ),
     Tema(
         temaId = TemaId(2),

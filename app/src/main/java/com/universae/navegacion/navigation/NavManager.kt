@@ -43,12 +43,14 @@ fun NavManager() {
             DetailView(navController, idAsignatura)
         }
         composable(
-            "Podcast/{tituloTema}", arguments = listOf(
-                navArgument("tituloTema") { type = NavType.StringType },
+            "Podcast/{idTema}/{idAsignatura}", arguments = listOf(
+                navArgument("idTema") { type = NavType.IntType },
+                navArgument("idAsignatura") { type = NavType.IntType }
             )
         ) {
-            val tituloTema = it.arguments?.getString("tituloTema") ?: "Null"
-            ReproductorPodcast(navController, tituloTema)
+            val idTema = it.arguments?.getInt("idTema") ?: -1
+            val idAsignatura = it.arguments?.getInt("idAsignatura") ?: -1
+            ReproductorPodcast(navController, idTema, idAsignatura)
         }
     }
 }

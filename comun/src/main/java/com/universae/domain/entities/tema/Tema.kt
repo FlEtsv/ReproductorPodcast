@@ -10,19 +10,10 @@ class Tema(
     val audioUrl: String, // URL de la fuente de audio
     val imagenUrl: String, // URL de la imagen del tema
     val trackNumber: Int,
+    var terminado: Boolean = false
 ) {
 
     var puntoParada: Int = 0 // intentar dato duration en milisegundos
-
-    private var _terminado: Boolean = false
-
-    var terminado: Boolean
-        get() = _terminado
-        set(value) {
-            if (!_terminado) {
-                _terminado = value
-            }
-        }
 }
 
 data class TemaId(val id: Int)

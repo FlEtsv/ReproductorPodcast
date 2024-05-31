@@ -6,6 +6,7 @@ import com.universae.reproductor.domain.entities.tema.Tema
 import com.universae.reproductor.domain.entities.tema.TemaId
 
 interface TemaUseCases {
+    fun getTemaById(id: Int): Tema?
     fun temasPorAsignatura(asignaturaId: AsignaturaId): List<Tema>
     fun marcarTemaComoCompletado(temaId: TemaId): Int // retorna la cantidad de filas afectadas, -1 si no se pudo realizar la operación
     fun marcarPuntoParada(
@@ -15,6 +16,12 @@ interface TemaUseCases {
 }
 
 object TemaUseCasesImpl : TemaUseCases {
+
+    override fun getTemaById(id: Int): Tema? {
+        return if (Sesion.sesionIniciada) {
+            Sesion.asignaturas.flatMap { it.temas }.find { tema -> tema.temaId.id == id }
+        } else null
+    }
     override fun temasPorAsignatura(asignaturaId: AsignaturaId): List<Tema> {
         return if (Sesion.sesionIniciada) {
             Sesion.asignaturas.find { asignatura -> asignatura.asignaturaId.id == asignaturaId.id }?.temas

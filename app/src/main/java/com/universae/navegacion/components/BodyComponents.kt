@@ -51,6 +51,7 @@ import androidx.navigation.NavController
 import com.android.navegacion.R
 import com.universae.domain.entities.asignatura.Asignatura
 import com.universae.reproductor.domain.entities.tema.Tema
+import com.universae.reproductor.domain.usecases.AsignaturaUseCasesImpl
 import com.universae.reproductor.ui.theme.AzulClaro
 import com.universae.reproductor.ui.theme.Blanco
 import com.universae.reproductor.ui.theme.GrisClaro
@@ -137,7 +138,7 @@ fun PodcastsAsignaturasTemas(podcasts: List<Asignatura>, navController: NavContr
             items(displayedTemas) { tema ->
                 cardTema(
                     titulo = tema.nombreTema,
-                    onClick = { navController.navigate("Podcast/${tema.temaId.id}") }
+                    onClick = { navController.navigate("Podcast/${tema.temaId.id}/${AsignaturaUseCasesImpl.getAsignaturaByTemaId(tema.temaId)!!.asignaturaId.id}") }
                 )
             }
         }

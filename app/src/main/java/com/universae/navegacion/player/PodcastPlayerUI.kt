@@ -42,15 +42,20 @@ import com.android.navegacion.components.iconFastForward
 import com.android.navegacion.components.iconFastReward
 import com.android.navegacion.components.iconPause
 import com.android.navegacion.components.iconPlay
+import com.universae.domain.entities.asignatura.Asignatura
+import com.universae.domain.entities.asignatura.AsignaturaId
 import com.universae.reproductor.domain.entities.tema.Tema
 import com.universae.reproductor.domain.entities.tema.TemaId
+import com.universae.reproductor.domain.usecases.AsignaturaUseCasesImpl
+import com.universae.reproductor.domain.usecases.TemaUseCasesImpl
+import com.universae.reproductor.domaintest.PreviewTemasFOL
 import com.universae.reproductor.ui.theme.AzulClaro
 import com.universae.reproductor.ui.theme.AzulOscuro
 import kotlin.time.DurationUnit
 import kotlin.time.toDuration
 
 @Composable
-fun ReproductorPodcast(navController: NavController, tituloTema: String) {
+fun ReproductorPodcast(navController: NavController, idTema: Int, idAsignatura: Int) {
     var reproduciendo by remember { mutableStateOf(false) }
     val progress = remember { mutableStateOf(0.0f) }
     // crea instancia audioPlayer e inicializa el controlador de reproducción mediante el composable AndroidAudioPlayerComposable
@@ -60,15 +65,8 @@ fun ReproductorPodcast(navController: NavController, tituloTema: String) {
 
     // Replace with your actual Tema instance
     //TODO("Reemplazar con tu instancia real de Tema")
-    val tema = Tema(
-        temaId = TemaId(21),
-        nombreTema = "nombreTema",
-        descripcionTema = "descripciontema",
-        duracionAudio = 120.toDuration(DurationUnit.SECONDS),
-        audioUrl = "https://file-examples.com/storage/fe54a1a6c9664b5d793d4bf/2017/11/file_example_MP3_700KB.mp3",
-        imagenUrl = "https://file-examples.com/wp-content/uploads/2017/10/file_example_JPG_100kB.jpg",
-        trackNumber = 1
-    )
+    val asignatura = AsignaturaUseCasesImpl.getAsignaturaById(idAsignatura)!!
+    val tema = TemaUseCasesImpl.getTemaById(idTema)!!
 
 
     // Interfaz de usuario del reproductor de podcast
@@ -111,7 +109,7 @@ fun ReproductorPodcast(navController: NavController, tituloTema: String) {
         PortadaPodcast()
         Spacer(modifier = Modifier.height(16.dp))
         Text(
-            text = tituloTema,
+            text = tema.nombreTema ?: "Título del tema",
             style = MaterialTheme.typography.bodyLarge
         )
         Spacer(modifier = Modifier.height(16.dp))
@@ -121,7 +119,7 @@ fun ReproductorPodcast(navController: NavController, tituloTema: String) {
             reproduciendo = reproduciendo,
             onReproduccionPausaToggle = {
                 if (reproduciendo) {
-                    audioPlayer.reproducir(tema)
+                    audioPlayer.reproducir(tema = tema, parentMediaId = asignatura.nombreAsignatura)
                 } else {
                     /*
                     if (audioPlayer.controller?.playbackState == Player.STATE_READY && audioPlayer.controller?.playWhenReady?.not() == true) {
@@ -129,7 +127,7 @@ fun ReproductorPodcast(navController: NavController, tituloTema: String) {
                     } else {
 
                      */
-                    audioPlayer.reproducir(tema)
+                    audioPlayer.reproducir(tema = tema, parentMediaId = asignatura.nombreAsignatura)
                     //}
                 }
                 reproduciendo = !reproduciendo
@@ -259,12 +257,4 @@ fun ProgressBarRow(progress: MutableState<Float>) {  // 'progress' debería ser 
             )
         }
     )
-}
-
-
-@Preview(showBackground = true)
-@Composable
-fun PreviewPodcast() {
-    var idTitulo: String = "titulo del Podcast"
-    ReproductorPodcast(navController = rememberNavController(), idTitulo)
 }

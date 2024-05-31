@@ -105,7 +105,7 @@ class BrowseTree(
                 )
             )
             setIsPlayable(false)
-            setFolderType(MediaMetadata.FOLDER_TYPE_ALBUMS)
+            setFolderType(MediaMetadata.FOLDER_TYPE_PLAYLISTS)
         }.build()
         rootList += MediaItem.Builder().apply {
             setMediaId(UAMP_ALBUMS_ROOT)
@@ -183,7 +183,7 @@ class BrowseTree(
         if (!albumsList.any { it.mediaId == albumMediaId }) {
             val albumMetadata = MediaMetadata.Builder().apply {
                 setTitle(albumTitle) // Establezco el título del álbum
-                setFolderType(MediaMetadata.FOLDER_TYPE_ALBUMS) // Indico que es una carpeta de álbumes
+                setFolderType(MediaMetadata.FOLDER_TYPE_PLAYLISTS) // Indico que es una carpeta de álbumes
                 setIsPlayable(false) // Indico que no es reproducible
                 setArtworkUri(
                     mediaItem.mediaMetadata.artworkUri // Establezco la imagen del álbum
@@ -218,7 +218,7 @@ class BrowseTree(
         if (!albumsRootList.any { it.mediaId == albumMediaId }) {
             val albumMetadata = MediaMetadata.Builder().apply {
                 setTitle(albumTitle) // Establezco el título del álbum
-                setFolderType(MediaMetadata.FOLDER_TYPE_ALBUMS) // Indico que es una carpeta de álbumes
+                setFolderType(MediaMetadata.FOLDER_TYPE_PLAYLISTS) // Indico que es una carpeta de álbumes
                 setIsPlayable(false) // Indico que no es reproducible
                 setArtworkUri(
                      mediaItem.mediaMetadata.artworkUri// Establezco la imagen d  el álbum
@@ -333,6 +333,11 @@ class BrowseTree(
             }
             mediaIdToMediaItem[mediaItem.mediaId] = mediaItem
         }
+    }
+
+    fun getMediaItemsInAlbum(albumTitle: String): List<MediaItem> {
+        val albumId = albumTitle.urlEncoded
+        return mediaIdToChildren[albumId] ?: emptyList()
     }
 }
 

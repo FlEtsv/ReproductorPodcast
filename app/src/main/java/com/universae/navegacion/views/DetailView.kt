@@ -43,6 +43,7 @@ import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import com.android.navegacion.R
 import com.android.navegacion.components.iconArrowBack
+import com.universae.domain.entities.asignatura.Asignatura
 import com.universae.domain.entities.asignatura.AsignaturaId
 import com.universae.reproductor.domain.entities.tema.Tema
 import com.universae.reproductor.domain.usecases.AsignaturaUseCasesImpl
@@ -93,7 +94,7 @@ fun BarraSuperior(navController: NavController) {
 @Composable
 fun ContentDetailView(navController: NavController, idAsignatura: Int) {
     BoxWithConstraints {//con esta funcion ya se puede sacar altura
-        val asignatura = AsignaturaUseCasesImpl.getAsignatura(AsignaturaId(idAsignatura))
+        val asignatura = AsignaturaUseCasesImpl.getAsignaturaByAsignaturaId(AsignaturaId(idAsignatura))
         val nombreAsignatura = asignatura?.nombreAsignatura
         val screenHeight = maxHeight
         val islandHeight = screenHeight * 0.25f  // Calcular el 25% de la altura
@@ -110,9 +111,9 @@ fun ContentDetailView(navController: NavController, idAsignatura: Int) {
             }
             item {
 
-                AsignaturaUseCasesImpl.getAsignatura(AsignaturaId(idAsignatura))
+                AsignaturaUseCasesImpl.getAsignaturaByAsignaturaId(AsignaturaId(idAsignatura))
                     ?.let { asignatura ->
-                        MostrarTemas(asignatura.temas, navController)
+                        MostrarTemas(asignatura, navController)
                     }
 
             }
@@ -121,10 +122,10 @@ fun ContentDetailView(navController: NavController, idAsignatura: Int) {
 }
 
 @Composable
-fun MostrarTemas(temas: List<Tema>, navController: NavController) {
+fun MostrarTemas(asignatura: Asignatura, navController: NavController) {
 
-    temas.forEach { tema ->
-        TarjetaTema(tema = tema, modifier = Modifier, navController = navController)
+    asignatura.temas.forEach { tema ->
+        TarjetaTema(idAsignatura= asignatura.asignaturaId.id, tema = tema, modifier = Modifier, navController = navController)
     }
 }
 
@@ -135,7 +136,7 @@ fun MostrarTemas(temas: List<Tema>, navController: NavController) {
  * @param modifier Modificador para personalizar la apariencia de la tarjeta
  */
 @Composable
-fun TarjetaTema(tema: Tema, modifier: Modifier = Modifier, navController: NavController) {
+fun TarjetaTema(idAsignatura: Int, tema: Tema, modifier: Modifier = Modifier, navController: NavController) {
     // Estado mutable para controlar el número de líneas del texto
     var maxLines by rememberSaveable { mutableIntStateOf(2) }
     // Diseño de fila para la tarjeta del tema
@@ -145,7 +146,7 @@ fun TarjetaTema(tema: Tema, modifier: Modifier = Modifier, navController: NavCon
             .padding(8.dp)
             .clip(RoundedCornerShape(8.dp)) // Aquí se establece el radio de las esquinas redondeadas
             .background(AzulOscuro) // Aquí se establece el color de fondo
-            .clickable(onClick = { navController.navigate("Podcast/${tema.nombreTema}") }),
+            .clickable(onClick = { navController.navigate("Podcast/${tema.temaId.id}/${idAsignatura}") }),
         verticalAlignment = Alignment.CenterVertically
     ) {
         // Imagen del logo
