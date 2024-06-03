@@ -507,11 +507,8 @@ open class MusicService : MediaLibraryService(), SesionObserver {
                 val selectedMediaItem: MediaItem? = replaceableForwardingPlayer.currentMediaItem
 
                 // Encuentra todos los MediaItems en el mismo álbum
-                val albumMediaItems: List<MediaItem> = browseTree.getMediaItemsInAlbum(albumTitle= selectedMediaItem?.mediaMetadata?.albumTitle.toString())
-
-                // Prepara el reproductor con la lista de reproducción del álbum y el MediaItem seleccionado
-                exoPlayer.setMediaItems(albumMediaItems)
-                exoPlayer.prepare()
+                val albumMediaItems: List<MediaItem> =
+                    browseTree.getMediaItemsInAlbum(albumTitle = selectedMediaItem?.mediaMetadata?.albumTitle.toString())
 
                 // Busca el índice del MediaItem seleccionado en la lista de reproducción del álbum
                 val selectedItemIndex: Int = albumMediaItems.indexOfFirst {
@@ -520,12 +517,19 @@ open class MusicService : MediaLibraryService(), SesionObserver {
 
                 // Si el MediaItem seleccionado se encuentra en la lista de reproducción del álbum, comienza a reproducirlo
                 if (selectedItemIndex != -1) {
-                    exoPlayer.seekTo(selectedItemIndex, 0)
+                    // Si el reproductor ya tiene los MediaItems del álbum, no es necesario prepararlo de nuevo
+                    if (exoPlayer.mediaItemCount > 0 && exoPlayer.getMediaItemAt(0).mediaId == albumMediaItems[0].mediaId) {
+                        exoPlayer.seekTo(selectedItemIndex, 0)
+                    } else {
+                        // Prepara el reproductor con la lista de reproducción del álbum y el MediaItem seleccionado
+                        exoPlayer.setMediaItems(albumMediaItems)
+                        exoPlayer.prepare()
+                        exoPlayer.seekTo(selectedItemIndex, 0)
+                    }
                     exoPlayer.playWhenReady = true
                 }
             }
-        }
-    }
+        }}
     override fun onSesionUpdated() {
         // Reload musicSource and BrowseTree
         serviceScope.launch {

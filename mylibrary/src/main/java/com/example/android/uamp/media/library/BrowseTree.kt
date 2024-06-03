@@ -95,7 +95,21 @@ class BrowseTree(
             setMediaId(UAMP_RECOMMENDED_ROOT)
             setMediaMetadata(recommendedCategory)
         }.build()
-
+        val gradoAsignaturaMetadata = MediaMetadata.Builder().apply {
+            setTitle(context.getString(R.string.grados_title))
+            setArtworkUri(
+                Uri.parse(
+                    RESOURCE_ROOT_URI +
+                            context.resources.getResourceEntryName(R.drawable.ic_album)
+                )
+            )
+            setIsPlayable(false)
+            setFolderType(MediaMetadata.FOLDER_TYPE_GENRES)
+        }.build()
+        rootList += MediaItem.Builder().apply {
+            setMediaId(GRADO_ASIGNATURA_ROOT)
+            setMediaMetadata(gradoAsignaturaMetadata)
+        }.build()
         val albumsMetadata = MediaMetadata.Builder().apply {
             setTitle(context.getString(R.string.albums_title))
             setArtworkUri(
@@ -111,21 +125,20 @@ class BrowseTree(
             setMediaId(UAMP_ALBUMS_ROOT)
             setMediaMetadata(albumsMetadata)
         }.build()
-
-        val gradoAsignaturaMetadata = MediaMetadata.Builder().apply {
-            setTitle(context.getString(R.string.grados_title))
+        val recentTracksMetadata = MediaMetadata.Builder().apply {
+            setTitle(context.getString(R.string.recent_tracks_title))
             setArtworkUri(
                 Uri.parse(
                     RESOURCE_ROOT_URI +
                             context.resources.getResourceEntryName(R.drawable.ic_album)
                 )
             )
+            setFolderType(MediaMetadata.FOLDER_TYPE_MIXED)
             setIsPlayable(false)
-            setFolderType(MediaMetadata.FOLDER_TYPE_GENRES)
         }.build()
         rootList += MediaItem.Builder().apply {
-            setMediaId(GRADO_ASIGNATURA_ROOT)
-            setMediaMetadata(gradoAsignaturaMetadata)
+            setMediaId(UAMP_RECENT_TRACKS_ROOT)
+            setMediaMetadata(recentTracksMetadata)
         }.build()
         mediaIdToChildren[UAMP_BROWSABLE_ROOT] = rootList
 
@@ -230,6 +243,7 @@ class BrowseTree(
             }.build()
             albumsRootList += albumMediaItem // Agrego el álbum a la lista de álbumes
             mediaIdToChildren[UAMP_ALBUMS_ROOT] = albumsRootList // Actualizo el mapa con la lista de álbumes bajo el root de álbumes
+
         }
 
         // Construir la jerarquía de Pistas bajo el Álbum en la jerarquía del root de Álbumes
@@ -246,6 +260,10 @@ class BrowseTree(
             tracksListInAlbumsRoot += trackMediaItemInAlbumsRoot // Agrego la pista a la lista de pistas
             mediaIdToChildren[albumMediaId] = tracksListInAlbumsRoot // Actualizo el mapa con la lista de pistas bajo el álbum
         }
+        // Add each track to the 'Recent Tracks' category
+        val recentTracksList = mediaIdToChildren[UAMP_RECENT_TRACKS_ROOT] ?: mutableListOf()
+        recentTracksList += mediaItem
+        mediaIdToChildren[UAMP_RECENT_TRACKS_ROOT] = recentTracksList
     }
 
 
@@ -281,6 +299,21 @@ class BrowseTree(
             setMediaId(UAMP_RECOMMENDED_ROOT)
             setMediaMetadata(recommendedCategory)
         }.build()
+        val gradoAsignaturaMetadata = MediaMetadata.Builder().apply {
+            setTitle(context.getString(R.string.grados_title))
+            setArtworkUri(
+                Uri.parse(
+                    RESOURCE_ROOT_URI +
+                            context.resources.getResourceEntryName(R.drawable.ic_album)
+                )
+            )
+            setIsPlayable(false)
+            setFolderType(MediaMetadata.FOLDER_TYPE_GENRES)
+        }.build()
+        rootList += MediaItem.Builder().apply {
+            setMediaId(GRADO_ASIGNATURA_ROOT)
+            setMediaMetadata(gradoAsignaturaMetadata)
+        }.build()
 
         val albumsMetadata = MediaMetadata.Builder().apply {
             setTitle(context.getString(R.string.albums_title))
@@ -298,20 +331,21 @@ class BrowseTree(
             setMediaMetadata(albumsMetadata)
         }.build()
 
-        val gradoAsignaturaMetadata = MediaMetadata.Builder().apply {
-            setTitle(context.getString(R.string.grados_title))
+
+        val recentTracksMetadata = MediaMetadata.Builder().apply {
+            setTitle(context.getString(R.string.recent_tracks_title))
             setArtworkUri(
                 Uri.parse(
                     RESOURCE_ROOT_URI +
                             context.resources.getResourceEntryName(R.drawable.ic_album)
                 )
             )
+            setFolderType(MediaMetadata.FOLDER_TYPE_MIXED)
             setIsPlayable(false)
-            setFolderType(MediaMetadata.FOLDER_TYPE_GENRES)
         }.build()
         rootList += MediaItem.Builder().apply {
-            setMediaId(GRADO_ASIGNATURA_ROOT)
-            setMediaMetadata(gradoAsignaturaMetadata)
+            setMediaId(UAMP_RECENT_TRACKS_ROOT)
+            setMediaMetadata(recentTracksMetadata)
         }.build()
         mediaIdToChildren[UAMP_BROWSABLE_ROOT] = rootList
 
@@ -347,6 +381,7 @@ const val UAMP_RECOMMENDED_ROOT = "__RECOMMENDED__"
 const val UAMP_ALBUMS_ROOT = "__ALBUMS__"
 const val UAMP_RECENT_ROOT = "__RECENT__"
 const val GRADO_ASIGNATURA_ROOT = "__GRADO__"
+const val UAMP_RECENT_TRACKS_ROOT = "__RECENT_TRACKS__"
 
 const val MEDIA_SEARCH_SUPPORTED = "android.media.browse.SEARCH_SUPPORTED"
 

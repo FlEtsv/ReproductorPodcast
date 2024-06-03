@@ -44,4 +44,5 @@
     <string name="recommended_title">Recomendados</string>
     <string name="albums_title">Asignaturas</string>
     <string name="grados_title">Grados</string>
+    <string name="recent_tracks_title">Recientes</string>
 </resources>
