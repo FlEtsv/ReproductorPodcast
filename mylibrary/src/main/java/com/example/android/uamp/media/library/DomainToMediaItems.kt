@@ -1,6 +1,5 @@
 package com.example.android.uamp.media.library
 
-import android.media.MediaDescription
 import android.net.Uri
 import android.os.Bundle
 import androidx.annotation.OptIn
@@ -63,11 +62,12 @@ private fun sesionToMediaItems(sesion: Sesion): List<MediaItem> {
             val asignatura = sesion.asignaturas.find { it.asignaturaId.id == asignaturaId.id }
             val totalTemas: Int? = asignatura?.temas?.size
             asignatura?.temas?.forEach { tema ->
-                val temaImageUri = Uri.parse(asignatura.icoAsignatura)
+                val temaImageUri = Uri.parse(tema.imagenUrl)
                 val imageUri = AlbumArtContentProvider.mapUri(temaImageUri)
                 val extras = Bundle()
                 extras.putString(DomainMediaSource.ORIGINAL_ARTWORK_URI_KEY, tema.imagenUrl)
                 extras.putString("artworkGrado", grado.icoGrado)
+                extras.putString("artworkAsignatura", asignatura.icoAsignatura)
                 extras.putInt("Completion State", if (tema.terminado) TEMA_COMPLETADO else TEMA_NO_COMPLETADO)
                 val mediaMetadata = MediaMetadata.Builder()
                     .setTitle(tema.nombreTema)
