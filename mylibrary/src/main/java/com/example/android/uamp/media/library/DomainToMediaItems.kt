@@ -50,6 +50,11 @@ internal class DomainMediaSource(private val source: Sesion): AbstractMusicSourc
 
     fun getMediaItems(): List<MediaItem> = mediaItems
 }
+
+private const val TEMA_COMPLETADO = 1
+
+const val TEMA_NO_COMPLETADO = 0
+
 private fun sesionToMediaItems(sesion: Sesion): List<MediaItem> {
     val mediaItems = mutableListOf<MediaItem>()
 
@@ -58,11 +63,12 @@ private fun sesionToMediaItems(sesion: Sesion): List<MediaItem> {
             val asignatura = sesion.asignaturas.find { it.asignaturaId.id == asignaturaId.id }
             val totalTemas: Int? = asignatura?.temas?.size
             asignatura?.temas?.forEach { tema ->
-                val temaImageUri = Uri.parse(tema.imagenUrl)
+                val temaImageUri = Uri.parse(asignatura.icoAsignatura)
                 val imageUri = AlbumArtContentProvider.mapUri(temaImageUri)
                 val extras = Bundle()
                 extras.putString(DomainMediaSource.ORIGINAL_ARTWORK_URI_KEY, tema.imagenUrl)
-                //extras.putInt("Completion State", if (tema.terminado) 1 else 0) //TODO: chek de esto
+                extras.putString("artworkGrado", grado.icoGrado)
+                extras.putInt("Completion State", if (tema.terminado) TEMA_COMPLETADO else TEMA_NO_COMPLETADO)
                 val mediaMetadata = MediaMetadata.Builder()
                     .setTitle(tema.nombreTema)
                     .setDisplayTitle(tema.nombreTema)
@@ -70,7 +76,6 @@ private fun sesionToMediaItems(sesion: Sesion): List<MediaItem> {
                     .setAlbumTitle(asignatura.nombreAsignatura)
                     .setGenre(grado.nombreModulo)
                     .setDescription(tema.descripcionTema) // Opcional, dependiendo de los detalles que quieras incluir
-                    //.setArtworkUri(temaImageUri)
                     .setArtworkUri(imageUri)
                     .setTrackNumber(tema.trackNumber)
                     .setTotalTrackCount(totalTemas)

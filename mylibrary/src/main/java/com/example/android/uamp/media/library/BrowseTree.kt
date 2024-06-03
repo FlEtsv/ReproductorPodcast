@@ -147,7 +147,8 @@ class BrowseTree(
 
             Log.d("BrowseTree", "loading catalogue for " + mediaItem.mediaId)
             // Add the first track of each album to the 'Recommended' category
-            if (mediaItem.mediaMetadata.trackNumber == 1) {
+            if (mediaItem.mediaMetadata.extras?.getInt("Completion State") == TEMA_NO_COMPLETADO &&
+                (mediaIdToChildren[UAMP_RECOMMENDED_ROOT]?.none { it.mediaMetadata.albumTitle == mediaItem.mediaMetadata.albumTitle } ?: true)) {
                 val recommendedChildren = mediaIdToChildren[UAMP_RECOMMENDED_ROOT]
                     ?: mutableListOf()
                 recommendedChildren += mediaItem
@@ -178,7 +179,7 @@ class BrowseTree(
                 setFolderType(MediaMetadata.FOLDER_TYPE_GENRES) // Indico que es una carpeta de géneros
                 setIsPlayable(false) // Indico que no es reproducible
                 setArtworkUri(
-                    mediaItem.mediaMetadata.artworkUri // Establezco la imagen del género (misma que la de los álbumes)
+                    AlbumArtContentProvider.mapUri(Uri.parse(mediaItem.mediaMetadata.extras?.getString("artworkGrado") ?: mediaItem.mediaMetadata.artworkUri.toString())) // Establezco la imagen del género (misma que la de los álbumes)
                 )
             }.build()
             val genreMediaItem = MediaItem.Builder().apply {
@@ -354,7 +355,8 @@ class BrowseTree(
 
             Log.d("BrowseTree", "loading catalogue for " + mediaItem.mediaId)
             // Add the first track of each album to the 'Recommended' category
-            if (mediaItem.mediaMetadata.trackNumber == 1) {
+            if (mediaItem.mediaMetadata.extras?.getInt("Completion State") == TEMA_NO_COMPLETADO &&
+                (mediaIdToChildren[UAMP_RECOMMENDED_ROOT]?.none { it.mediaMetadata.albumTitle == mediaItem.mediaMetadata.albumTitle } ?: true)) {
                 val recommendedChildren = mediaIdToChildren[UAMP_RECOMMENDED_ROOT]
                     ?: mutableListOf()
                 recommendedChildren += mediaItem
