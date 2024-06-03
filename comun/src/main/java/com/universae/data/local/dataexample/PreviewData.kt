@@ -11,23 +11,22 @@ import com.universae.reproductor.domain.entities.tema.TemaId
 import kotlin.time.DurationUnit
 import kotlin.time.toDuration
 
-val urlAudio = "https://file-examples.com/storage/fe4e1227086659fa1a24064/2017/11/file_example_MP3_5MG.mp3"
-val urlImagen = "https://estaticos-cdn.prensaiberica.es/epi/public/file/2023/0804/12/universae-f534810.png"
+val urlAudio = "https://drive.google.com/uc?export=download&id=12j5NkdFRbmQYmZK1xbIQeU8oGbsgc4s8"
 
-val comunicacionYAtencionCliente: String = "https://cnt-02.content-eu.drive.amazonaws.com/cdproxy/templink/noR8UdvHxnWOd2dVJaa46WtEqJZi0_ivyB-zOZG6to0eJxFPc?viewBox=700"
-val GestionDocumentacionJuridicaEmpresarial: String = "https://cnt-02.content-eu.drive.amazonaws.com/cdproxy/templink/XNnPowLjIgz7rS2vJRbUukD_ztENuqWJeSxqFmQB63EeJxFPc?viewBox=700"
-val OfimáticaProcesoInformación: String = "https://cnt-02.content-eu.drive.amazonaws.com/cdproxy/templink/UA6hWiRLUBFFwzkE-Dv9ALvxBM3Kavfmgy4u8L2BPk8eJxFPc?viewBox=700"
-val GestionEconFinEmpresa: String = "https://cnt-02.content-eu.drive.amazonaws.com/cdproxy/templink/b9DeJojnHNFdflBo1hCfKF7TRh9Fm-qwBx1EOneAV7IeJxFPc?viewBox=700"
-val LogAlmacenamiento: String = "https://cnt-02.content-eu.drive.amazonaws.com/cdproxy/templink/g39vqYX_vDlPcgVUqRVbKMctErq_JO3uYZOZNFRRxNEeJxFPc?viewBox=700"
-val GestAdministrativaComercioInternacional: String = "https://cnt-02.content-eu.drive.amazonaws.com/cdproxy/templink/E_rGw2L1Mm9kdIIWoyXPo4zUZUd9ZS68-mtdx0UpxKkeJxFPc?viewBox=700"
-val ProgMultiDispoMoviles: String = "https://cnt-02.content-eu.drive.amazonaws.com/cdproxy/templink/bjkk4-9NbRv-a9WpmyYOOt6c9miYOiyYbjuZbmAcHI4eJxFPc?viewBox=700"
-val ProgServiciosProcesos: String = "https://thumbnails-photos.amazon.es/v1/thumbnail/uSm649V0TAiY1Q5tHZZsVA?viewBox=301%2C301&ownerId=A2EPZBGFWEH80K"
-val DesarrolloInterfaces: String = "https://cnt-02.content-eu.drive.amazonaws.com/cdproxy/templink/hnBXOEb3xY856kBUKRjl2swD9KC4k9DmkWbgeNAZj-UeJxFPc?viewBox=700"
-val DispoVentaProductos: String = "https://cnt-02.content-eu.drive.amazonaws.com/cdproxy/templink/7tNdAd3PCXuspknfsB11--0QEhDn0x9glax4FYBWdrceJxFPc?viewBox=700"
-val DispProdFarmaceuticos: String = "https://cnt-02.content-eu.drive.amazonaws.com/cdproxy/templink/toe59q2EKfwJ2OYqqbUMFnGviWwTFfdZkniknkxGLS0eJxFPc?viewBox=700"
-val Anatomofisiologia: String = "https://cnt-02.content-eu.drive.amazonaws.com/cdproxy/templink/I8aanJhn46L5sl2bDdqfrGRlkeHdql4uFsY3XJpPCv0eJxFPc?viewBox=700"
-val EmpresaIniciativaEmprendedora: String = "https://cnt-02.content-eu.drive.amazonaws.com/cdproxy/templink/qbk_SH9AIUAj6d70kj_YjHmZMkxqpg8eQZt2sC30-DweJxFPc?viewBox=301%2C301"
-val FOL:String = "https://cnt-02.content-eu.drive.amazonaws.com/cdproxy/templink/FNoFf2MN7ZcfE8TeBIgTLzl35atyB9-PdqE1mk-fjOoeJxFPc?viewBox=700"
+val comunicacionYAtencionCliente: String = "https://drive.google.com/uc?export=download&id=1mOjxI4Ra2tifnO_UQasQwpizv0Bfsv4k"
+val GestionDocumentacionJuridicaEmpresarial: String = "https://drive.google.com/uc?export=download&id=1Ni9H8Fgqm8pD1CSa-TtCchFd7ZFRU4Fv"
+val OfimaticaProcesoInformacion: String = "https://drive.google.com/uc?export=download&id=1hit5Bt2DbAYrgllasDwn82xTL5F8rD3o"
+val GestionEconFinEmpresa: String = "https://drive.google.com/uc?export=download&id=1-EdJarOIXT3iWPM3DmNmBcOywStMstj1"
+val LogAlmacenamiento: String = "https://drive.google.com/uc?export=download&id=1EMhvAS9zuLf70zYqumqpt-NP5m3AuMml"
+val GestAdministrativaComercioInternacional: String = "https://drive.google.com/uc?export=download&id=16XQGixUuZOrUDXJ8L0da3U_dTr0mlbDs"
+val ProgMultiDispoMoviles: String = "https://drive.google.com/uc?export=download&id=12Gq9C7ZBnSlgOX3KNKuQRX7tzWj-MR4U"
+val ProgServiciosProcesos: String = "https://drive.google.com/uc?export=download&id=1uN55RvDvEE0WOew84_0JwAtE69y9ndG6"
+val DesarrolloInterfaces: String = "https://drive.google.com/uc?export=download&id=16nhQAAkDfAxspP2idgqjTPhcVT3REFAy"
+val DispoVentaProductos: String = "https://drive.google.com/uc?export=download&id=1utuGJbk9OWDO5F0b7hdDXOeRZ-Q8Lvg2"
+val DispProdFarmaceuticos: String = "https://drive.google.com/uc?export=download&id=1Rmu9Ui7oZtLuSzKGSzn-Te9OihTxOw4R"
+val Anatomofisiologia: String = "https://drive.google.com/uc?export=download&id=1tFYyquBJp108ypOY-ETMzVWkssSLzkRh"
+val EmpresaIniciativaEmprendedora: String = "https://drive.google.com/uc?export=download&id=1djwzW1gipFG1hEyfb_o9K6qVssunzNnc"
+val FOL:String = "https://drive.google.com/uc?export=download&id=1PuMVfH2gL_kA4uirfaiIi8iBvMV-4Dle"
 
 val PreviewTemas = listOf(
     Tema(
@@ -82,7 +81,7 @@ val PreviewTemas = listOf(
         descripcionTema = "descripcion6",
         duracionAudio = 170.toDuration(DurationUnit.SECONDS),
         audioUrl = urlAudio,
-        imagenUrl = OfimáticaProcesoInformación,
+        imagenUrl = OfimaticaProcesoInformacion,
         trackNumber = 1
     ),
     Tema(
@@ -91,7 +90,7 @@ val PreviewTemas = listOf(
         descripcionTema = "descripcion7",
         duracionAudio = 180.toDuration(DurationUnit.SECONDS),
         audioUrl = urlAudio,
-        imagenUrl = OfimáticaProcesoInformación,
+        imagenUrl = OfimaticaProcesoInformacion,
         trackNumber = 2
     ),
     Tema(
@@ -100,7 +99,7 @@ val PreviewTemas = listOf(
         descripcionTema = "descripcion8",
         duracionAudio = 190.toDuration(DurationUnit.SECONDS),
         audioUrl = urlAudio,
-        imagenUrl = OfimáticaProcesoInformación,
+        imagenUrl = OfimaticaProcesoInformacion,
         trackNumber = 3
     ),
     Tema(
@@ -304,7 +303,7 @@ val PreviewTemasFOL = listOf(
 val PreviewAsignaturas = listOf(
     Asignatura(AsignaturaId(1), "Comunicacion y Atencion al Cliente", PreviewTemas.filter{it.temaId.id <= 3}, comunicacionYAtencionCliente),
     Asignatura(AsignaturaId(2), "Gestion de la Documentacion Juridica y Empresarial", PreviewTemas.filter{it.temaId.id in 4..5}, GestionDocumentacionJuridicaEmpresarial),
-    Asignatura(AsignaturaId(3), "Ofimática y Proceso de Información", PreviewTemas.filter{it.temaId.id in 6..8}, OfimáticaProcesoInformación),
+    Asignatura(AsignaturaId(3), "Ofimática y Proceso de Información", PreviewTemas.filter{it.temaId.id in 6..8}, OfimaticaProcesoInformacion),
     Asignatura(AsignaturaId(4), "Gestión Económica y Financiera de la Empresa", PreviewTemas.filter{it.temaId.id in 9..10}, GestionEconFinEmpresa),
     Asignatura(AsignaturaId(5), "Logística de Almacenamiento", PreviewTemas.filter{it.temaId.id in 11..11}, LogAlmacenamiento),
     Asignatura(AsignaturaId(6), "Gestión Administrativa del comercio internacional", PreviewTemas.filter{it.temaId.id in 12..12}, GestAdministrativaComercioInternacional),
@@ -319,10 +318,10 @@ val PreviewAsignaturas = listOf(
 )
 
 val PreviewGrados = listOf(
-    Grado(GradoId(1), "Administracion Y Finanzas", PreviewAsignaturas.map { it.asignaturaId }.filter { it.id in 1..3 || it.id == 98 || it.id == 99 }, "https://cnt-02.content-eu.drive.amazonaws.com/cdproxy/templink/gS8SI_8c4oMAyEkXJh-iIKF5m4BbhF0Ll4LIE37ykHweJxFPc?viewBox=902%2C927"),
-    Grado(GradoId(2), "Comercio Internacional", PreviewAsignaturas.map { it.asignaturaId }.filter { it.id in 4..6 || it.id == 98 || it.id == 99}, "https://cnt-02.content-eu.drive.amazonaws.com/cdproxy/templink/rpWkN5XhC9W5GHifExUOtJXd4xm13vi7kr2gwczdalseJxFPc?viewBox=902%2C927"),
-    Grado(GradoId(3), "Desarrollo De Aplicaciones Multiplataforma", PreviewAsignaturas.map { it.asignaturaId }.filter { it.id in 7..9 || it.id == 98}, "https://cnt-02.content-eu.drive.amazonaws.com/cdproxy/templink/CxjcokABkBsOr2OE266QiBkvTorqUaBBWmFFvuxxyK4eJxFPc?viewBox=902%2C927"),
-    Grado(GradoId(4), "Farmacia Y Parafarmacia", PreviewAsignaturas.map { it.asignaturaId }.filter { it.id in 10..12 || it.id == 98 || it.id == 99}, "https://cnt-02.content-eu.drive.amazonaws.com/cdproxy/templink/cfyPfb8SsXqKkxRvJmWgCoh6TG3QZTGwhyzfmMJ3TJEeJxFPc?viewBox=902%2C927"),
+    Grado(GradoId(1), "Administracion Y Finanzas", PreviewAsignaturas.map { it.asignaturaId }.filter { it.id in 1..3 || it.id == 98 || it.id == 99 }, "https://drive.google.com/uc?export=download&id=1JMMom6-nVaFCRO5QTu5wrGXKtumt8KSZ"),
+    Grado(GradoId(2), "Comercio Internacional", PreviewAsignaturas.map { it.asignaturaId }.filter { it.id in 4..6 || it.id == 98 || it.id == 99}, "https://drive.google.com/uc?export=download&id=1AUviEHgDJSBPN0BYHSfnZQQDYQu4muR0"),
+    Grado(GradoId(3), "Desarrollo De Aplicaciones Multiplataforma", PreviewAsignaturas.map { it.asignaturaId }.filter { it.id in 7..9 || it.id == 98}, "https://drive.google.com/uc?export=download&id=1AdE_vnHVVd-1DTMlHMog9TG83zzR_uCY"),
+    Grado(GradoId(4), "Farmacia Y Parafarmacia", PreviewAsignaturas.map { it.asignaturaId }.filter { it.id in 10..12 || it.id == 98 || it.id == 99}, "https://drive.google.com/uc?export=download&id=1XyahEA49jnY-IsMpj67ng1jOVG99E-7N"),
 )
 
 val PreviewAlumno = listOf(
