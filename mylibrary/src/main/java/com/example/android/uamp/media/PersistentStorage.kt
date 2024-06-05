@@ -44,9 +44,11 @@ internal class PersistentStorage private constructor(val context: Context) {
             instance ?: synchronized(this) {
                 instance ?: PersistentStorage(context).also { instance = it }
             }
+        private const val PREFS_NAME = "com.example.app.PREFS"
+        private const val RECENT_TRACKS_KEY = "RECENT_TRACKS"
     }
 
-    suspend fun saveRecentSong(mediaItem: MediaItem, position: Long) {
+    suspend fun saveRecentSong(mediaItem:MediaItem, position: Long) {
 
         withContext(Dispatchers.IO) {
             /**
@@ -90,8 +92,6 @@ internal class PersistentStorage private constructor(val context: Context) {
         }
     }
 }
-
-const val NOTIFICATION_LARGE_ICON_SIZE = 144 // px
 
 private const val PREFERENCES_NAME = "uamp"
 private const val RECENT_SONG_MEDIA_ID_KEY = "recent_song_media_id"

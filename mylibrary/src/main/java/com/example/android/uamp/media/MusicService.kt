@@ -20,7 +20,6 @@ import android.app.PendingIntent
 import android.app.PendingIntent.FLAG_IMMUTABLE
 import android.app.PendingIntent.FLAG_UPDATE_CURRENT
 import android.content.Intent
-import android.net.Uri
 import android.os.Build
 import android.os.Bundle
 import android.os.ConditionVariable
@@ -79,6 +78,8 @@ import kotlin.math.min
  * commands are passed to a [CastPlayer].
  */
 @OptIn(UnstableApi::class)
+
+
 open class MusicService : MediaLibraryService(), SesionObserver {
 
     private val serviceJob = SupervisorJob()
@@ -95,7 +96,7 @@ open class MusicService : MediaLibraryService(), SesionObserver {
      * This must be `by lazy` because the [musicSource] won't initially be ready. Use
      * [callWhenMusicSourceReady] to be sure it is safely ready for usage.
      */
-    private val browseTree: BrowseTree by lazy {
+    val browseTree: BrowseTree by lazy {
         BrowseTree(applicationContext, musicSource)
     }
 
@@ -125,8 +126,6 @@ open class MusicService : MediaLibraryService(), SesionObserver {
         MoreExecutors.listeningDecorator(Executors.newSingleThreadExecutor())
     }
 
-    private val remoteJsonSource: Uri =
-        Uri.parse("https://storage.googleapis.com/uamp/catalog.json")
 
     private val uAmpAudioAttributes = AudioAttributes.Builder()
         .setContentType(C.AUDIO_CONTENT_TYPE_MUSIC)
@@ -171,7 +170,7 @@ open class MusicService : MediaLibraryService(), SesionObserver {
         }
     }
 
-    private val replaceableForwardingPlayer: ReplaceableForwardingPlayer by lazy {
+    val replaceableForwardingPlayer: ReplaceableForwardingPlayer by lazy {
         ReplaceableForwardingPlayer(exoPlayer)
     }
 
@@ -205,7 +204,6 @@ open class MusicService : MediaLibraryService(), SesionObserver {
         }
 
         try {
-            //musicSource = JsonSource(source = remoteJsonSource)
             musicSource = DomainMediaSource(Sesion)
             serviceScope.launch {
                 musicSource.load()
@@ -217,7 +215,6 @@ open class MusicService : MediaLibraryService(), SesionObserver {
         packageValidator = PackageValidator(this, R.xml.allowed_media_browser_callers)
         storage = PersistentStorage.getInstance(applicationContext)
 
-        // Register as an observer of Sesion
         Sesion.addObserver(this)
     }
 
@@ -270,14 +267,26 @@ open class MusicService : MediaLibraryService(), SesionObserver {
         musicSource.whenReady {
             if (it) {
                 val playableMediaItem = browseTree.getMediaItemByMediaId(mediaItem.mediaId)
-                val startPositionMs =
-                    mediaItem.mediaMetadata.extras?.getLong(
-                        MEDIA_DESCRIPTION_EXTRAS_START_PLAYBACK_POSITION_MS
-                    ) ?: 0
-                playableMediaItem?.let {
-                    exoPlayer.setMediaItem(playableMediaItem)
-                    exoPlayer.seekTo(startPositionMs)
+                val albumMediaItems: List<MediaItem> =
+                    browseTree.getMediaItemsInAlbum(albumTitle = playableMediaItem?.mediaMetadata?.albumTitle.toString())
+
+                val selectedItemIndex: Int = albumMediaItems.indexOfFirst {
+                    it.mediaId == (playableMediaItem?.mediaId ?: -1)
+                }
+
+                if (selectedItemIndex != -1) {
+                    exoPlayer.setMediaItems(albumMediaItems)
                     exoPlayer.prepare()
+                    exoPlayer.seekTo(selectedItemIndex, C.TIME_UNSET)
+                    exoPlayer.playWhenReady = true
+
+                    // Actualizar la cola de reproducción y la metadata del elemento de medios actual
+                    exoPlayer.setMediaItems(albumMediaItems.mapIndexed { index, item ->
+                        item.buildUpon().setMediaId(index.toString()).build()
+                    })
+                    if (playableMediaItem != null) {
+                        exoPlayer.setMediaItem(playableMediaItem)
+                    }
                 }
             }
         }
@@ -316,8 +325,6 @@ open class MusicService : MediaLibraryService(), SesionObserver {
         override fun onGetLibraryRoot(
             session: MediaLibrarySession, browser: MediaSession.ControllerInfo, params: LibraryParams?
         ): ListenableFuture<LibraryResult<MediaItem>> {
-            // By default, all known clients are permitted to search, but only tell unknown callers
-            // about search if permitted by the [BrowseTree].
             val isKnownCaller = packageValidator.isKnownCaller(browser.packageName, browser.uid)
             val rootExtras = Bundle().apply {
                 putBoolean(
@@ -369,7 +376,6 @@ open class MusicService : MediaLibraryService(), SesionObserver {
                 )
             }
         }
-
         override fun onGetItem(
             session: MediaLibrarySession,
             browser: MediaSession.ControllerInfo,
@@ -394,7 +400,6 @@ open class MusicService : MediaLibraryService(), SesionObserver {
                             LibraryParams.Builder().build())
                     }
                     else -> {
-                        // Handle unknown mediaId gracefully
                         val mediaItem = browseTree.getMediaItemByMediaId(mediaId)
                         if (mediaItem != null) {
                             LibraryResult.ofItem(mediaItem, LibraryParams.Builder().build())
@@ -406,7 +411,6 @@ open class MusicService : MediaLibraryService(), SesionObserver {
                 }
             }
         }
-
 
         override fun onSearch(
             session: MediaLibrarySession,
@@ -477,21 +481,54 @@ open class MusicService : MediaLibraryService(), SesionObserver {
 
     /** Listen for events from ExoPlayer. */
     private inner class PlayerEventListener : Player.Listener {
+        private var currentMediaItem: MediaItem? = null
+        private var playbackPosition: Long = 0
+
         override fun onEvents(player: Player, events: Player.Events) {
             if (events.contains(EVENT_POSITION_DISCONTINUITY)
                 || events.contains(EVENT_MEDIA_ITEM_TRANSITION)
-                || events.contains(EVENT_PLAY_WHEN_READY_CHANGED)) {
+                || events.contains(EVENT_PLAY_WHEN_READY_CHANGED)
+            ) {
+
+                currentMediaItem?.let {
+                    serviceScope.launch {
+                        storage.saveRecentSong(it, player.currentPosition)
+                        browseTree.updateRecentTrack(it)
+                    }
+                }
+
                 currentMediaItemIndex = player.currentMediaItemIndex
-                saveRecentSongToStorage()
+                currentMediaItem = player.currentMediaItem
+            }
+
+            if (events.contains(Player.EVENT_PLAYBACK_STATE_CHANGED)) {
+                if (player.playbackState == Player.STATE_ENDED) {
+                    currentMediaItem?.let {
+                        serviceScope.launch {
+                            storage.saveRecentSong(it, player.currentPosition)
+                            browseTree.updateRecentTrack(it)
+                        }
+                    }
+                }
+            }
+
+            if (events.contains(EVENT_MEDIA_ITEM_TRANSITION)) {
+                currentMediaItem?.let {
+                    serviceScope.launch {
+                        storage.saveRecentSong(it, player.currentPosition)
+                        browseTree.updateRecentTrack(it)
+                    }
+                }
             }
         }
 
         override fun onPlayerError(error: PlaybackException) {
-            var message = R.string.generic_error;
-            Log.e(TAG, "Player error: " + error.errorCodeName + " (" + error.errorCode + ")", error);
+            var message = R.string.generic_error
+            Log.e(TAG, "Player error: " + error.errorCodeName + " (" + error.errorCode + ")", error)
             if (error.errorCode == PlaybackException.ERROR_CODE_IO_BAD_HTTP_STATUS
-                || error.errorCode == PlaybackException.ERROR_CODE_IO_FILE_NOT_FOUND) {
-                message = R.string.error_media_not_found;
+                || error.errorCode == PlaybackException.ERROR_CODE_IO_FILE_NOT_FOUND
+            ) {
+                message = R.string.error_media_not_found
             }
             Toast.makeText(
                 applicationContext,
@@ -503,33 +540,41 @@ open class MusicService : MediaLibraryService(), SesionObserver {
         override fun onPlayWhenReadyChanged(playWhenReady: Boolean, reason: Int) {
             super.onPlayWhenReadyChanged(playWhenReady, reason)
             if (playWhenReady) {
-                // Encuentra el MediaItem seleccionado
                 val selectedMediaItem: MediaItem? = replaceableForwardingPlayer.currentMediaItem
-
-                // Encuentra todos los MediaItems en el mismo álbum
-                val albumMediaItems: List<MediaItem> =
-                    browseTree.getMediaItemsInAlbum(albumTitle = selectedMediaItem?.mediaMetadata?.albumTitle.toString())
+                val albumMediaItems: List<MediaItem> = browseTree.getMediaItemsInAlbum(albumTitle = selectedMediaItem?.mediaMetadata?.albumTitle.toString())
 
                 // Busca el índice del MediaItem seleccionado en la lista de reproducción del álbum
                 val selectedItemIndex: Int = albumMediaItems.indexOfFirst {
                     it.mediaId == (selectedMediaItem?.mediaId ?: -1)
                 }
 
-                // Si el MediaItem seleccionado se encuentra en la lista de reproducción del álbum, comienza a reproducirlo
-                if (selectedItemIndex != -1) {
-                    // Si el reproductor ya tiene los MediaItems del álbum, no es necesario prepararlo de nuevo
-                    if (exoPlayer.mediaItemCount > 0 && exoPlayer.getMediaItemAt(0).mediaId == albumMediaItems[0].mediaId) {
-                        exoPlayer.seekTo(selectedItemIndex, 0)
-                    } else {
-                        // Prepara el reproductor con la lista de reproducción del álbum y el MediaItem seleccionado
-                        exoPlayer.setMediaItems(albumMediaItems)
-                        exoPlayer.prepare()
-                        exoPlayer.seekTo(selectedItemIndex, 0)
-                    }
+                if (exoPlayer.contentPosition != 0L && currentMediaItem == selectedMediaItem) { // Si el reproductor ya ha sido utilizado, no está en la posición 0 y el MediaItem no ha cambiado, continua reproduciendo
                     exoPlayer.playWhenReady = true
+                } else {
+                    // Prepara el reproductor con la lista de reproducción del álbum y el MediaItem seleccionado
+                    while (exoPlayer.mediaItemCount != albumMediaItems.size) {
+                        exoPlayer.setMediaItems(albumMediaItems)
+                    }
+                    exoPlayer.prepare()
+
+                    // Si el MediaItem seleccionado se encuentra en la lista de reproducción del álbum, comienza a reproducirlo
+                    if (selectedItemIndex != -1) {
+                        // Si el MediaItem ha cambiado, comienza desde 0, de lo contrario, comienza desde la posición guardada
+                        val position = if (currentMediaItem != selectedMediaItem) 0L else playbackPosition
+                        exoPlayer.seekTo(selectedItemIndex, position)
+                        exoPlayer.playWhenReady = true
+                    }
+                }
+                currentMediaItem = selectedMediaItem
+            } else {
+                playbackPosition = exoPlayer.currentPosition
+                serviceScope.launch {
+                    storage.saveRecentSong(currentMediaItem!!, playbackPosition)
                 }
             }
-        }}
+        }
+    }
+
     override fun onSesionUpdated() {
         // Reload musicSource and BrowseTree
         serviceScope.launch {
