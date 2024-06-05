@@ -79,7 +79,6 @@ import kotlin.math.min
  */
 @OptIn(UnstableApi::class)
 
-
 open class MusicService : MediaLibraryService(), SesionObserver {
 
     private val serviceJob = SupervisorJob()
@@ -126,7 +125,6 @@ open class MusicService : MediaLibraryService(), SesionObserver {
         MoreExecutors.listeningDecorator(Executors.newSingleThreadExecutor())
     }
 
-
     private val uAmpAudioAttributes = AudioAttributes.Builder()
         .setContentType(C.AUDIO_CONTENT_TYPE_MUSIC)
         .setUsage(C.USAGE_MEDIA)
@@ -158,7 +156,7 @@ open class MusicService : MediaLibraryService(), SesionObserver {
                 setSessionAvailabilityListener(UampCastSessionAvailabilityListener())
                 addListener(playerListener)
             }
-        } catch (e : Exception) {
+        } catch (e: Exception) {
             // We wouldn't normally catch the generic `Exception` however
             // calling `CastContext.getSharedInstance` can throw various exceptions, all of which
             // indicate that Cast is unavailable.
@@ -480,43 +478,38 @@ open class MusicService : MediaLibraryService(), SesionObserver {
     }
 
     /** Listen for events from ExoPlayer. */
+    private var lastMediaItem: MediaItem? = null
+
     private inner class PlayerEventListener : Player.Listener {
         private var currentMediaItem: MediaItem? = null
         private var playbackPosition: Long = 0
 
         override fun onEvents(player: Player, events: Player.Events) {
-            if (events.contains(EVENT_POSITION_DISCONTINUITY)
-                || events.contains(EVENT_MEDIA_ITEM_TRANSITION)
-                || events.contains(EVENT_PLAY_WHEN_READY_CHANGED)
-            ) {
+            if (events.contains(EVENT_MEDIA_ITEM_TRANSITION) || events.contains(EVENT_POSITION_DISCONTINUITY) || events.contains(EVENT_PLAY_WHEN_READY_CHANGED)) {
 
-                currentMediaItem?.let {
+                // Guardar el último MediaItem
+                lastMediaItem?.let {
                     serviceScope.launch {
-                        storage.saveRecentSong(it, player.currentPosition)
+                        storage.saveRecentSong(it, playbackPosition)
                         browseTree.updateRecentTrack(it)
                     }
                 }
 
-                currentMediaItemIndex = player.currentMediaItemIndex
+                // Actualizar lastMediaItem a currentMediaItem antes de cambiar a uno nuevo
+                lastMediaItem = currentMediaItem
+
+                // Actualizar currentMediaItem al nuevo MediaItem y almacenar su posición
                 currentMediaItem = player.currentMediaItem
-            }
+                playbackPosition = player.currentPosition
 
-            if (events.contains(Player.EVENT_PLAYBACK_STATE_CHANGED)) {
-                if (player.playbackState == Player.STATE_ENDED) {
-                    currentMediaItem?.let {
-                        serviceScope.launch {
-                            storage.saveRecentSong(it, player.currentPosition)
-                            browseTree.updateRecentTrack(it)
+                if (events.contains(Player.EVENT_PLAYBACK_STATE_CHANGED)) {
+                    if (player.playbackState == Player.STATE_ENDED) {
+                        currentMediaItem?.let {
+                            serviceScope.launch {
+                                storage.clearRecentSong()
+                                browseTree.updateRecentTrack(it)
+                            }
                         }
-                    }
-                }
-            }
-
-            if (events.contains(EVENT_MEDIA_ITEM_TRANSITION)) {
-                currentMediaItem?.let {
-                    serviceScope.launch {
-                        storage.saveRecentSong(it, player.currentPosition)
-                        browseTree.updateRecentTrack(it)
                     }
                 }
             }
@@ -541,31 +534,39 @@ open class MusicService : MediaLibraryService(), SesionObserver {
             super.onPlayWhenReadyChanged(playWhenReady, reason)
             if (playWhenReady) {
                 val selectedMediaItem: MediaItem? = replaceableForwardingPlayer.currentMediaItem
-                val albumMediaItems: List<MediaItem> = browseTree.getMediaItemsInAlbum(albumTitle = selectedMediaItem?.mediaMetadata?.albumTitle.toString())
+                val recentMediaItem = storage.loadRecentSong()
 
-                // Busca el índice del MediaItem seleccionado en la lista de reproducción del álbum
-                val selectedItemIndex: Int = albumMediaItems.indexOfFirst {
-                    it.mediaId == (selectedMediaItem?.mediaId ?: -1)
-                }
-
-                if (exoPlayer.contentPosition != 0L && currentMediaItem == selectedMediaItem) { // Si el reproductor ya ha sido utilizado, no está en la posición 0 y el MediaItem no ha cambiado, continua reproduciendo
+                // Si el MediaItem seleccionado está en recientes, lo carga directamente
+                if (selectedMediaItem == recentMediaItem) {
+                    exoPlayer.setMediaItem(recentMediaItem!!)
+                    exoPlayer.prepare()
                     exoPlayer.playWhenReady = true
                 } else {
-                    // Prepara el reproductor con la lista de reproducción del álbum y el MediaItem seleccionado
-                    while (exoPlayer.mediaItemCount != albumMediaItems.size) {
-                        exoPlayer.setMediaItems(albumMediaItems)
-                    }
-                    exoPlayer.prepare()
+                    val albumMediaItems: List<MediaItem> = browseTree.getMediaItemsInAlbum(albumTitle = selectedMediaItem?.mediaMetadata?.albumTitle.toString())
 
-                    // Si el MediaItem seleccionado se encuentra en la lista de reproducción del álbum, comienza a reproducirlo
-                    if (selectedItemIndex != -1) {
-                        // Si el MediaItem ha cambiado, comienza desde 0, de lo contrario, comienza desde la posición guardada
-                        val position = if (currentMediaItem != selectedMediaItem) 0L else playbackPosition
-                        exoPlayer.seekTo(selectedItemIndex, position)
-                        exoPlayer.playWhenReady = true
+                    // Busca el índice del MediaItem seleccionado en la lista de reproducción del álbum
+                    val selectedItemIndex: Int = albumMediaItems.indexOfFirst {
+                        it.mediaId == (selectedMediaItem?.mediaId ?: -1)
                     }
+
+                    // Prepara el reproductor con la lista de reproducción del álbum y el MediaItem seleccionado
+                    if (exoPlayer.mediaItemCount != albumMediaItems.size) {
+                        exoPlayer.setMediaItems(albumMediaItems)
+                        exoPlayer.prepare()
+                    }
+
+                    // Si el MediaItem ha cambiado, comienza desde 0, de lo contrario, comienza desde la posición guardada
+                    val position = when {
+                        currentMediaItem != selectedMediaItem -> 0L
+                        selectedMediaItem == recentMediaItem && recentMediaItem != null ->
+                            recentMediaItem.mediaMetadata.extras?.getLong(MEDIA_DESCRIPTION_EXTRAS_START_PLAYBACK_POSITION_MS, 0L) ?: 0L
+                        else -> playbackPosition
+                    }
+
+                    exoPlayer.seekTo(selectedItemIndex, position)
+                    exoPlayer.playWhenReady = true
+                    currentMediaItem = selectedMediaItem
                 }
-                currentMediaItem = selectedMediaItem
             } else {
                 playbackPosition = exoPlayer.currentPosition
                 serviceScope.launch {
@@ -573,6 +574,7 @@ open class MusicService : MediaLibraryService(), SesionObserver {
                 }
             }
         }
+
     }
 
     override fun onSesionUpdated() {

@@ -91,6 +91,15 @@ internal class PersistentStorage private constructor(val context: Context) {
             }
         }
     }
+    fun clearRecentSong() {
+        preferences.edit()
+            .remove(RECENT_SONG_MEDIA_ID_KEY)
+            .remove(RECENT_SONG_TITLE_KEY)
+            .remove(RECENT_SONG_SUBTITLE_KEY)
+            .remove(RECENT_SONG_ICON_URI_KEY)
+            .remove(RECENT_SONG_POSITION_KEY)
+            .apply()
+    }
 }
 
 private const val PREFERENCES_NAME = "uamp"
