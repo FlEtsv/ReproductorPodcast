@@ -1,6 +1,5 @@
 package com.android.navegacion.navigation
 
-import HomeView
 import androidx.compose.runtime.Composable
 import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
@@ -10,7 +9,8 @@ import androidx.navigation.navArgument
 import com.android.navegacion.views.DetailView
 import com.android.navegacion.views.Login
 import com.android.navegacion.views.SplashScreen
-import com.universae.navegacion.player.ReproductorPodcast
+import com.universae.navegacion.views.ReproductorPodcast
+import com.universae.navegacion.views.HomeView
 
 @Composable
 fun NavManager() {
@@ -43,14 +43,12 @@ fun NavManager() {
             DetailView(navController, idAsignatura)
         }
         composable(
-            "Podcast/{idTema}/{idAsignatura}", arguments = listOf(
-                navArgument("idTema") { type = NavType.IntType },
-                navArgument("idAsignatura") { type = NavType.IntType }
+            "Podcast/{idTema}", arguments = listOf(
+                navArgument("idTema") { type = NavType.IntType }
             )
         ) {
             val idTema = it.arguments?.getInt("idTema") ?: -1
-            val idAsignatura = it.arguments?.getInt("idAsignatura") ?: -1
-            ReproductorPodcast(navController, idTema, idAsignatura)
+            ReproductorPodcast(navController, idTema)
         }
     }
 }

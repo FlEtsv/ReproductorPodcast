@@ -1,64 +1,61 @@
+package com.universae.navegacion.views
+
 import android.annotation.SuppressLint
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Star
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.shadow
-import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.ColorFilter
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
+import coil.compose.ImagePainter
+import coil.compose.rememberImagePainter
+import com.android.navegacion.R
 import com.android.navegacion.components.*
 import com.universae.domain.entities.asignatura.Asignatura
+import com.universae.navegacion.theme.AzulClaro
+import com.universae.navegacion.theme.AzulOscuro
 import com.universae.reproductor.domain.entities.alumno.Alumno
 import com.universae.reproductor.domain.entities.grado.Grado
-import com.universae.reproductor.domain.entities.grado.GradoId
 import com.universae.reproductor.domain.usecases.AlumnoUseCaseImpl
 import com.universae.reproductor.domain.usecases.AsignaturaUseCasesImpl
 import com.universae.reproductor.domain.usecases.GradoUseCaseImpl
-import com.universae.reproductor.ui.theme.gradientBackground
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.delay
-import kotlinx.coroutines.withContext
+import com.universae.navegacion.theme.gradientBackground
 
+//TODO("implementar click en grado y muestra asignaturas del grado y sugeridos de las asignaturas del grado")
 /**
  * Vista principal de la aplicación, configurada para mostrar una barra superior, un botón flotante y un contenido dinámico.
  * @param navController Controlador de navegación para manejar transiciones de pantalla.
- * @param id Identificador del usuario.
- * @param pass Contraseña del usuario, opcional.
+ * @param alumnoId Identificador del usuario.
  */
 @SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
-@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun HomeView(navController: NavController, alumnoId: Int) {
 
     val alumno: Alumno =
         AlumnoUseCaseImpl.getAlumnoById(alumnoId)!! // Si llegamos a esta view es porque el alumno existe y siempre retorna un alumno
-    val grado: Grado? = GradoUseCaseImpl.getGrado(alumno.gradosId.first())
+    val grados: List<Grado> = GradoUseCaseImpl.getGradosByAlumnoID(alumnoId)
     val nombreReal = alumno.nombreReal
 
-    //val alumno: Alumno = AlumnoUseCaseImpl.gatAlumnoById(alumnoId)!! // Si llegamos a esta view es porque el alumno existe y siempre retorna un alumno
     // TODO("comprobar si hay cola de reproducción")
 
     var hayCola = false
-    // TODO("Obtener listas")
 
-    var listaAsignaturas: List<Asignatura> = mutableListOf()
-
-    for (gradoId: GradoId in alumno.gradosId) {
-        listaAsignaturas += AsignaturaUseCasesImpl.asignaturasNoCompletadas(gradoId)
-    }
-
-    var listadoReal: Set<Asignatura> = listaAsignaturas.sortedBy { it.asignaturaId.id }.toSet()
+    val allAsignaturasAlumno: List<Asignatura> = alumno.gradosId.flatMap { gradoId ->
+        AsignaturaUseCasesImpl.asignaturasNoCompletadas(gradoId)
+    }.sortedBy { it.asignaturaId.id }.distinct()
 
     // Estructura básica con barra superior y botón flotante
     Scaffold(
@@ -81,9 +78,9 @@ fun HomeView(navController: NavController, alumnoId: Int) {
                 item { Spacer(modifier = Modifier.height(20.dp)) }
             } else {
                 item { Spacer(modifier = Modifier.height(10.dp)) }
-                item { TituloIzquierda(texto = "Bienvenido ${nombreReal} nos escanta volver a verte!") }
+                item { TituloIzquierda(texto = "Bienvenido $nombreReal nos escanta volver a verte!") }
                 item { Spacer(modifier = Modifier.height(20.dp)) }
-                item { FilaTituloNoCola(grado) }
+                item { FilaTituloNoCola(grados = grados) }
                 item { Spacer(modifier = Modifier.height(20.dp)) }
             }
 
@@ -91,9 +88,8 @@ fun HomeView(navController: NavController, alumnoId: Int) {
                 TituloMedianoCentralLeft(texto = "Asignaturas...")
             }
 
-
             item { Spacer(modifier = Modifier.height(5.dp)) }
-            item { PodcastsAsignaturasTemas(listadoReal.toList(), navController = navController) }
+            item { PodcastsAsignaturasTemas(allAsignaturasAlumno, navController = navController) }
 
             /*
             funcion para generar las lineas
@@ -107,7 +103,7 @@ fun HomeView(navController: NavController, alumnoId: Int) {
 }
 
 /**
- * Muestra una Card pequeña alineada a la izquierda con texto a su derecha, ambos centrados en el Row.
+ * Muestra una Card pequeña alineada a la izquierda con texto a su derecha, ambos centrados en el Row. TODO: revisar este composable
  */
 @Composable
 fun FilaTituloCola() {
@@ -152,118 +148,149 @@ fun FilaTituloCola() {
  * */
 
 @Composable
-fun FilaTituloNoCola(grado: Grado?) {
-
-    Row(
+fun FilaTituloNoCola(grados: List<Grado?>) {
+    LazyRow(
         modifier = Modifier
             .fillMaxWidth()
             .padding(16.dp),
-        verticalAlignment = Alignment.CenterVertically,
-        horizontalArrangement = Arrangement.Center // Centra los elementos dentro del Row
+        horizontalArrangement = Arrangement.spacedBy(16.dp) // Espaciado entre elementos
     ) {
-// Card pequeña a la izquierda
-        Card(
-            modifier = Modifier
-                .width(100.dp)
-                .height(100.dp)
-                .weight(1f) // Usa weight para permitir que el elemento ocupe un espacio proporcional en el Row
-                .shadow(
-                    8.dp,
-                    shape = RoundedCornerShape(16.dp)
-                ), // Sombra más pronunciada y bordes redondeados
-            shape = RoundedCornerShape(16.dp),
-            elevation = CardDefaults.cardElevation(8.dp)
-        ) {
-            Box(
+        items(grados.size) { index ->
+            val grado = grados[index]
+            GradoCard(grado)
+        }
+    }
+}
+
+@Composable
+fun ImageWithColoredPlaceholder(
+    imageUrl: String,
+    placeholderRes: Int,
+    placeholderColor: Color,
+    modifier: Modifier = Modifier,
+    contentDescription: String? = null,
+    padding: Int = 0
+) {
+    val imagePainter = rememberImagePainter(data = imageUrl)
+
+    Box(modifier = modifier) {
+        if (imagePainter.state is ImagePainter.State.Loading) {
+            val placeholder = painterResource(id = placeholderRes)
+            Image(
+                painter = placeholder,
+                contentDescription = contentDescription,
                 modifier = Modifier
                     .fillMaxSize()
-                    .background(
-                        Brush.verticalGradient(
-                            colors = listOf(
-                                MaterialTheme.colorScheme.primary,
-                                MaterialTheme.colorScheme.primaryContainer
+                    .padding(padding.dp),
+                colorFilter = ColorFilter.tint(placeholderColor)
+            )
+        }
+
+        Image(
+            painter = imagePainter,
+            contentDescription = contentDescription,
+            modifier = Modifier
+                .fillMaxSize()
+                .padding(padding.dp)
+        )
+    }
+}
+
+@Composable
+fun GradoCard(grado: Grado?) {
+    Card(
+        modifier = Modifier
+            .width(340.dp) // Define el ancho aquí
+            .height(100.dp)
+            .background(Color.Transparent),
+        colors = CardColors(Color.Transparent, Color.Transparent, Color.Transparent, Color.Transparent)
+    ) {
+        Row(
+            modifier = Modifier.fillMaxSize(),
+            verticalAlignment = Alignment.CenterVertically,
+            horizontalArrangement = Arrangement.Start // Centra los elementos dentro del Row
+        ) {
+            // Card pequeña a la izquierda
+            Card(
+                modifier = Modifier
+                    .width(100.dp)
+                    .height(100.dp)
+                    .shadow(
+                        8.dp,
+                        shape = RoundedCornerShape(16.dp)
+                    ), // Sombra más pronunciada y bordes redondeados
+                shape = RoundedCornerShape(16.dp),
+                elevation = CardDefaults.cardElevation(8.dp)
+            ) {
+                ImageWithColoredPlaceholder(
+                    imageUrl = grado?.icoGrado ?: "",
+                    placeholderRes = R.mipmap.escudo,
+                    placeholderColor = AzulOscuro,
+                    modifier = Modifier.fillMaxSize().background(color = AzulClaro),
+                    contentDescription = "Icono del Grado"
+                )
+            }
+            Spacer(modifier = Modifier.width(16.dp)) // Espaciador para crear un padding mínimo entre la Card y el texto
+            // Columna para el texto y el progreso a la derecha de la Card
+            Column(
+                //modifier = Modifier.weight(1f), // Usa un peso mayor para la columna
+                verticalArrangement = Arrangement.Center,
+                horizontalAlignment = Alignment.Start // Alinea el texto al inicio (izquierda de su columna)
+            ) {
+                grado?.nombreModulo?.let {
+                    Text(
+                        text = it,
+                        style = TextStyle(
+                            color = Color.White,
+                            fontSize = 24.sp,
+                            fontWeight = FontWeight.Bold,
+                            letterSpacing = 1.sp,
+                            lineHeight = 28.sp
+                        ).merge(MaterialTheme.typography.bodyLarge),
+                        maxLines = 2
+                    )
+                }
+                Spacer(modifier = Modifier.height(8.dp))
+                Row(
+                    verticalAlignment = Alignment.CenterVertically,
+                    horizontalArrangement = Arrangement.SpaceBetween
+                ) {
+                    Column {
+                        Text(
+                            text = "Progreso",
+                            style = MaterialTheme.typography.bodySmall.copy(
+                                color = Color.White,
+                                fontSize = 14.sp
                             )
                         )
-                    ),
-                contentAlignment = Alignment.Center
-            ) {
-                Icon(
-                    imageVector = Icons.Default.Star,
-                    contentDescription = "Decorative Icon",
-                    modifier = Modifier.size(32.dp),
-                    tint = Color.White
-                )
-            }
-        }
-        Spacer(modifier = Modifier.width(16.dp)) // Espaciador para crear un padding mínimo entre la Card y el texto
-// Columna para el texto y el progreso a la derecha de la Card
-        Column(
-            modifier = Modifier.weight(2f), // Usa un peso mayor para la columna
-            verticalArrangement = Arrangement.Center,
-            horizontalAlignment = Alignment.Start // Alinea el texto al inicio (izquierda de su columna)
-        ) {
-            grado?.nombreModulo?.let {
-                Text(
-                    text = it,
-                    style = TextStyle(
-                        color = Color.White,
-                        fontSize = 24.sp,
-                        fontWeight = FontWeight.Bold,
-                        letterSpacing = 1.sp,
-                        lineHeight = 28.sp
-                    ).merge(MaterialTheme.typography.bodyLarge)
-                )
-            }
-            Text(
-                text = "Título: X",
-                style = MaterialTheme.typography.bodyMedium.copy(
-                    color = Color.White,
-                    fontSize = 16.sp
-                )
-            )
-            Spacer(modifier = Modifier.height(8.dp))
-            Row(
-                verticalAlignment = Alignment.CenterVertically,
-                horizontalArrangement = Arrangement.SpaceBetween
-            ) {
-                Column {
-                    Text(
-                        text = "Progreso",
-                        style = MaterialTheme.typography.bodySmall.copy(
-                            color = Color.White,
-                            fontSize = 14.sp
-                        )
-                    )
-                }
-                Spacer(modifier = Modifier.width(8.dp))
-                val progress = remember { mutableStateOf(0.0f) }
-                Box(
-                    contentAlignment = Alignment.Center,
-                    modifier = Modifier.size(48.dp) // Tamaño del CircularProgressIndicator
-                ) {
-// CircularProgressBar
-                    CircularProgressIndicator(
-                        progress = { progress.value },
-                        modifier = Modifier.fillMaxSize(),
-                        color = MaterialTheme.colorScheme.primary,
-                        strokeWidth = 4.dp,
-                    )
-// Texto del porcentaje
-                    Text(
-                        text = "${(progress.value * 100).toInt()}%",
-                        style = MaterialTheme.typography.bodySmall.copy(
-                            color = Color.White,
-                            fontSize = 12.sp
-                        )
-                    )
-                }
-// Manejo adecuado de la corutina dentro de la composable
-                LaunchedEffect(Unit) {
-                    withContext(Dispatchers.Default) {
-                        for (i in 1..100) {
-                            delay(100) // Simula un trabajo que toma tiempo 1 segundo
-                            progress.value = i / 100f
+                    }
+                    Spacer(modifier = Modifier.width(8.dp))
+                    val progress = remember { mutableFloatStateOf(0.0f) }
+                    // Observa los cambios en porcentajeCompletadoGrado y actualiza progress
+                    LaunchedEffect(key1 = grado) {
+                        grado?.let {
+                            progress.value = GradoUseCaseImpl.porcentajeCompletadoGrado(grado.gradoId) / 100f
                         }
+                    }
+                    Box(
+                        contentAlignment = Alignment.Center,
+                        modifier = Modifier.size(48.dp) // Tamaño del CircularProgressIndicator
+                    ) {
+                        // CircularProgressBar
+                        CircularProgressIndicator(
+                            progress = { progress.value },
+                            modifier = Modifier.fillMaxSize(),
+                            color = MaterialTheme.colorScheme.primary,
+                            strokeWidth = 4.dp,
+                        )
+                        // Texto del porcentaje
+                        Text(
+                            text = "${(progress.value * 100).toInt()}%",
+                            style = MaterialTheme.typography.bodySmall.copy(
+                                color = Color.White,
+                                fontSize = 12.sp
+                            )
+                        )
                     }
                 }
             }

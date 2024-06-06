@@ -14,6 +14,10 @@ class Tema(
 ) {
 
     var puntoParada: Int = 0 // intentar dato duration en milisegundos
+
+    fun isCompletado(): Boolean {
+        return terminado
+    }
 }
 
 data class TemaId(val id: Int)

@@ -1,4 +1,4 @@
-package com.universae.reproductor.ui.theme
+package com.universae.navegacion.theme
 
 import android.app.Activity
 import androidx.compose.foundation.background

@@ -10,9 +10,11 @@ interface AsignaturaUseCases {
     fun getAsignaturaByAsignaturaId(asignaturaId: AsignaturaId): Asignatura?
     fun getAsignaturaById(id: Int): Asignatura?
     fun getListAsignaturas(asignaturasId: List<AsignaturaId>): List<Asignatura>
-    fun porcentajeAsignatura(asignaturaId: AsignaturaId): Int
+    fun porcentajeCompletadoAsignatura(asignaturaId: AsignaturaId): Int
     fun asignaturasNoCompletadas(gradoId: GradoId): List<Asignatura>
     fun getAsignaturaByTemaId(temaId: TemaId): Asignatura?
+    fun getNombreAsignaturaByTemaId(temaId: TemaId): String?
+    fun getNombreAsignaturaById(idAsignatura: Int) : String?
 }
 
 object AsignaturaUseCasesImpl : AsignaturaUseCases {
@@ -31,15 +33,15 @@ object AsignaturaUseCasesImpl : AsignaturaUseCases {
         } else emptyList()
     }
 
-    override fun porcentajeAsignatura(asignaturaId: AsignaturaId): Int {
+    override fun porcentajeCompletadoAsignatura(asignaturaId: AsignaturaId): Int {
         getAsignaturaByAsignaturaId(asignaturaId)?.let { asignatura ->
-            val temasCompletados = asignatura.temas.count { it.terminado }
+            val temasCompletados = asignatura.temas.count { it.isCompletado() }
             return (temasCompletados * 100) / asignatura.temas.size
         } ?: return -1
     }
 
     override fun asignaturasNoCompletadas(gradoId: GradoId): List<Asignatura> {
-        return GradoUseCaseImpl.getGrado(gradoId)?.let { grado ->
+        return GradoUseCaseImpl.getGradoByGradoID(gradoId)?.let { grado ->
             grado.asignaturasId.mapNotNull { getAsignaturaByAsignaturaId(it) }.filter { asignatura ->
                 asignatura.temas.any { !it.terminado }
             }
@@ -48,5 +50,13 @@ object AsignaturaUseCasesImpl : AsignaturaUseCases {
 
     override fun getAsignaturaByTemaId(temaId: TemaId): Asignatura? {
         return if (Sesion.sesionIniciada) Sesion.asignaturas.find { asignatura -> asignatura.temas.any { tema -> tema.temaId.id == temaId.id } } else null
+    }
+
+    override fun getNombreAsignaturaByTemaId(temaId: TemaId): String? {
+        return getAsignaturaByTemaId(temaId)?.nombreAsignatura
+    }
+
+    override fun getNombreAsignaturaById(idAsignatura: Int): String? {
+        return getAsignaturaById(idAsignatura)?.nombreAsignatura
     }
 }

@@ -36,7 +36,7 @@ import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import com.android.navegacion.R
 import com.android.navegacion.components.MainButton
-import com.universae.reproductor.ui.theme.gradientBackground
+import com.universae.navegacion.theme.gradientBackground
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 

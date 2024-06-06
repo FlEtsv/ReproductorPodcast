@@ -1,17 +1,16 @@
-package com.universae.reproductor.data.remote
+package com.universae.data.local
 
-import com.universae.data.local.AsignaturaRepositoryImpl
 import com.universae.reproductor.domain.entities.alumno.AlumnoId
 import com.universae.domain.entities.asignatura.AsignaturaId
 import com.universae.reproductor.domain.entities.tema.Tema
 import com.universae.reproductor.domain.entities.tema.TemaId
 import com.universae.reproductor.domain.entities.tema.TemaRepository
-import com.universae.reproductor.domaintest.PreviewTemas
+import com.universae.data.local.dataexample.PreviewTemas
 
 object TemaRepositoryImpl : TemaRepository {
 
     override fun guardarPuntoParada(alumnoId: AlumnoId, temaId: TemaId, puntoParada: Int): Int {
-        /* TODO("Implementar la lógica para guardar el punto de parada de un tema escuchado por un alumno en el mock data")
+        /* TODO("Implementar la lógica para guardar el punto de parada de un tema escuchado por un alumno")
         val query =
             "INSERT INTO progreso_escucha_alumno (usuario_id, tema_id, punto_parada) VALUES (?, ?, ?)"
         var connection: Connection? = null
@@ -43,44 +42,14 @@ object TemaRepositoryImpl : TemaRepository {
     }
 
     override fun marcarTemaComoEscuchado(alumnoId: AlumnoId, temaId: TemaId): Int {
-        /* TODO("Implementar la lógica para marcar un tema como escuchado por un alumno en el mock data")
-        val query =
-            "INSERT INTO progreso_escucha_alumno (usuario_id, tema_id, escuchado) VALUES (?, ?, ?)"
-        var connection: Connection? = null
-        var preparedStatement: PreparedStatement? = null
-
-        try {
-            connection = DriverManager.getConnection(
-                "jdbc:mysql://10.0.2.2:3306/reproductor",
-                "dbadmin",
-                "dbadmin"
-            )
-            preparedStatement = connection.prepareStatement(query)
-            preparedStatement.setString(1, alumnoId.id.toString())
-            preparedStatement.setString(2, temaId.id.toString())
-            preparedStatement.setBoolean(3, true) // Marcar como escuchado
-            val affectedRows = preparedStatement.executeUpdate()
-
-            return affectedRows // Devuelve el número de filas afectadas
-        } catch (e: SQLException) {
-            println("Database operation failed. Error: ${e.message}")
-            e.printStackTrace()
-            return -1
-        } finally {
-            preparedStatement?.close()
-            connection?.close()
-        }
-         */
-        return 0
+        TODO(
+            "Implementar la lógica para marcar un tema como escuchado por un alumno"
+        )
     }
 
     override fun obtenerTema(temaId: TemaId): Tema? {
 
-        return if (PreviewTemas.filter { it.temaId == temaId }.isNotEmpty()) {
-            PreviewTemas.filter { it.temaId == temaId }[0]
-        } else {
-            null
-        }
+        return PreviewTemas.firstOrNull { it.temaId == temaId }
 
         /*
         val query = "SELECT * FROM temas WHERE tema_id = ?"

@@ -3,17 +3,13 @@ package com.universae.data.local
 import com.universae.reproductor.domain.entities.grado.Grado
 import com.universae.reproductor.domain.entities.grado.GradoId
 import com.universae.reproductor.domain.entities.grado.GradoRepository
-import com.universae.reproductor.domaintest.PreviewGrados
+import com.universae.data.local.dataexample.PreviewGrados
 
 object GradoRepositoryImpl : GradoRepository {
 
     override fun getGrado(gradoId: GradoId): Grado? {
 
-        return if (PreviewGrados.filter { it.gradoId == gradoId }.isNotEmpty()) {
-            PreviewGrados.filter { it.gradoId == gradoId }[0]
-        } else {
-            null
-        }
+        return PreviewGrados.firstOrNull { it.gradoId == gradoId }
 
         /*val query = "SELECT * FROM grados WHERE grado_id = ?"
         var connection: Connection? = null

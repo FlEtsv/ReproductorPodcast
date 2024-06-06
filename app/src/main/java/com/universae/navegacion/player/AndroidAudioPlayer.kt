@@ -3,9 +3,11 @@ package com.universae.navegacion.player
 import android.content.ComponentName
 import android.content.Context
 import android.util.Log
+import androidx.annotation.OptIn
 import androidx.media3.common.C
 import androidx.media3.common.MediaItem
 import androidx.media3.common.Player
+import androidx.media3.common.util.UnstableApi
 import com.example.android.uamp.common.MusicServiceConnection
 import com.example.android.uamp.media.MusicService
 import com.example.android.uamp.media.extensions.isEnded
@@ -89,19 +91,33 @@ class AndroidAudioPlayer(private val context: Context) : AudioPlayerUseCases {
     }
 
     override fun adelantarDiezSegundos() {
-        // Implementar lógica para adelantar diez segundos en la reproducción actual
+        musicServiceConnection.player?.let { player ->
+            val newPosition = player.currentPosition + 10000
+            player.seekTo(newPosition.coerceAtMost(player.duration))
+        }
     }
 
     override fun retrocederDiezSegundos() {
-        // Implementar lógica para retroceder diez segundos en la reproducción actual
+        musicServiceConnection.player?.let { player ->
+            val newPosition = player.currentPosition - 10000
+            player.seekTo(newPosition.coerceAtLeast(0))
+        }
     }
 
     override fun siguienteTema() {
-        // Enviar comando para reproducir el siguiente tema a MyMediaSessionService a través de MusicServiceConnection
+        musicServiceConnection.player?.let { player ->
+            if (player.hasNextMediaItem()) {
+                player.seekToNextMediaItem()
+            }
+        }
     }
 
     override fun temaAnterior() {
-        // Enviar comando para reproducir el tema anterior a MyMediaSessionService a través de MusicServiceConnection
+        musicServiceConnection.player?.let { player ->
+            if (player.hasPreviousMediaItem()) {
+                player.seekToPrevious()
+            }
+        }
     }
 }
 

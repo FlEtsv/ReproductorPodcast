@@ -1,4 +1,4 @@
-package com.universae.reproductor.domaintest
+package com.universae.data.local.dataexample
 
 import com.universae.reproductor.domain.entities.alumno.Alumno
 import com.universae.reproductor.domain.entities.alumno.AlumnoId
@@ -32,7 +32,7 @@ val PreviewTemas = listOf(
     Tema(
         temaId = TemaId(1),
         nombreTema = "Tema 1",
-        descripcionTema = "descripcion1",
+        descripcionTema = "descripcion1 lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.",
         duracionAudio = 120.toDuration(DurationUnit.SECONDS),
         audioUrl = URL_AUDIO,
         imagenUrl = COMUNICACION_ATENCION_CLIENTE,

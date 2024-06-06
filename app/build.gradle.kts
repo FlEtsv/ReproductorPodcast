@@ -67,6 +67,7 @@ dependencies {
     implementation(libs.androidx.lifecycle.runtime.ktx)
     implementation(libs.androidx.activity.compose)
     implementation(libs.androidx.activity)
+    implementation(libs.coil.compose)
 
     // media3 for audio playback
     implementation(libs.androidx.media3.exoplayer)

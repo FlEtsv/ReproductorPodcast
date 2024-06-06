@@ -3,7 +3,7 @@ package com.universae.domain
 import com.universae.data.local.AlumnoRepositoryImpl
 import com.universae.data.local.AsignaturaRepositoryImpl
 import com.universae.data.local.GradoRepositoryImpl
-import com.universae.reproductor.data.remote.TemaRepositoryImpl
+import com.universae.data.local.TemaRepositoryImpl
 import com.universae.reproductor.domain.entities.alumno.Alumno
 import com.universae.domain.entities.asignatura.Asignatura
 import com.universae.reproductor.domain.entities.alumno.AlumnoId

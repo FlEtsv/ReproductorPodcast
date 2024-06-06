@@ -22,8 +22,8 @@ import androidx.navigation.NavController
 import com.android.navegacion.R
 import com.universae.domain.usecases.SesionUseCase
 import com.universae.reproductor.domain.entities.alumno.Alumno
-import com.universae.reproductor.domaintest.PreviewAlumno
-import com.universae.reproductor.ui.theme.gradientBackground
+import com.universae.reproductor.domain.usecases.AlumnoUseCaseImpl
+import com.universae.navegacion.theme.gradientBackground
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.TimeoutCancellationException
 import kotlinx.coroutines.delay
@@ -57,7 +57,7 @@ fun SplashScreen(navController: NavController, usuario: String, pass: String) {
 
             if (usuarioEncontrado) {
                 usuarioEncontrado = false
-                alumno = PreviewAlumno.filter { it.nombreUsuario == usuario }[0]
+                alumno = AlumnoUseCaseImpl.getAlumno(nombreUsuario = usuario, clave = pass)
             }
 
             if (alumno != null) {

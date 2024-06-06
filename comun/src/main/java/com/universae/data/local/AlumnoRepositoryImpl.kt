@@ -3,7 +3,7 @@ package com.universae.data.local
 
 import com.universae.reproductor.domain.entities.alumno.Alumno
 import com.universae.reproductor.domain.entities.alumno.AlumnoRepository
-import com.universae.reproductor.domaintest.PreviewAlumno
+import com.universae.data.local.dataexample.PreviewAlumno
 
 object AlumnoRepositoryImpl : AlumnoRepository {
 

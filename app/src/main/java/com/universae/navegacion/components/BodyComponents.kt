@@ -8,17 +8,13 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Star
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Card
@@ -36,9 +32,9 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.geometry.Offset
-import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.Shadow
 import androidx.compose.ui.graphics.vector.ImageVector
@@ -52,11 +48,14 @@ import com.android.navegacion.R
 import com.universae.domain.entities.asignatura.Asignatura
 import com.universae.reproductor.domain.entities.tema.Tema
 import com.universae.reproductor.domain.usecases.AsignaturaUseCasesImpl
-import com.universae.reproductor.ui.theme.AzulClaro
-import com.universae.reproductor.ui.theme.Blanco
-import com.universae.reproductor.ui.theme.GrisClaro
-import com.universae.reproductor.ui.theme.GrisOscuro
-import com.universae.reproductor.ui.theme.Negro
+import com.universae.navegacion.theme.AzulClaro
+import com.universae.navegacion.theme.AzulDark
+import com.universae.navegacion.theme.AzulOscuro
+import com.universae.navegacion.theme.Blanco
+import com.universae.navegacion.theme.GrisOscuro
+import com.universae.navegacion.theme.Negro
+import com.universae.navegacion.theme.ralewayFamily
+import com.universae.navegacion.views.ImageWithColoredPlaceholder
 
 @Composable
 fun TitleView(name: String) {
@@ -82,10 +81,10 @@ fun MainButton(name: String, backColor: Color, color: Color, onClick: () -> Unit
 
 /**
  * Muestra una fila de tarjetas para cada tema de podcast proporcionado.
- * @param podcasts Lista de nombres de podcasts para mostrar.
+ * @param asignaturaList Lista de nombres de podcasts para mostrar.
  */
 @Composable
-fun PodcastsAsignaturasTemas(podcasts: List<Asignatura>, navController: NavController) {
+fun PodcastsAsignaturasTemas(asignaturaList: List<Asignatura>, navController: NavController) {
     var focusedAsignaturaId by remember { mutableStateOf<Int?>(null) }
     var displayedTemas by remember { mutableStateOf<List<Tema>>(emptyList()) }
 
@@ -93,9 +92,11 @@ fun PodcastsAsignaturasTemas(podcasts: List<Asignatura>, navController: NavContr
 
     LaunchedEffect(focusedAsignaturaId) {
         displayedTemas = if (focusedAsignaturaId != null) {
-            podcasts.find { it.asignaturaId.id == focusedAsignaturaId }?.temas ?: emptyList()
+            asignaturaList.find { it.asignaturaId.id == focusedAsignaturaId }?.temas ?: emptyList()
         } else {
-            podcasts.mapNotNull { it.temas.firstOrNull() }
+            asignaturaList.mapNotNull { asignatura ->
+                asignatura.temas.firstOrNull { !it.terminado }
+            }
         }
     }
 
@@ -107,19 +108,18 @@ fun PodcastsAsignaturasTemas(podcasts: List<Asignatura>, navController: NavContr
             horizontalArrangement = Arrangement.spacedBy(8.dp),
             contentPadding = PaddingValues(horizontal = 16.dp)
         ) {
-            items(podcasts) { podcast ->
-                val isFocused = podcast.asignaturaId.id == focusedAsignaturaId
+            items(asignaturaList) { asignatura ->
+                val isFocused = asignatura.asignaturaId.id == focusedAsignaturaId
                 val onCardClick: () -> Unit = {
                     if (isFocused) {
-                        navController.navigate("Detail/${podcast.asignaturaId.id}")
+                        navController.navigate("Detail/${asignatura.asignaturaId.id}")
                     } else {
-                        focusedAsignaturaId = podcast.asignaturaId.id
-                        temaMarcado = "Temas de " + podcast.nombreAsignatura
+                        focusedAsignaturaId = asignatura.asignaturaId.id
+                        temaMarcado = "Temas de " + asignatura.nombreAsignatura
                     }
                 }
-                PodcastTopicCard(
-                    isFocused = isFocused,
-                    titulo = podcast.nombreAsignatura,
+                AsignaturaCard(
+                    asignatura = asignatura,
                     onCardClick = onCardClick
                 )
             }
@@ -136,9 +136,9 @@ fun PodcastsAsignaturasTemas(podcasts: List<Asignatura>, navController: NavContr
             contentPadding = PaddingValues(horizontal = 16.dp)
         ) {
             items(displayedTemas) { tema ->
-                cardTema(
-                    titulo = tema.nombreTema,
-                    onClick = { navController.navigate("Podcast/${tema.temaId.id}/${AsignaturaUseCasesImpl.getAsignaturaByTemaId(tema.temaId)!!.asignaturaId.id}") }
+                TemaCard(
+                    tema = tema,
+                    onClick = { navController.navigate("Podcast/${tema.temaId.id}") }
                 )
             }
         }
@@ -147,70 +147,53 @@ fun PodcastsAsignaturasTemas(podcasts: List<Asignatura>, navController: NavContr
 
 
 /**
- * Muestra una tarjeta para un tema de podcast específico.
+ * Muestra una tarjeta para un tema de podcast.
  * @param topic Tema del podcast a mostrar.
  */
 @Composable
-fun PodcastTopicCard(isFocused: Boolean, titulo: String, onCardClick: () -> Unit) {
+fun AsignaturaCard(asignatura: Asignatura, onCardClick: () -> Unit, anchoTotal: Int = 240, anchoImagen: Int = 80) {
     Card(
         modifier = Modifier
-            .width(200.dp)
-            .height(120.dp)
+            .width(anchoTotal.dp)
             .clickable(onClick = onCardClick)
             .shadow(
                 8.dp,
                 shape = RoundedCornerShape(16.dp)
-            ), // Sombra más pronunciada y bordes redondeados
-        shape = RoundedCornerShape(16.dp),
+            ) // Sombra más pronunciada y bordes redondeados
+            .clip(RoundedCornerShape(16.dp))
+            .background(AzulClaro),
         elevation = CardDefaults.cardElevation(
             defaultElevation = 8.dp
         )
     ) {
-        Box(
-            modifier = Modifier
-                .fillMaxSize()
-                .background(
-                    Brush.linearGradient(
-                        colors = listOf(
-                            AzulClaro,
-                            Blanco,
-                            GrisClaro
-                        )
-                    )
-                )
+        Row (modifier = Modifier.fillMaxWidth().background(AzulClaro),
+            verticalAlignment = Alignment.CenterVertically
         ) {
-            Column(
+            ImageWithColoredPlaceholder(
+                imageUrl = asignatura.icoAsignatura,
+                placeholderRes = R.mipmap.escudo,
+                placeholderColor = AzulOscuro,
                 modifier = Modifier
-                    .fillMaxSize()
-                    .padding(8.dp),
-                verticalArrangement = Arrangement.Center,
-                horizontalAlignment = Alignment.CenterHorizontally
-            ) {
-                Icon(
-                    imageVector = Icons.Default.Star,
-                    contentDescription = "Decorative Icon",
-                    modifier = Modifier.size(22.dp),
-                    tint = Blanco
-                )
-                Spacer(modifier = Modifier.height(8.dp))
-                Text(
-                    text = titulo,
-                    style = MaterialTheme.typography.bodyLarge.copy(color = Negro),
-                    modifier = Modifier.padding(horizontal = 16.dp)
-                )
-            }
+                    .width(anchoImagen.dp)
+                    .background(color = AzulClaro),
+                contentDescription = "Icono de ${asignatura.nombreAsignatura}",
+                padding = 8
+            )
+            Text(
+                text = asignatura.nombreAsignatura,
+                style = MaterialTheme.typography.bodyLarge.copy(color = AzulDark),
+                fontFamily = ralewayFamily,
+                modifier = Modifier.padding(horizontal = 8.dp)
+            )
         }
     }
 }
 
-
 @Composable
-fun cardTema(titulo: String, onClick: () -> Unit) {
-
+fun TemaCard(tema: Tema, onClick: () -> Unit) {
     Card(
         modifier = Modifier
             .width(200.dp)
-            .height(120.dp)
             .clickable(onClick = onClick)
             .shadow(
                 8.dp,
@@ -221,37 +204,24 @@ fun cardTema(titulo: String, onClick: () -> Unit) {
             defaultElevation = 8.dp
         )
     ) {
-        Box(
-            modifier = Modifier
-                .fillMaxSize()
-                .background(
-                    Brush.linearGradient(
-                        colors = listOf(
-                            AzulClaro,
-                            Blanco,
-                            GrisClaro
-                        )
-                    )
-                )
-        ) {
-            Column(
-                modifier = Modifier
-                    .fillMaxSize()
-                    .padding(8.dp),
-                verticalArrangement = Arrangement.Center,
-                horizontalAlignment = Alignment.CenterHorizontally
+        Box(modifier = Modifier.fillMaxWidth().background(AzulClaro)) { // Asegura que el contenido ocupe todo el ancho disponible
+            Row(
+                verticalAlignment = Alignment.CenterVertically
             ) {
-                Icon(
-                    imageVector = Icons.Default.Star,
-                    contentDescription = "Decorative Icon",
-                    modifier = Modifier.size(22.dp),
-                    tint = Blanco
+                ImageWithColoredPlaceholder(
+                    imageUrl = tema.imagenUrl,
+                    placeholderRes = R.mipmap.escudo,
+                    placeholderColor = AzulDark,
+                    modifier = Modifier
+                        .width(80.dp)
+                        .background(color = AzulClaro),
+                    contentDescription = "Icono de ${tema.nombreTema}",
+                    padding = 8
                 )
-                Spacer(modifier = Modifier.height(8.dp))
                 Text(
-                    text = titulo,
-                    style = MaterialTheme.typography.bodyLarge.copy(color = Negro),
-                    modifier = Modifier.padding(horizontal = 16.dp)
+                    text = tema.nombreTema,
+                    style = MaterialTheme.typography.bodyLarge.copy(fontFamily = ralewayFamily, color = AzulDark),
+                    modifier = Modifier.padding(horizontal = 8.dp)
                 )
             }
         }
@@ -394,7 +364,7 @@ fun iconCast(): ImageVector {
     val imageVector = ImageVector.vectorResource(id = R.drawable.cast)
     Icon(
         imageVector = imageVector,
-        contentDescription = "Descripción del icono"
+        contentDescription = "Cast"
     )
     return imageVector
 }
@@ -404,7 +374,7 @@ fun iconPause(): ImageVector {
     val imageVector = ImageVector.vectorResource(id = R.drawable.pause)
     Icon(
         imageVector = imageVector,
-        contentDescription = "Descripción del icono"
+        contentDescription = "Pausa"
     )
     return imageVector
 }
@@ -414,7 +384,7 @@ fun iconPlay(): ImageVector {
     val imageVector = ImageVector.vectorResource(id = R.drawable.play)
     Icon(
         imageVector = imageVector,
-        contentDescription = "Descripción del icono"
+        contentDescription = "Play"
     )
     return imageVector
 }
@@ -424,7 +394,17 @@ fun iconArrowBack(): ImageVector {
     val imageVector = ImageVector.vectorResource(id = R.drawable.arroyback)
     Icon(
         imageVector = imageVector,
-        contentDescription = "Descripción del icono"
+        contentDescription = "Flecha de regreso"
+    )
+    return imageVector
+}
+
+@Composable
+fun iconBackwardTenSec(): ImageVector {
+    val imageVector = ImageVector.vectorResource(id = R.drawable.baseline_replay_10_24)
+    Icon(
+        imageVector = imageVector,
+        contentDescription = "Retroceso diez segundos"
     )
     return imageVector
 }
@@ -434,7 +414,7 @@ fun iconFastReward(): ImageVector {
     val imageVector = ImageVector.vectorResource(id = R.drawable.fastrewind)
     Icon(
         imageVector = imageVector,
-        contentDescription = "Descripción del icono"
+        contentDescription = "Signo de retroceso rápido"
     )
     return imageVector
 }
@@ -444,17 +424,17 @@ fun iconFastForward(): ImageVector {
     val imageVector = ImageVector.vectorResource(id = R.drawable.fastfoward)
     Icon(
         imageVector = imageVector,
-        contentDescription = "Descripción del icono"
+        contentDescription = "Signo de avance rápido"
     )
     return imageVector
 }
 
 @Composable
-fun iconArrowForward(): ImageVector {
-    val imageVector = ImageVector.vectorResource(id = R.drawable.arrowforward)
+fun arrowForwardTenSec(): ImageVector {
+    val imageVector = ImageVector.vectorResource(id = R.drawable.baseline_forward_10_24)
     Icon(
         imageVector = imageVector,
-        contentDescription = "Descripción del icono"
+        contentDescription = "Avance diez segundos"
     )
     return imageVector
 }

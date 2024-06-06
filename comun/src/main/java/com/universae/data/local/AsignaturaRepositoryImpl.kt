@@ -3,16 +3,13 @@ package com.universae.data.local
 import com.universae.domain.entities.asignatura.Asignatura
 import com.universae.domain.entities.asignatura.AsignaturaId
 import com.universae.reproductor.domain.entities.asignatura.AsignaturaRepository
-import com.universae.reproductor.domaintest.PreviewAsignaturas
+import com.universae.data.local.dataexample.PreviewAsignaturas
 
 object AsignaturaRepositoryImpl : AsignaturaRepository {
 
     override fun getAsignatura(asignaturaId: AsignaturaId): Asignatura? {
-        return if (PreviewAsignaturas.filter { it.asignaturaId == asignaturaId }.isNotEmpty()) {
-            PreviewAsignaturas.filter { it.asignaturaId == asignaturaId }[0]
-        } else {
-            null
-        }
+        return PreviewAsignaturas.firstOrNull { it.asignaturaId == asignaturaId }
+    }
 
 
         /*val query = "SELECT * FROM asignaturas WHERE asignatura_id = ?"
@@ -51,5 +48,5 @@ object AsignaturaRepositoryImpl : AsignaturaRepository {
         }
 
          */
-    }
+
 }
