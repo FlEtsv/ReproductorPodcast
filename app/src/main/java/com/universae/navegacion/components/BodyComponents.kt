@@ -38,6 +38,7 @@ import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.Shadow
 import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
@@ -46,6 +47,7 @@ import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import com.android.navegacion.R
 import com.universae.domain.entities.asignatura.Asignatura
+import com.universae.navegacion.player.AndroidAudioPlayer
 import com.universae.reproductor.domain.entities.tema.Tema
 import com.universae.reproductor.domain.usecases.AsignaturaUseCasesImpl
 import com.universae.navegacion.theme.AzulClaro
@@ -56,6 +58,11 @@ import com.universae.navegacion.theme.GrisOscuro
 import com.universae.navegacion.theme.Negro
 import com.universae.navegacion.theme.ralewayFamily
 import com.universae.navegacion.views.ImageWithColoredPlaceholder
+import com.universae.reproductor.domain.usecases.AsignaturaUseCasesImpl.getAsignaturaByTemaId
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.launch
 
 @Composable
 fun TitleView(name: String) {
@@ -85,6 +92,7 @@ fun MainButton(name: String, backColor: Color, color: Color, onClick: () -> Unit
  */
 @Composable
 fun PodcastsAsignaturasTemas(asignaturaList: List<Asignatura>, navController: NavController) {
+    val context = LocalContext.current
     var focusedAsignaturaId by remember { mutableStateOf<Int?>(null) }
     var displayedTemas by remember { mutableStateOf<List<Tema>>(emptyList()) }
 
@@ -138,7 +146,23 @@ fun PodcastsAsignaturasTemas(asignaturaList: List<Asignatura>, navController: Na
             items(displayedTemas) { tema ->
                 TemaCard(
                     tema = tema,
-                    onClick = { navController.navigate("Podcast/${tema.temaId.id}") }
+                    onClick = {
+                        CoroutineScope(Dispatchers.Main).launch {
+                            val androidAudioPlayer = AndroidAudioPlayer(context)
+                            var result = androidAudioPlayer.reproducir(tema = tema, parentMediaId = getAsignaturaByTemaId(tema.temaId)!!.asignaturaId.id.toString())
+
+                            // Esperar a que la conexión con el servicio de música se establezca
+                            while (!result) {
+                                delay(1000) // Esperar 1 segundo antes de volver a intentarlo
+                                result = androidAudioPlayer.reproducir(tema = tema, parentMediaId = getAsignaturaByTemaId(tema.temaId)!!.asignaturaId.id.toString())
+                            }
+
+                            // Navegar a la vista PodcastPlayerUI una vez que la reproducción ha comenzado
+                            if (result) {
+                                navController.navigate("Podcast/${tema.temaId.id}")
+                            }
+                        }
+                    }
                 )
             }
         }

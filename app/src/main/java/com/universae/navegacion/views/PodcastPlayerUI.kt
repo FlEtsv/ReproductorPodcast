@@ -1,6 +1,8 @@
 package com.universae.navegacion.views
 
+import android.content.ComponentName
 import android.content.Context
+import androidx.annotation.OptIn
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -33,6 +35,7 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
+import androidx.media3.common.MediaItem
 import androidx.navigation.NavController
 import com.android.navegacion.R
 import com.android.navegacion.components.arrowForwardTenSec
@@ -42,22 +45,41 @@ import com.android.navegacion.components.iconFastForward
 import com.android.navegacion.components.iconFastReward
 import com.android.navegacion.components.iconPause
 import com.android.navegacion.components.iconPlay
+import com.example.android.uamp.common.MusicServiceConnection
 import com.universae.navegacion.player.AndroidAudioPlayer
 import com.universae.reproductor.domain.usecases.AsignaturaUseCasesImpl
 import com.universae.reproductor.domain.usecases.TemaUseCasesImpl
 import com.universae.navegacion.theme.AzulClaro
 import com.universae.navegacion.theme.AzulOscuro
 import com.universae.navegacion.theme.gradientBackground
-import com.universae.reproductor.domain.entities.tema.Tema
 import kotlin.math.sqrt
+import androidx.compose.runtime.livedata.observeAsState
+import androidx.media3.common.C
+import androidx.media3.common.Player
+import androidx.media3.common.util.Log
+import androidx.media3.common.util.UnstableApi
+import com.example.android.uamp.common.EMPTY_PLAYBACK_STATE
+import com.example.android.uamp.common.PlaybackState
+import com.example.android.uamp.media.MusicService
+import com.example.android.uamp.media.extensions.isEnded
+import com.example.android.uamp.media.extensions.isPlayEnabled
+import com.universae.navegacion.theme.Blanco
+import com.universae.navegacion.theme.ralewayFamily
 
 //TODO: actualizar info en base al servicio de musica para que cambie el composable incluso si usas el reproductor fuera de la vista de la app
+@OptIn(UnstableApi::class)
 @Composable
 fun ReproductorPodcast(navController: NavController, idTema: Int) {
+
+    val context: Context = LocalContext.current
+    val musicServiceConnection = remember { MusicServiceConnection(context, ComponentName(context, MusicService::class.java)) }
+
+    val currentMediaItem by musicServiceConnection.nowPlaying.observeAsState(initial = MediaItem.EMPTY)
+    val playbackState by musicServiceConnection.playbackState.observeAsState(initial = EMPTY_PLAYBACK_STATE)
+
     var reproduciendo by remember { mutableStateOf(false) }
     val progress = remember { mutableFloatStateOf(0.0f) }
     // crea instancia audioPlayer e inicializa el controlador de reproducción mediante el composable AndroidAudioPlayerComposable
-    val context: Context = LocalContext.current
     val audioPlayer = remember { AndroidAudioPlayer(context) }
     val tema = TemaUseCasesImpl.getTemaById(idTema)!!
 
@@ -104,16 +126,18 @@ fun ReproductorPodcast(navController: NavController, idTema: Int) {
                 }
             }
             Spacer(modifier = Modifier.height(100.dp))
-            PortadaPodcast(tema)
+            PortadaPodcast(currentMediaItem.mediaMetadata.artworkUri.toString(), currentMediaItem.mediaMetadata.title.toString())
             Spacer(modifier = Modifier.height(16.dp))
             Text(
-                text = tema.nombreTema,
-                style = MaterialTheme.typography.bodyLarge
+                text = currentMediaItem.mediaMetadata.title?.toString() ?: tema.nombreTema,
+                style = MaterialTheme.typography.bodyLarge.copy(fontFamily = ralewayFamily, color = Blanco)
             )
             Spacer(modifier = Modifier.height(16.dp))
             ProgressBarRow(progress = progress)
             Spacer(modifier = Modifier.height(16.dp))
             ControlesReproduccion(
+                playbackState = playbackState,
+                musicServiceConnection = musicServiceConnection,
                 reproduciendo = reproduciendo,
                 onPlayPauseToggle = {
                     audioPlayer.reproducir(
@@ -135,7 +159,7 @@ fun ReproductorPodcast(navController: NavController, idTema: Int) {
 
 
 @Composable
-fun PortadaPodcast(tema: Tema) {
+fun PortadaPodcast(temaImagen: String, temaNombre: String) {
     val diameter = 200.dp
     Box(
         modifier = Modifier
@@ -145,19 +169,21 @@ fun PortadaPodcast(tema: Tema) {
         contentAlignment = Alignment.Center
     ) {
         ImageWithColoredPlaceholder(
-            imageUrl = tema.imagenUrl,
+            imageUrl = temaImagen,
             placeholderRes = R.mipmap.escudo,
             placeholderColor = AzulOscuro,
             modifier = Modifier
                 .size(diameter / 2 * sqrt(2f)) // Escala la imagen para que su diagonal sea igual al diámetro del círculo
                 .align(Alignment.Center),
-            contentDescription = "Icono de ${tema.nombreTema}"
+            contentDescription = "Icono de $temaNombre"
         )
     }
 }
 
 @Composable
 fun ControlesReproduccion(
+    playbackState: PlaybackState,
+    musicServiceConnection: MusicServiceConnection,
     reproduciendo: Boolean,
     onPlayPauseToggle: () -> Unit,
     onRetrocederTenSecs: () -> Unit,
@@ -165,6 +191,8 @@ fun ControlesReproduccion(
     onAvanzarTenSecs: () -> Unit,
     onPreviousSong: () -> Unit
 ) {
+    val player = musicServiceConnection.player?: return
+
     Row(
         horizontalArrangement = Arrangement.Center,
         verticalAlignment = Alignment.CenterVertically
@@ -190,11 +218,18 @@ fun ControlesReproduccion(
 
         // Botón de reproducción/pausa
         IconButton(onClick = {
-            onPlayPauseToggle()
+            val isPrepared = player.playbackState != Player.STATE_IDLE
+            if (isPrepared) {
+                when {
+                    player.isPlaying -> player.pause()
+                    player.isPlayEnabled -> player.play()
+                    player.isEnded -> player.seekTo(C.TIME_UNSET)
+                }
+            }
         }) {
             Icon(
-                imageVector = if (reproduciendo) iconPause() else iconPlay(),
-                contentDescription = if (reproduciendo) "Pausa" else "Reproducir",
+                imageVector = if (playbackState.isPlaying) iconPause() else iconPlay(),
+                contentDescription = if (playbackState.isPlaying) "Pausa" else "Reproducir",
                 tint = Color.White
             )
         }

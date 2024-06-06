@@ -58,6 +58,7 @@ dependencies {
     implementation(project(":mylibrary"))
 
     implementation(libs.kotlinx.coroutines.guava)
+    implementation(libs.androidx.compose.livedata)
 
     implementation(libs.androidx.navigation.compose)
     implementation(libs.androidx.core.ktx)

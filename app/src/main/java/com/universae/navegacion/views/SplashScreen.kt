@@ -1,5 +1,6 @@
 package com.android.navegacion.views
 
+import android.content.ComponentName
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -16,10 +17,13 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import com.android.navegacion.R
+import com.example.android.uamp.common.MusicServiceConnection
+import com.example.android.uamp.media.MusicService
 import com.universae.domain.usecases.SesionUseCase
 import com.universae.reproductor.domain.entities.alumno.Alumno
 import com.universae.reproductor.domain.usecases.AlumnoUseCaseImpl
@@ -34,6 +38,8 @@ import kotlinx.coroutines.withTimeout
 @Composable
 fun SplashScreen(navController: NavController, usuario: String, pass: String) {
     val coroutineScope = rememberCoroutineScope()
+    val context = LocalContext.current
+    val musicServiceConnection: MusicServiceConnection = MusicServiceConnection(context = context, serviceComponent = ComponentName(context, MusicService::class.java))
 
     LaunchedEffect(key1 = true) {
         coroutineScope.launch {
@@ -49,6 +55,10 @@ fun SplashScreen(navController: NavController, usuario: String, pass: String) {
                     }
                 }
                 usuarioEncontrado = true
+
+                // Carga el catálogo de música
+                musicServiceConnection.loadCatalog()
+
             } catch (e: TimeoutCancellationException) {
                 // Manejar la excepción de tiempo de espera aquí
                 println("La operación de la base de datos excedió el tiempo límite después de 10 segundos.")

@@ -217,10 +217,14 @@ class MusicServiceConnection(context: Context, serviceComponent: ComponentName) 
             }
         }
     }
+
+    suspend fun loadCatalog(): Boolean {
+        return (browser?.getLibraryRoot(/* params= */ null)?.await()?.value?.mediaId?.isNotEmpty() ?: false)
+    }
 }
 
 class PlaybackState(
-    private val playbackState: Int = Player.STATE_IDLE,
+    val playbackState: Int = Player.STATE_IDLE,
     private val playWhenReady: Boolean = false,
     val duration: Long = C.TIME_UNSET) {
     val isPlaying: Boolean

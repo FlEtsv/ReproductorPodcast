@@ -174,7 +174,7 @@ fun ImageWithColoredPlaceholder(
     val imagePainter = rememberImagePainter(data = imageUrl)
 
     Box(modifier = modifier) {
-        if (imagePainter.state is ImagePainter.State.Loading) {
+        if (imagePainter.state is ImagePainter.State.Loading || imageUrl.equals("null")) {
             val placeholder = painterResource(id = placeholderRes)
             Image(
                 painter = placeholder,

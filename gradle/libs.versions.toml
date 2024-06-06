@@ -63,6 +63,7 @@ kotlinx-coroutines-guava = { group = "org.jetbrains.kotlinx", name = "kotlinx-co
 androidx-media3-common = { group = "androidx.media3", name = "media3-common", version.ref = "media3Common" }
 firebase-sessions = { group = "com.google.firebase", name = "firebase-sessions", version.ref = "firebaseSessions" }
 coil-compose = { module = "io.coil-kt:coil-compose", version.ref = "coilCompose" }
+androidx-compose-livedata = { module = "androidx.compose.runtime:runtime-livedata", version.ref = "composeUi" }
 
 [plugins]
 android-application = { id = "com.android.application", version.ref = "agp" }

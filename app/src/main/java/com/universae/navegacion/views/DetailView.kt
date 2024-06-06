@@ -38,6 +38,7 @@ import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.ColorFilter
 import androidx.compose.ui.input.pointer.pointerInput
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.Dp
@@ -48,6 +49,7 @@ import com.android.navegacion.components.AsignaturaCard
 import com.android.navegacion.components.iconArrowBack
 import com.universae.domain.entities.asignatura.Asignatura
 import com.universae.domain.entities.asignatura.AsignaturaId
+import com.universae.navegacion.player.AndroidAudioPlayer
 import com.universae.navegacion.theme.Azul
 import com.universae.navegacion.theme.AzulClaro
 import com.universae.reproductor.domain.entities.tema.Tema
@@ -57,6 +59,10 @@ import com.universae.navegacion.theme.AzulMedio
 import com.universae.navegacion.theme.AzulOscuro
 import com.universae.navegacion.theme.gradientBackground
 import com.universae.navegacion.theme.ralewayFamily
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.launch
 import kotlin.math.roundToInt
 import androidx.compose.foundation.layout.Box as Box1
 
@@ -147,6 +153,7 @@ fun MostrarTemas(asignatura: Asignatura, navController: NavController) {
  */
 @Composable
 fun TarjetaTema(idAsignatura: Int, tema: Tema, modifier: Modifier = Modifier, navController: NavController) {
+    val context = LocalContext.current
     // Estado mutable para controlar el número de líneas del texto
     var maxLines by rememberSaveable { mutableIntStateOf(2) }
     // Diseño de fila para la tarjeta del tema
@@ -202,12 +209,29 @@ fun TarjetaTema(idAsignatura: Int, tema: Tema, modifier: Modifier = Modifier, na
         }
         // Caja para el icono de reproducción
         // TODO: agregar pointerInput para lanzar la reproducción
+        val scope = CoroutineScope(Dispatchers.Main)
         Box1(
             modifier = modifier
                 .padding(12.dp)
                 .clip(CircleShape)
                 .background(MaterialTheme.colorScheme.primary.copy(alpha = 0.6f))
-                .clickable(onClick = { navController.navigate("Podcast/${tema.temaId.id}") })
+                .clickable(onClick = {
+                    scope.launch {
+                        val androidAudioPlayer = AndroidAudioPlayer(context)
+                        var result = androidAudioPlayer.reproducir(tema = tema, parentMediaId = idAsignatura.toString())
+
+                        // Esperar a que la conexión con el servicio de música se establezca
+                        while (!result) {
+                            delay(1000) // Esperar 1 segundo antes de volver a intentarlo
+                            result = androidAudioPlayer.reproducir(tema = tema, parentMediaId = idAsignatura.toString())
+                        }
+
+                        // Navegar a la vista PodcastPlayerUI una vez que la reproducción ha comenzado
+                        if (result) {
+                            navController.navigate("Podcast/${tema.temaId.id}")
+                        }
+                    }
+                })
         ) {
             // Icono de reproducción
             Icon(

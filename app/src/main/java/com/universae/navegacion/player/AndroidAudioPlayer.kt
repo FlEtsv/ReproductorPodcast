@@ -25,17 +25,19 @@ class AndroidAudioPlayer(private val context: Context) : AudioPlayerUseCases {
 
     override fun reproducir(
         tema: Tema,
-        pauseThenPlaying: Boolean,
+        pauseThenPlaying: Boolean?,
         parentMediaId: String?
-    ) {
+    ): Boolean {
+        Log.e(TAG, "reproducir")
         val nowPlaying = musicServiceConnection.nowPlaying.value
-        val player = musicServiceConnection.player ?: return
+        val player = musicServiceConnection.player ?: return false
 
         val isPrepared = player.playbackState != Player.STATE_IDLE
         if (isPrepared && tema.temaId.id.toString() == nowPlaying?.mediaId) {
+            Log.e(TAG, "en el iffffffffffffffffffffffff")
             when {
                 player.isPlaying ->
-                    if (pauseThenPlaying) player.pause() else Unit
+                    if (pauseThenPlaying!!) player.pause() else Unit
 
                 player.isPlayEnabled -> player.play()
                 player.isEnded -> player.seekTo(C.TIME_UNSET)
@@ -48,9 +50,11 @@ class AndroidAudioPlayer(private val context: Context) : AudioPlayerUseCases {
                 }
             }
         } else {
+            Log.e(TAG, "en el else")
             CoroutineScope(Dispatchers.Main).launch {
-                val mediaItem: MediaItem =
-                    musicServiceConnection.getMediaItemByMediaId(tema.temaId.id.toString())!!
+
+                val mediaItem: MediaItem = musicServiceConnection.getMediaItemByMediaId(tema.temaId.id.toString())!!
+
                 var playlist: MutableList<MediaItem> = arrayListOf()
                 // load the children of the parent if requested
                 parentMediaId?.let {
@@ -72,6 +76,7 @@ class AndroidAudioPlayer(private val context: Context) : AudioPlayerUseCases {
                 player.play()
             }
         }
+        return true
     }
 
     override fun reproducir(temas: List<Tema>) {
@@ -118,6 +123,12 @@ class AndroidAudioPlayer(private val context: Context) : AudioPlayerUseCases {
                 player.seekToPrevious()
             }
         }
+    }
+
+    override fun isPlaying(): Boolean {
+        return if ((musicServiceConnection.player?.mediaItemCount
+                ?: -1) > 0 && musicServiceConnection.player?.isPlaying == true
+        ) true else false
     }
 }
 
