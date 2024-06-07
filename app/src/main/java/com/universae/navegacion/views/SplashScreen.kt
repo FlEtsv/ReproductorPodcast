@@ -1,4 +1,4 @@
-package com.android.navegacion.views
+package com.universae.navegacion.views
 
 import android.content.ComponentName
 import androidx.compose.foundation.Image
@@ -13,6 +13,7 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
@@ -24,9 +25,9 @@ import androidx.navigation.NavController
 import com.android.navegacion.R
 import com.example.android.uamp.common.MusicServiceConnection
 import com.example.android.uamp.media.MusicService
-import com.universae.domain.usecases.SesionUseCase
-import com.universae.reproductor.domain.entities.alumno.Alumno
-import com.universae.reproductor.domain.usecases.AlumnoUseCaseImpl
+import com.universae.domain.entities.alumno.Alumno
+import com.universae.domain.usecases.AlumnoUseCasesImpl
+import com.universae.domain.usecases.SesionUseCasesImpl
 import com.universae.navegacion.theme.gradientBackground
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.TimeoutCancellationException
@@ -35,11 +36,28 @@ import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import kotlinx.coroutines.withTimeout
 
+/**
+ * Composable que muestra la pantalla de carga mientras se realiza la autenticación del usuario.
+ *
+ * @param navController Controlador de navegación para manejar la navegación entre composables.
+ * @param usuario Nombre de usuario para la autenticación.
+ * @param pass Contraseña para la autenticación.
+ */
 @Composable
 fun SplashScreen(navController: NavController, usuario: String, pass: String) {
+    // Obtiene el alcance de la corrutina y el contexto actual
     val coroutineScope = rememberCoroutineScope()
     val context = LocalContext.current
-    val musicServiceConnection: MusicServiceConnection = MusicServiceConnection(context = context, serviceComponent = ComponentName(context, MusicService::class.java))
+    val musicServiceConnection: MusicServiceConnection = MusicServiceConnection(
+        context = context,
+        serviceComponent = ComponentName(context, MusicService::class.java)
+    )
+
+    DisposableEffect(musicServiceConnection) {
+        onDispose {
+            musicServiceConnection.release()
+        }
+    }
 
     LaunchedEffect(key1 = true) {
         coroutineScope.launch {
@@ -49,7 +67,7 @@ fun SplashScreen(navController: NavController, usuario: String, pass: String) {
                 withTimeout(10000) { // Timeout of 10 seconds
                     withContext(Dispatchers.IO) {
                         //COMPARAR CON BBDD DESDE PREVIEWDATA
-                        while (!DataFech(usuario = usuario, password = pass)) {
+                        while (!dataFetch(usuario = usuario, password = pass)) {
                             delay(1000)
                         }
                     }
@@ -67,7 +85,7 @@ fun SplashScreen(navController: NavController, usuario: String, pass: String) {
 
             if (usuarioEncontrado) {
                 usuarioEncontrado = false
-                alumno = AlumnoUseCaseImpl.getAlumno(nombreUsuario = usuario, clave = pass)
+                alumno = AlumnoUseCasesImpl.getAlumno(nombreUsuario = usuario, clave = pass)
             }
 
             if (alumno != null) {
@@ -113,6 +131,13 @@ fun SplashScreen(navController: NavController, usuario: String, pass: String) {
     }
 }
 
-fun DataFech(usuario: String, password: String): Boolean {
-    return SesionUseCase.iniciarSesion(usuario, password)
+/**
+ * Función que inicia una sesión de usuario.
+ *
+ * @param usuario El nombre de usuario para iniciar sesión.
+ * @param password La contraseña del usuario para iniciar sesión.
+ * @return Boolean Retorna verdadero si la sesión se inició correctamente, falso en caso contrario.
+ */
+fun dataFetch(usuario: String, password: String): Boolean {
+    return SesionUseCasesImpl.iniciarSesion(usuario, password)
 }

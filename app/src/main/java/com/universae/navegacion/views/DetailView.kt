@@ -34,7 +34,6 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.ColorFilter
 import androidx.compose.ui.input.pointer.pointerInput
@@ -45,15 +44,15 @@ import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import com.android.navegacion.R
-import com.android.navegacion.components.AsignaturaCard
-import com.android.navegacion.components.iconArrowBack
+import com.universae.navegacion.components.AsignaturaCard
+import com.universae.navegacion.components.iconArrowBack
 import com.universae.domain.entities.asignatura.Asignatura
 import com.universae.domain.entities.asignatura.AsignaturaId
+import com.universae.domain.entities.tema.Tema
+import com.universae.domain.usecases.AsignaturaUseCasesImpl
 import com.universae.navegacion.player.AndroidAudioPlayer
 import com.universae.navegacion.theme.Azul
 import com.universae.navegacion.theme.AzulClaro
-import com.universae.reproductor.domain.entities.tema.Tema
-import com.universae.reproductor.domain.usecases.AsignaturaUseCasesImpl
 import com.universae.navegacion.theme.AzulDark
 import com.universae.navegacion.theme.AzulMedio
 import com.universae.navegacion.theme.AzulOscuro
@@ -66,21 +65,36 @@ import kotlinx.coroutines.launch
 import kotlin.math.roundToInt
 import androidx.compose.foundation.layout.Box as Box1
 
-@OptIn(ExperimentalMaterial3Api::class)
+/**
+ * Composable que muestra la vista de detalle de una asignatura.
+ *
+ * @param navController Controlador de navegación para manejar la navegación entre composables.
+ * @param idAsignatura ID de la asignatura para la que se muestra la vista de detalle.
+ */
 @SuppressLint("UnusedMaterialScaffoldPaddingParameter")
 @Composable
 fun DetailView(navController: NavController, idAsignatura: Int) {
-    Box(modifier = Modifier
-        .fillMaxSize()
-        .gradientBackground()
+    // Caja que ocupa todo el tamaño disponible y tiene un fondo degradado
+    Box(
+        modifier = Modifier
+            .fillMaxSize()
+            .gradientBackground()
     ) {
+        // Columna que contiene la barra superior y el contenido de la vista de detalle
         Column {
+            // Barra superior con el botón de retroceso
             BarraSuperior(navController)
+            // Contenido de la vista de detalle para la asignatura especificada
             ContentDetailView(navController, idAsignatura)
         }
     }
 }
 
+/**
+ * Composable que muestra la barra superior en la vista de detalle de una asignatura.
+ *
+ * @param navController Controlador de navegación para manejar la navegación entre composables.
+ */
 @Composable
 fun BarraSuperior(navController: NavController) {
     Row(
@@ -108,10 +122,17 @@ fun BarraSuperior(navController: NavController) {
     }
 }
 
+/**
+ * Composable que muestra el contenido de la vista de detalle de una asignatura.
+ *
+ * @param navController Controlador de navegación para manejar la navegación entre composables.
+ * @param idAsignatura ID de la asignatura para la que se muestra la vista de detalle.
+ */
 @Composable
 fun ContentDetailView(navController: NavController, idAsignatura: Int) {
     BoxWithConstraints {//con esta funcion ya se puede sacar altura
-        val asignatura = AsignaturaUseCasesImpl.getAsignaturaByAsignaturaId(AsignaturaId(idAsignatura))
+        val asignatura =
+            AsignaturaUseCasesImpl.getAsignaturaByAsignaturaId(AsignaturaId(idAsignatura))
         val nombreAsignatura = asignatura?.nombreAsignatura
         val screenHeight = maxHeight
         val islandHeight = screenHeight * 0.25f  // Calcular el 25% de la altura
@@ -137,22 +158,41 @@ fun ContentDetailView(navController: NavController, idAsignatura: Int) {
     }
 }
 
+/**
+ * Composable que muestra los temas de una asignatura.
+ *
+ * @param asignatura Asignatura de la que se muestran los temas.
+ * @param navController Controlador de navegación para manejar la navegación entre composables.
+ */
 @Composable
 fun MostrarTemas(asignatura: Asignatura, navController: NavController) {
 
     asignatura.temas.forEach { tema ->
-        TarjetaTema(idAsignatura= asignatura.asignaturaId.id, tema = tema, modifier = Modifier, navController = navController)
+        TarjetaTema(
+            idAsignatura = asignatura.asignaturaId.id,
+            tema = tema,
+            modifier = Modifier,
+            navController = navController
+        )
     }
 }
 
 
 /**
- * Composable para mostrar una tarjeta de un tema
- * @param tema Tema a mostrar
- * @param modifier Modificador para personalizar la apariencia de la tarjeta
+ * Composable que muestra una tarjeta de un tema.
+ *
+ * @param idAsignatura ID de la asignatura a la que pertenece el tema.
+ * @param tema Tema que se va a mostrar en la tarjeta.
+ * @param modifier Modificador para personalizar la apariencia de la tarjeta.
+ * @param navController Controlador de navegación para manejar la navegación entre composables.
  */
 @Composable
-fun TarjetaTema(idAsignatura: Int, tema: Tema, modifier: Modifier = Modifier, navController: NavController) {
+fun TarjetaTema(
+    idAsignatura: Int,
+    tema: Tema,
+    modifier: Modifier = Modifier,
+    navController: NavController
+) {
     val context = LocalContext.current
     // Estado mutable para controlar el número de líneas del texto
     var maxLines by rememberSaveable { mutableIntStateOf(2) }
@@ -181,13 +221,19 @@ fun TarjetaTema(idAsignatura: Int, tema: Tema, modifier: Modifier = Modifier, na
             // Texto para el nombre del tema
             Text(
                 text = tema.nombreTema,
-                style = MaterialTheme.typography.bodyLarge.copy(fontFamily = ralewayFamily, color = AzulDark),
+                style = MaterialTheme.typography.bodyLarge.copy(
+                    fontFamily = ralewayFamily,
+                    color = AzulDark
+                ),
                 modifier = Modifier.padding(top = 4.dp)
             )
             // Texto para la descripción del tema
             Text(
                 text = tema.descripcionTema,
-                style = MaterialTheme.typography.labelSmall.copy(fontFamily = ralewayFamily, color = Azul),
+                style = MaterialTheme.typography.labelSmall.copy(
+                    fontFamily = ralewayFamily,
+                    color = Azul
+                ),
                 maxLines = maxLines,
                 overflow = TextOverflow.Ellipsis,
                 modifier = Modifier
@@ -201,14 +247,16 @@ fun TarjetaTema(idAsignatura: Int, tema: Tema, modifier: Modifier = Modifier, na
             // Texto para la duración del audio
             Text(
                 text = tema.duracionAudio.toString(),
-                style = MaterialTheme.typography.bodySmall.copy(fontFamily = ralewayFamily, color = AzulOscuro),
+                style = MaterialTheme.typography.bodySmall.copy(
+                    fontFamily = ralewayFamily,
+                    color = AzulOscuro
+                ),
                 modifier = Modifier
                     .padding(bottom = 4.dp)
 
             )
         }
         // Caja para el icono de reproducción
-        // TODO: agregar pointerInput para lanzar la reproducción
         val scope = CoroutineScope(Dispatchers.Main)
         Box1(
             modifier = modifier
@@ -218,12 +266,18 @@ fun TarjetaTema(idAsignatura: Int, tema: Tema, modifier: Modifier = Modifier, na
                 .clickable(onClick = {
                     scope.launch {
                         val androidAudioPlayer = AndroidAudioPlayer(context)
-                        var result = androidAudioPlayer.reproducir(tema = tema, parentMediaId = idAsignatura.toString())
+                        var result = androidAudioPlayer.reproducir(
+                            tema = tema,
+                            parentMediaId = idAsignatura.toString()
+                        )
 
                         // Esperar a que la conexión con el servicio de música se establezca
                         while (!result) {
                             delay(1000) // Esperar 1 segundo antes de volver a intentarlo
-                            result = androidAudioPlayer.reproducir(tema = tema, parentMediaId = idAsignatura.toString())
+                            result = androidAudioPlayer.reproducir(
+                                tema = tema,
+                                parentMediaId = idAsignatura.toString()
+                            )
                         }
 
                         // Navegar a la vista PodcastPlayerUI una vez que la reproducción ha comenzado
@@ -244,11 +298,27 @@ fun TarjetaTema(idAsignatura: Int, tema: Tema, modifier: Modifier = Modifier, na
     }
 }
 
+/**
+ * Composable que muestra el título de la fila de la isla en la vista de detalle de una asignatura.
+ *
+ * @param idAsignatura ID de la asignatura para la que se muestra el título.
+ * @param height Altura del título.
+ */
 @Composable
 fun IslandRowTittle(idAsignatura: Int, height: Dp) {
-    BoxWithConstraints (modifier = Modifier.padding(10.dp).height(height).clip(RoundedCornerShape(16.dp)).background(AzulClaro)
+    BoxWithConstraints(
+        modifier = Modifier
+            .padding(10.dp)
+            .height(height)
+            .clip(RoundedCornerShape(16.dp))
+            .background(AzulClaro)
     ) {
         val anchoTotal: Int = maxWidth.value.roundToInt()
-        AsignaturaCard(asignatura = AsignaturaUseCasesImpl.getAsignaturaById(idAsignatura)!!, onCardClick = {}, anchoTotal = anchoTotal, anchoImagen = anchoTotal/3)
+        AsignaturaCard(
+            asignatura = AsignaturaUseCasesImpl.getAsignaturaById(idAsignatura)!!,
+            onCardClick = {},
+            anchoTotal = anchoTotal,
+            anchoImagen = anchoTotal / 3
+        )
     }
 }

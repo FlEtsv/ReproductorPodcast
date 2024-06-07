@@ -1,4 +1,4 @@
-package com.android.navegacion.components
+package com.universae.navegacion.components
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -47,9 +47,9 @@ import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import com.android.navegacion.R
 import com.universae.domain.entities.asignatura.Asignatura
+import com.universae.domain.entities.tema.Tema
+import com.universae.domain.usecases.AsignaturaUseCasesImpl.getAsignaturaByTemaId
 import com.universae.navegacion.player.AndroidAudioPlayer
-import com.universae.reproductor.domain.entities.tema.Tema
-import com.universae.reproductor.domain.usecases.AsignaturaUseCasesImpl
 import com.universae.navegacion.theme.AzulClaro
 import com.universae.navegacion.theme.AzulDark
 import com.universae.navegacion.theme.AzulOscuro
@@ -58,22 +58,18 @@ import com.universae.navegacion.theme.GrisOscuro
 import com.universae.navegacion.theme.Negro
 import com.universae.navegacion.theme.ralewayFamily
 import com.universae.navegacion.views.ImageWithColoredPlaceholder
-import com.universae.reproductor.domain.usecases.AsignaturaUseCasesImpl.getAsignaturaByTemaId
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 
-@Composable
-fun TitleView(name: String) {
-    Text(text = name, fontSize = 40.sp, fontWeight = FontWeight.Bold)
-}
-
-@Composable
-fun Space() {
-    Spacer(modifier = Modifier.height(10.dp))
-}
-
+/**
+ * Botón principal personalizado.
+ * @param name El nombre que se mostrará en el botón.
+ * @param backColor El color de fondo del botón.
+ * @param color El color del texto del botón.
+ * @param onClick La acción que se ejecutará al hacer clic en el botón.
+ */
 @Composable
 fun MainButton(name: String, backColor: Color, color: Color, onClick: () -> Unit) {
     Button(
@@ -82,13 +78,14 @@ fun MainButton(name: String, backColor: Color, color: Color, onClick: () -> Unit
             contentColor = color
         )
     ) {
-        Text(text = "Prueba")
+        Text(text = "Log In", fontFamily = ralewayFamily)
     }
 }
 
 /**
  * Muestra una fila de tarjetas para cada tema de podcast proporcionado.
- * @param asignaturaList Lista de nombres de podcasts para mostrar.
+ * @param asignaturaList Lista de asignaturas para mostrar.
+ * @param navController Controlador de navegación para manejar la navegación entre vistas.
  */
 @Composable
 fun PodcastsAsignaturasTemas(asignaturaList: List<Asignatura>, navController: NavController) {
@@ -149,12 +146,18 @@ fun PodcastsAsignaturasTemas(asignaturaList: List<Asignatura>, navController: Na
                     onClick = {
                         CoroutineScope(Dispatchers.Main).launch {
                             val androidAudioPlayer = AndroidAudioPlayer(context)
-                            var result = androidAudioPlayer.reproducir(tema = tema, parentMediaId = getAsignaturaByTemaId(tema.temaId)!!.asignaturaId.id.toString())
+                            var result = androidAudioPlayer.reproducir(
+                                tema = tema,
+                                parentMediaId = getAsignaturaByTemaId(tema.temaId)!!.asignaturaId.id.toString()
+                            )
 
                             // Esperar a que la conexión con el servicio de música se establezca
                             while (!result) {
                                 delay(1000) // Esperar 1 segundo antes de volver a intentarlo
-                                result = androidAudioPlayer.reproducir(tema = tema, parentMediaId = getAsignaturaByTemaId(tema.temaId)!!.asignaturaId.id.toString())
+                                result = androidAudioPlayer.reproducir(
+                                    tema = tema,
+                                    parentMediaId = getAsignaturaByTemaId(tema.temaId)!!.asignaturaId.id.toString()
+                                )
                             }
 
                             // Navegar a la vista PodcastPlayerUI una vez que la reproducción ha comenzado
@@ -169,13 +172,20 @@ fun PodcastsAsignaturasTemas(asignaturaList: List<Asignatura>, navController: Na
     }
 }
 
-
 /**
- * Muestra una tarjeta para un tema de podcast.
- * @param topic Tema del podcast a mostrar.
+ * Muestra una tarjeta para una asignatura.
+ * @param asignatura La asignatura a mostrar.
+ * @param onCardClick La acción que se ejecutará al hacer clic en la tarjeta.
+ * @param anchoTotal El ancho total de la tarjeta.
+ * @param anchoImagen El ancho de la imagen en la tarjeta.
  */
 @Composable
-fun AsignaturaCard(asignatura: Asignatura, onCardClick: () -> Unit, anchoTotal: Int = 240, anchoImagen: Int = 80) {
+fun AsignaturaCard(
+    asignatura: Asignatura,
+    onCardClick: () -> Unit,
+    anchoTotal: Int = 240,
+    anchoImagen: Int = 80
+) {
     Card(
         modifier = Modifier
             .width(anchoTotal.dp)
@@ -190,7 +200,10 @@ fun AsignaturaCard(asignatura: Asignatura, onCardClick: () -> Unit, anchoTotal: 
             defaultElevation = 8.dp
         )
     ) {
-        Row (modifier = Modifier.fillMaxWidth().background(AzulClaro),
+        Row(
+            modifier = Modifier
+                .fillMaxWidth()
+                .background(AzulClaro),
             verticalAlignment = Alignment.CenterVertically
         ) {
             ImageWithColoredPlaceholder(
@@ -213,6 +226,11 @@ fun AsignaturaCard(asignatura: Asignatura, onCardClick: () -> Unit, anchoTotal: 
     }
 }
 
+/**
+ * Muestra una tarjeta para un tema.
+ * @param tema El tema a mostrar.
+ * @param onClick La acción que se ejecutará al hacer clic en la tarjeta.
+ */
 @Composable
 fun TemaCard(tema: Tema, onClick: () -> Unit) {
     Card(
@@ -228,7 +246,11 @@ fun TemaCard(tema: Tema, onClick: () -> Unit) {
             defaultElevation = 8.dp
         )
     ) {
-        Box(modifier = Modifier.fillMaxWidth().background(AzulClaro)) { // Asegura que el contenido ocupe todo el ancho disponible
+        Box(
+            modifier = Modifier
+                .fillMaxWidth()
+                .background(AzulClaro)
+        ) { // Asegura que el contenido ocupe todo el ancho disponible
             Row(
                 verticalAlignment = Alignment.CenterVertically
             ) {
@@ -244,7 +266,10 @@ fun TemaCard(tema: Tema, onClick: () -> Unit) {
                 )
                 Text(
                     text = tema.nombreTema,
-                    style = MaterialTheme.typography.bodyLarge.copy(fontFamily = ralewayFamily, color = AzulDark),
+                    style = MaterialTheme.typography.bodyLarge.copy(
+                        fontFamily = ralewayFamily,
+                        color = AzulDark
+                    ),
                     modifier = Modifier.padding(horizontal = 8.dp)
                 )
             }
@@ -255,6 +280,9 @@ fun TemaCard(tema: Tema, onClick: () -> Unit) {
 /**
  * Muestra un título grande con estilo imponente.
  * @param texto El contenido del texto a mostrar.
+ * Esta función Composable crea un componente de texto con un estilo específico.
+ * El estilo incluye color, tamaño de fuente, familia de fuentes, peso de fuente, espaciado entre letras y altura de línea.
+ * Este componente de texto se utiliza para mostrar títulos grandes en la aplicación.
  */
 @Composable
 fun TituloPrincipal(texto: String) {
@@ -263,6 +291,7 @@ fun TituloPrincipal(texto: String) {
         style = TextStyle(
             color = Blanco, // Color del texto
             fontSize = 20.sp, // Tamaño del texto muy grande para realzar la importancia
+            fontFamily = ralewayFamily,
             fontWeight = FontWeight.Bold, // Grosor de la fuente para destacar el título
             letterSpacing = 1.sp, // Espaciado entre letras para mejorar la legibilidad
             lineHeight = 25.sp // Altura de línea ajustada para manejar el tamaño de fuente más grande
@@ -272,6 +301,9 @@ fun TituloPrincipal(texto: String) {
 
 /**
  * Muestra un título grande con estilo imponente, alineado a la izquierda.
+ * Este componente Composable crea un componente de texto con un estilo específico.
+ * El estilo incluye color, tamaño de fuente, familia de fuentes, peso de fuente, espaciado entre letras y altura de línea.
+ * Este componente de texto se utiliza para mostrar títulos grandes en la aplicación.
  * @param texto El contenido del texto a mostrar.
  */
 @Composable
@@ -293,6 +325,7 @@ fun TituloIzquierda(texto: String) {
                 style = TextStyle(
                     color = Color.White,
                     fontSize = 35.sp,
+                    fontFamily = ralewayFamily,
                     fontWeight = FontWeight.Bold,
                     letterSpacing = 3.sp,
                     lineHeight = 40.sp,
@@ -308,7 +341,11 @@ fun TituloIzquierda(texto: String) {
 }
 
 /**
- * Muestra un título Grande con estilo personalizado.
+ * Muestra un título grande con un estilo personalizado.
+ * Esta función Composable crea un componente de texto con un estilo específico.
+ * El estilo incluye color, tamaño de fuente, familia de fuentes, peso de fuente, espaciado entre letras y altura de línea.
+ * Este componente de texto se utiliza para mostrar títulos grandes en la aplicación.
+ *
  * @param texto El contenido del texto a mostrar.
  */
 @Composable
@@ -318,6 +355,7 @@ fun TituloGrande(texto: String) {
         style = TextStyle(
             color = Blanco, // Color del texto
             fontSize = 35.sp, // Tamaño del texto
+            fontFamily = ralewayFamily,
             fontWeight = FontWeight.Bold, // Grosor de la fuente
             letterSpacing = 3.sp, // Espaciado entre letras
             lineHeight = 30.sp // Altura de línea del texto
@@ -327,8 +365,9 @@ fun TituloGrande(texto: String) {
 }
 
 /**
- * Muestra un título mediano con estilo personalizado.
- * @param texto El contenido del texto a mostrar.
+ * Esta función Composable muestra un título de tamaño mediano con un estilo personalizado.
+ *
+ * @param texto El contenido del texto a mostrar. Este texto se mostrará como un título de tamaño mediano en la aplicación.
  */
 @Composable
 fun TituloMediano(texto: String) {
@@ -337,6 +376,7 @@ fun TituloMediano(texto: String) {
         style = TextStyle(
             color = Blanco, // Color del texto
             fontSize = 20.sp, // Tamaño del texto
+            fontFamily = ralewayFamily,
             fontWeight = FontWeight.Bold, // Grosor de la fuente
             letterSpacing = 2.sp, // Espaciado entre letras
             lineHeight = 28.sp, // Altura de línea del texto
@@ -346,7 +386,9 @@ fun TituloMediano(texto: String) {
 }
 
 /**
- * @param texto sirve para determinar el texto a mostrar alineamento a la izquierda
+ * Muestra un título de tamaño mediano con un estilo personalizado y alineado a la izquierda.
+ *
+ * @param texto El contenido del texto a mostrar. Este texto se mostrará como un título de tamaño mediano en la aplicación.
  */
 @Composable
 fun TituloMedianoCentralLeft(texto: String) {
@@ -361,6 +403,7 @@ fun TituloMedianoCentralLeft(texto: String) {
             style = TextStyle(
                 color = Blanco,
                 fontSize = 24.sp,
+                fontFamily = ralewayFamily,
                 fontWeight = FontWeight.Bold,
                 letterSpacing = 2.sp,
                 lineHeight = 30.sp,
@@ -374,6 +417,11 @@ fun TituloMedianoCentralLeft(texto: String) {
     }
 }
 
+/**
+ * Muestra una barra de progreso circular dinámica.
+ *
+ * @param progress El estado mutable del progreso a mostrar. Este valor se actualizará dinámicamente a medida que cambie el progreso.
+ */
 @Composable
 fun DynamicCircularProgressBar(progress: MutableState<Float>) {
     CircularProgressIndicator(
@@ -383,6 +431,11 @@ fun DynamicCircularProgressBar(progress: MutableState<Float>) {
     )
 }
 
+/**
+ * Muestra un icono de "Cast".
+ *
+ * @return ImageVector El vector de imagen del icono de "Cast".
+ */
 @Composable
 fun iconCast(): ImageVector {
     val imageVector = ImageVector.vectorResource(id = R.drawable.cast)
@@ -393,6 +446,11 @@ fun iconCast(): ImageVector {
     return imageVector
 }
 
+/**
+ * Muestra un icono de "Pausa".
+ *
+ * @return ImageVector El vector de imagen del icono de "Pausa".
+ */
 @Composable
 fun iconPause(): ImageVector {
     val imageVector = ImageVector.vectorResource(id = R.drawable.pause)
@@ -403,6 +461,11 @@ fun iconPause(): ImageVector {
     return imageVector
 }
 
+/**
+ * Muestra un icono de "Play".
+ *
+ * @return ImageVector El vector de imagen del icono de "Play".
+ */
 @Composable
 fun iconPlay(): ImageVector {
     val imageVector = ImageVector.vectorResource(id = R.drawable.play)
@@ -413,6 +476,11 @@ fun iconPlay(): ImageVector {
     return imageVector
 }
 
+/**
+ * Muestra un icono de "Flecha de regreso".
+ *
+ * @return ImageVector El vector de imagen del icono de "Flecha de regreso".
+ */
 @Composable
 fun iconArrowBack(): ImageVector {
     val imageVector = ImageVector.vectorResource(id = R.drawable.arroyback)
@@ -423,6 +491,11 @@ fun iconArrowBack(): ImageVector {
     return imageVector
 }
 
+/**
+ * Muestra un icono de "Retroceso diez segundos".
+ *
+ * @return ImageVector El vector de imagen del icono de "Retroceso diez segundos".
+ */
 @Composable
 fun iconBackwardTenSec(): ImageVector {
     val imageVector = ImageVector.vectorResource(id = R.drawable.baseline_replay_10_24)
@@ -433,6 +506,11 @@ fun iconBackwardTenSec(): ImageVector {
     return imageVector
 }
 
+/**
+ * Muestra un icono de "Signo de retroceso rápido".
+ *
+ * @return ImageVector El vector de imagen del icono de "Signo de retroceso rápido".
+ */
 @Composable
 fun iconFastReward(): ImageVector {
     val imageVector = ImageVector.vectorResource(id = R.drawable.fastrewind)
@@ -443,6 +521,11 @@ fun iconFastReward(): ImageVector {
     return imageVector
 }
 
+/**
+ * Muestra un icono de "Signo de avance rápido".
+ *
+ * @return ImageVector El vector de imagen del icono de "Signo de avance rápido".
+ */
 @Composable
 fun iconFastForward(): ImageVector {
     val imageVector = ImageVector.vectorResource(id = R.drawable.fastfoward)
@@ -453,6 +536,11 @@ fun iconFastForward(): ImageVector {
     return imageVector
 }
 
+/**
+ * Muestra un icono de "Avance diez segundos".
+ *
+ * @return ImageVector El vector de imagen del icono de "Avance diez segundos".
+ */
 @Composable
 fun arrowForwardTenSec(): ImageVector {
     val imageVector = ImageVector.vectorResource(id = R.drawable.baseline_forward_10_24)

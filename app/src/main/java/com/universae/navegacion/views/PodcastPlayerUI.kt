@@ -8,10 +8,8 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
@@ -24,61 +22,73 @@ import androidx.compose.material3.LinearProgressIndicator
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.runtime.mutableFloatStateOf
-import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
+import androidx.media3.common.C
 import androidx.media3.common.MediaItem
+import androidx.media3.common.Player
+import androidx.media3.common.util.UnstableApi
 import androidx.navigation.NavController
 import com.android.navegacion.R
-import com.android.navegacion.components.arrowForwardTenSec
-import com.android.navegacion.components.iconBackwardTenSec
-import com.android.navegacion.components.iconCast
-import com.android.navegacion.components.iconFastForward
-import com.android.navegacion.components.iconFastReward
-import com.android.navegacion.components.iconPause
-import com.android.navegacion.components.iconPlay
-import com.example.android.uamp.common.MusicServiceConnection
-import com.universae.navegacion.player.AndroidAudioPlayer
-import com.universae.reproductor.domain.usecases.AsignaturaUseCasesImpl
-import com.universae.reproductor.domain.usecases.TemaUseCasesImpl
-import com.universae.navegacion.theme.AzulClaro
-import com.universae.navegacion.theme.AzulOscuro
-import com.universae.navegacion.theme.gradientBackground
-import kotlin.math.sqrt
-import androidx.compose.runtime.livedata.observeAsState
-import androidx.media3.common.C
-import androidx.media3.common.Player
-import androidx.media3.common.util.Log
-import androidx.media3.common.util.UnstableApi
+import com.universae.navegacion.components.arrowForwardTenSec
+import com.universae.navegacion.components.iconBackwardTenSec
+import com.universae.navegacion.components.iconCast
+import com.universae.navegacion.components.iconFastForward
+import com.universae.navegacion.components.iconFastReward
+import com.universae.navegacion.components.iconPause
+import com.universae.navegacion.components.iconPlay
 import com.example.android.uamp.common.EMPTY_PLAYBACK_STATE
+import com.example.android.uamp.common.MusicServiceConnection
 import com.example.android.uamp.common.PlaybackState
 import com.example.android.uamp.media.MusicService
 import com.example.android.uamp.media.extensions.isEnded
 import com.example.android.uamp.media.extensions.isPlayEnabled
+import com.universae.domain.usecases.TemaUseCasesImpl
+import com.universae.navegacion.player.AndroidAudioPlayer
+import com.universae.navegacion.theme.AzulClaro
+import com.universae.navegacion.theme.AzulOscuro
 import com.universae.navegacion.theme.Blanco
+import com.universae.navegacion.theme.gradientBackground
 import com.universae.navegacion.theme.ralewayFamily
+import kotlin.math.sqrt
 
-//TODO: actualizar info en base al servicio de musica para que cambie el composable incluso si usas el reproductor fuera de la vista de la app
+/**
+ * Composable que representa el reproductor de podcast.
+ *
+ * @param navController Controlador de navegación para manejar la navegación entre composables.
+ * @param idTema ID del tema del podcast a reproducir.
+ */
 @OptIn(UnstableApi::class)
 @Composable
 fun ReproductorPodcast(navController: NavController, idTema: Int) {
 
     val context: Context = LocalContext.current
-    val musicServiceConnection = remember { MusicServiceConnection(context, ComponentName(context, MusicService::class.java)) }
+    val musicServiceConnection = remember {
+        MusicServiceConnection(
+            context,
+            ComponentName(context, MusicService::class.java)
+        )
+    }
+
+    DisposableEffect(musicServiceConnection) {
+        onDispose {
+            musicServiceConnection.release()
+        }
+    }
 
     val currentMediaItem by musicServiceConnection.nowPlaying.observeAsState(initial = MediaItem.EMPTY)
     val playbackState by musicServiceConnection.playbackState.observeAsState(initial = EMPTY_PLAYBACK_STATE)
 
-    var reproduciendo by remember { mutableStateOf(false) }
     val progress = remember { mutableFloatStateOf(0.0f) }
     // crea instancia audioPlayer e inicializa el controlador de reproducción mediante el composable AndroidAudioPlayerComposable
     val audioPlayer = remember { AndroidAudioPlayer(context) }
@@ -129,36 +139,46 @@ fun ReproductorPodcast(navController: NavController, idTema: Int) {
                     }
                 }
             }
-            item {PortadaPodcast(currentMediaItem.mediaMetadata.artworkUri.toString(), currentMediaItem.mediaMetadata.title.toString()) }
+            item {
+                PortadaPodcast(
+                    currentMediaItem.mediaMetadata.artworkUri.toString(),
+                    currentMediaItem.mediaMetadata.title.toString()
+                )
+            }
             //Spacer(modifier = Modifier.height(16.dp))
-            item{Text(
-                text = currentMediaItem.mediaMetadata.title?.toString() ?: tema.nombreTema,
-                style = MaterialTheme.typography.bodyLarge.copy(fontFamily = ralewayFamily, color = Blanco)
-            )}
-            item{ ProgressBarRow(progress = progress) }
-            item{ ControlesReproduccion(
-                playbackState = playbackState,
-                musicServiceConnection = musicServiceConnection,
-                reproduciendo = reproduciendo,
-                onPlayPauseToggle = {
-                    audioPlayer.reproducir(
-                        tema = tema,
-                        parentMediaId = AsignaturaUseCasesImpl.getNombreAsignaturaByTemaId(tema.temaId)
+            item {
+                Text(
+                    text = currentMediaItem.mediaMetadata.title?.toString() ?: tema.nombreTema,
+                    style = MaterialTheme.typography.bodyLarge.copy(
+                        fontFamily = ralewayFamily,
+                        color = Blanco
                     )
-                    reproduciendo = !reproduciendo
-                },
-                onRetrocederTenSecs = { audioPlayer.retrocederDiezSegundos() },
-                onNextSong = { audioPlayer.siguienteTema() },
-                onAvanzarTenSecs = { audioPlayer.adelantarDiezSegundos() },
-                onPreviousSong = { audioPlayer.temaAnterior() }
-            )}
+                )
+            }
+            item { ProgressBarRow(progress = progress) }
+            item {
+                ControlesReproduccion(
+                    playbackState = playbackState,
+                    musicServiceConnection = musicServiceConnection,
+                    onRetrocederTenSecs = { audioPlayer.retrocederDiezSegundos() },
+                    onNextSong = { audioPlayer.siguienteTema() },
+                    onAvanzarTenSecs = { audioPlayer.adelantarDiezSegundos() },
+                    onPreviousSong = { audioPlayer.temaAnterior() }
+                )
+            }
         }
     }
 }
 
-
+/**
+ * Composable que muestra la portada del podcast.
+ *
+ * @param temaImagen La URL de la imagen del tema del podcast.
+ * @param temaNombre El nombre del tema del podcast.
+ */
 @Composable
 fun PortadaPodcast(temaImagen: String, temaNombre: String) {
+    // Diámetro de la portada
     val diameter = 200.dp
     Box(
         modifier = Modifier
@@ -180,18 +200,26 @@ fun PortadaPodcast(temaImagen: String, temaNombre: String) {
     }
 }
 
+/**
+ * Composable que muestra los controles de reproducción para el reproductor de podcast.
+ *
+ * @param playbackState Estado de reproducción actual del reproductor de podcast.
+ * @param musicServiceConnection Conexión con el servicio de música que maneja la reproducción.
+ * @param onRetrocederTenSecs Función que se invoca cuando se presiona el botón para retroceder diez segundos.
+ * @param onNextSong Función que se invoca cuando se presiona el botón para pasar a la siguiente canción.
+ * @param onAvanzarTenSecs Función que se invoca cuando se presiona el botón para avanzar diez segundos.
+ * @param onPreviousSong Función que se invoca cuando se presiona el botón para pasar a la canción anterior.
+ */
 @Composable
 fun ControlesReproduccion(
     playbackState: PlaybackState,
     musicServiceConnection: MusicServiceConnection,
-    reproduciendo: Boolean,
-    onPlayPauseToggle: () -> Unit,
     onRetrocederTenSecs: () -> Unit,
     onNextSong: () -> Unit,
     onAvanzarTenSecs: () -> Unit,
     onPreviousSong: () -> Unit
 ) {
-    val player = musicServiceConnection.player?: return
+    val player = musicServiceConnection.player ?: return
 
     Row(
         horizontalArrangement = Arrangement.Center,
@@ -258,10 +286,14 @@ fun ControlesReproduccion(
     }
 }
 
+/**
+ * Composable que muestra un botón para compartir.
+ * Al hacer clic en el botón, se debe implementar la lógica para compartir.
+ */
 @Composable
 fun BotonCompartir() {
     IconButton(
-        onClick = { /* TODO: Lógica para compartir con Android Auto */ }
+        onClick = { /* TODO: Lógica para compartir */ }
     ) {
         Icon(
             imageVector = iconCast(),
@@ -271,6 +303,11 @@ fun BotonCompartir() {
     }
 }
 
+/**
+ * Composable que muestra una barra de progreso.
+ *
+ * @param progress Un estado mutable que representa el progreso actual. Debe ser un valor entre 0f y 1f.
+ */
 @Composable
 fun ProgressBarRow(progress: MutableState<Float>) {  // 'progress' debería ser un valor entre 0f y 1f
     Row(

@@ -1,5 +1,4 @@
-package com.android.navegacion.views
-
+package com.universae.navegacion.views
 
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.focusable
@@ -35,12 +34,20 @@ import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import com.android.navegacion.R
-import com.android.navegacion.components.MainButton
+import com.universae.navegacion.components.MainButton
+import com.universae.navegacion.theme.Blanco
+import com.universae.navegacion.theme.GrisOscuro
+import com.universae.navegacion.theme.Negro
+import com.universae.navegacion.theme.Rojo
 import com.universae.navegacion.theme.gradientBackground
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 
-
+/**
+ * Composable que muestra la pantalla de inicio de sesión.
+ *
+ * @param navController Controlador de navegación para manejar la navegación entre composables.
+ */
 @Composable
 fun Login(navController: NavController) {
     val keyboardController = LocalSoftwareKeyboardController.current
@@ -76,27 +83,6 @@ fun Login(navController: NavController) {
                 .fillMaxWidth()
                 .requiredHeight(200.dp)
         )
-
-        /*
-        BasicTextField(
-            value = username.value,
-            onValueChange = { username.value = it },
-            textStyle = androidx.compose.ui.text.TextStyle(
-                color = textColor.value, fontSize = 18.sp
-            ),
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(top = 16.dp)
-                .border(1.dp, Color.Gray, RoundedCornerShape(8.dp))
-                .padding(8.dp),
-            decorationBox = { innerTextField ->
-                if (username.value.isEmpty()) {
-                    Text("Username", color = Color.Gray, style = MaterialTheme.typography.bodyLarge)
-                }
-                innerTextField()
-            }
-        )
-        */
         var user by remember { mutableStateOf("") }
         var avisoUser by remember { mutableStateOf("") }
         OutlinedTextField(
@@ -108,89 +94,22 @@ fun Login(navController: NavController) {
                 Text(
                     text = "Usuario",
                     style = MaterialTheme.typography.bodyMedium,
-                    color = Color.White
+                    color = Blanco
                 )
             },
             placeholder = {
                 Text(
                     text = avisoUser,
                     style = MaterialTheme.typography.bodySmall,
-                    color = Color.White
+                    color = Blanco
                 )
             },
             singleLine = true,
-            textStyle = TextStyle(color = Color.White),
+            textStyle = TextStyle(color = Blanco),
             colors = OutlinedTextFieldDefaults.colors(
-                /*
-                TODO("cambiar colores por MaterialTheme")
-                focusedTextColor = OutlinedTextFieldTokens.FocusInputColor.value,
-                unfocusedTextColor = OutlinedTextFieldTokens.InputColor.value,
-                disabledTextColor = OutlinedTextFieldTokens.DisabledInputColor.value
-                    .copy(alpha = OutlinedTextFieldTokens.DisabledInputOpacity),
-                errorTextColor = OutlinedTextFieldTokens.ErrorInputColor.value,
-                 */
-
-
-                /*
-                focusedContainerColor = Color.Transparent,
-                unfocusedContainerColor = Color.Transparent,
-                disabledContainerColor = Color.Transparent,
-                errorContainerColor = Color.Transparent,
-                cursorColor = Color.White,
-
-                 */
-                /*
-                TODO("cambiar colores por MaterialTheme")
-                errorCursorColor = OutlinedTextFieldTokens.ErrorFocusCaretColor.value,
-                selectionColors = LocalTextSelectionColors.current,
-                 */
-
-
-                //focusedBorderColor = Color.White,
-                unfocusedBorderColor = Color.White,
-                disabledBorderColor = Color.White,
-                errorBorderColor = MaterialTheme.colorScheme.error,
-
-
-                /*
-                TODO("cambiar colores por MaterialTheme")
-                focusedLeadingIconColor = OutlinedTextFieldTokens.FocusLeadingIconColor.value,
-                unfocusedLeadingIconColor = OutlinedTextFieldTokens.LeadingIconColor.value,
-                disabledLeadingIconColor = OutlinedTextFieldTokens.DisabledLeadingIconColor.value
-                    .copy(alpha = OutlinedTextFieldTokens.DisabledLeadingIconOpacity),
-                errorLeadingIconColor = OutlinedTextFieldTokens.ErrorLeadingIconColor.value,
-                focusedTrailingIconColor = OutlinedTextFieldTokens.FocusTrailingIconColor.value,
-                unfocusedTrailingIconColor = OutlinedTextFieldTokens.TrailingIconColor.value,
-                disabledTrailingIconColor = OutlinedTextFieldTokens.DisabledTrailingIconColor
-                    .value.copy(alpha = OutlinedTextFieldTokens.DisabledTrailingIconOpacity),
-                errorTrailingIconColor = OutlinedTextFieldTokens.ErrorTrailingIconColor.value,
-                focusedLabelColor = OutlinedTextFieldTokens.FocusLabelColor.value,
-                unfocusedLabelColor = OutlinedTextFieldTokens.LabelColor.value,
-                disabledLabelColor = OutlinedTextFieldTokens.DisabledLabelColor.value
-                    .copy(alpha = OutlinedTextFieldTokens.DisabledLabelOpacity),
-                errorLabelColor = OutlinedTextFieldTokens.ErrorLabelColor.value,
-                focusedPlaceholderColor = OutlinedTextFieldTokens.InputPlaceholderColor.value,
-                unfocusedPlaceholderColor = OutlinedTextFieldTokens.InputPlaceholderColor.value,
-                disabledPlaceholderColor = OutlinedTextFieldTokens.DisabledInputColor.value
-                    .copy(alpha = OutlinedTextFieldTokens.DisabledInputOpacity),
-                errorPlaceholderColor = OutlinedTextFieldTokens.InputPlaceholderColor.value,
-                focusedSupportingTextColor = OutlinedTextFieldTokens.FocusSupportingColor.value,
-                unfocusedSupportingTextColor = OutlinedTextFieldTokens.SupportingColor.value,
-                disabledSupportingTextColor = OutlinedTextFieldTokens.DisabledSupportingColor
-                    .value.copy(alpha = OutlinedTextFieldTokens.DisabledSupportingOpacity),
-                errorSupportingTextColor = OutlinedTextFieldTokens.ErrorSupportingColor.value,
-                focusedPrefixColor = OutlinedTextFieldTokens.InputPrefixColor.value,
-                unfocusedPrefixColor = OutlinedTextFieldTokens.InputPrefixColor.value,
-                disabledPrefixColor = OutlinedTextFieldTokens.InputPrefixColor.value
-                    .copy(alpha = OutlinedTextFieldTokens.DisabledInputOpacity),
-                errorPrefixColor = OutlinedTextFieldTokens.InputPrefixColor.value,
-                focusedSuffixColor = OutlinedTextFieldTokens.InputSuffixColor.value,
-                unfocusedSuffixColor = OutlinedTextFieldTokens.InputSuffixColor.value,
-                disabledSuffixColor = OutlinedTextFieldTokens.InputSuffixColor.value
-                    .copy(alpha = OutlinedTextFieldTokens.DisabledInputOpacity),
-                errorSuffixColor = OutlinedTextFieldTokens.InputSuffixColor.value,
-
-                 */
+                unfocusedBorderColor = Blanco,
+                disabledBorderColor = Blanco,
+                errorBorderColor = Rojo
             )
         )
 
@@ -203,111 +122,34 @@ fun Login(navController: NavController) {
                 Text(
                     text = "Contraseña",
                     style = MaterialTheme.typography.bodyMedium,
-                    color = Color.White
+                    color = Blanco
                 )
             },
             placeholder = {
                 Text(
                     text = avisoPass,
                     style = MaterialTheme.typography.bodySmall,
-                    color = Color.White
+                    color = Blanco
                 )
             },
             singleLine = true,
-            textStyle = TextStyle(color = Color.White),
+            textStyle = TextStyle(color = Blanco),
             colors = OutlinedTextFieldDefaults.colors(
-                /*
-                TODO("cambiar colores por MaterialTheme")
-                focusedTextColor = OutlinedTextFieldTokens.FocusInputColor.value,
-                unfocusedTextColor = OutlinedTextFieldTokens.InputColor.value,
-                disabledTextColor = OutlinedTextFieldTokens.DisabledInputColor.value
-                    .copy(alpha = OutlinedTextFieldTokens.DisabledInputOpacity),
-                errorTextColor = OutlinedTextFieldTokens.ErrorInputColor.value,
-                focusedContainerColor = Color.Transparent,
-                unfocusedContainerColor = Color.Transparent,
-                disabledContainerColor = Color.Transparent,
-                errorContainerColor = Color.Transparent,
-                cursorColor = Color.White,
-                errorCursorColor = OutlinedTextFieldTokens.ErrorFocusCaretColor.value,
-                selectionColors = LocalTextSelectionColors.current,
-                focusedBorderColor = Color.White,
-                unfocusedBorderColor = Color.White,
-                disabledBorderColor = Color.White,
-                errorBorderColor = OutlinedTextFieldTokens.ErrorOutlineColor.value,
-                focusedLeadingIconColor = OutlinedTextFieldTokens.FocusLeadingIconColor.value,
-                unfocusedLeadingIconColor = OutlinedTextFieldTokens.LeadingIconColor.value,
-                disabledLeadingIconColor = OutlinedTextFieldTokens.DisabledLeadingIconColor.value
-                    .copy(alpha = OutlinedTextFieldTokens.DisabledLeadingIconOpacity),
-                errorLeadingIconColor = OutlinedTextFieldTokens.ErrorLeadingIconColor.value,
-                focusedTrailingIconColor = OutlinedTextFieldTokens.FocusTrailingIconColor.value,
-                unfocusedTrailingIconColor = OutlinedTextFieldTokens.TrailingIconColor.value,
-                disabledTrailingIconColor = OutlinedTextFieldTokens.DisabledTrailingIconColor
-                    .value.copy(alpha = OutlinedTextFieldTokens.DisabledTrailingIconOpacity),
-                errorTrailingIconColor = OutlinedTextFieldTokens.ErrorTrailingIconColor.value,
-                focusedLabelColor = OutlinedTextFieldTokens.FocusLabelColor.value,
-                unfocusedLabelColor = OutlinedTextFieldTokens.LabelColor.value,
-                disabledLabelColor = OutlinedTextFieldTokens.DisabledLabelColor.value
-                    .copy(alpha = OutlinedTextFieldTokens.DisabledLabelOpacity),
-                errorLabelColor = OutlinedTextFieldTokens.ErrorLabelColor.value,
-                focusedPlaceholderColor = OutlinedTextFieldTokens.InputPlaceholderColor.value,
-                unfocusedPlaceholderColor = OutlinedTextFieldTokens.InputPlaceholderColor.value,
-                disabledPlaceholderColor = OutlinedTextFieldTokens.DisabledInputColor.value
-                    .copy(alpha = OutlinedTextFieldTokens.DisabledInputOpacity),
-                errorPlaceholderColor = OutlinedTextFieldTokens.InputPlaceholderColor.value,
-                focusedSupportingTextColor = OutlinedTextFieldTokens.FocusSupportingColor.value,
-                unfocusedSupportingTextColor = OutlinedTextFieldTokens.SupportingColor.value,
-                disabledSupportingTextColor = OutlinedTextFieldTokens.DisabledSupportingColor
-                    .value.copy(alpha = OutlinedTextFieldTokens.DisabledSupportingOpacity),
-                errorSupportingTextColor = OutlinedTextFieldTokens.ErrorSupportingColor.value,
-                focusedPrefixColor = OutlinedTextFieldTokens.InputPrefixColor.value,
-                unfocusedPrefixColor = OutlinedTextFieldTokens.InputPrefixColor.value,
-                disabledPrefixColor = OutlinedTextFieldTokens.InputPrefixColor.value
-                    .copy(alpha = OutlinedTextFieldTokens.DisabledInputOpacity),
-                errorPrefixColor = OutlinedTextFieldTokens.InputPrefixColor.value,
-                focusedSuffixColor = OutlinedTextFieldTokens.InputSuffixColor.value,
-                unfocusedSuffixColor = OutlinedTextFieldTokens.InputSuffixColor.value,
-                disabledSuffixColor = OutlinedTextFieldTokens.InputSuffixColor.value
-                    .copy(alpha = OutlinedTextFieldTokens.DisabledInputOpacity),
-                errorSuffixColor = OutlinedTextFieldTokens.InputSuffixColor.value,
-
-                 */
-                //focusedBorderColor = Color.White,
-                unfocusedBorderColor = Color.White,
-                disabledBorderColor = Color.White,
-                errorBorderColor = MaterialTheme.colorScheme.error,
+                unfocusedBorderColor = Blanco,
+                disabledBorderColor = Blanco,
+                errorBorderColor = Rojo
             ),
             // VisualTransformation para ocultar la contraseña
             visualTransformation = PasswordVisualTransformation(),
             // Opciones del teclado para establecer el tipo de entrada como contraseña
             keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Password),
         )
-
-        /*
-        BasicTextField(
-            value = password.value,
-            onValueChange = { password.value = it },
-            textStyle = androidx.compose.ui.text.TextStyle(
-                color = textColor.value, fontSize = 18.sp
-            ),
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(top = 16.dp)
-                .border(1.dp, Color.Gray, RoundedCornerShape(8.dp))
-                .padding(8.dp),
-            decorationBox = { innerTextField ->
-                if (password.value.isEmpty()) {
-                    Text("Password", color = Color.Gray, style = MaterialTheme.typography.bodyLarge)
-                }
-                innerTextField()
-            }
-        )
-        */
         Spacer(modifier = Modifier.height(20.dp))
 
         MainButton(
             name = "Login",
             backColor = MaterialTheme.colorScheme.primary,
-            color = Color.White
+            color = Blanco
         ) {
             var id = user
             var pass = clave
@@ -316,13 +158,13 @@ fun Login(navController: NavController) {
             } else {
                 avisoUser = "No deje vacios los campos"
                 avisoPass = "No deje vacios los campos"
-                textColor.value = Color.Red
-                borderColor.value = Color.Red
+                textColor.value = Rojo
+                borderColor.value = Rojo
                 //coroutine para dejar el color y textos como antes
                 coroutineScope.launch {
                     delay(4000)
-                    textColor.value = Color.Black
-                    borderColor.value = Color.Gray
+                    textColor.value = Negro
+                    borderColor.value = GrisOscuro
                     username.value = ""
                     password.value = ""
                 }

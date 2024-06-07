@@ -3,12 +3,31 @@ package com.universae.navegacion.views
 import android.annotation.SuppressLint
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
-import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material3.*
-import androidx.compose.runtime.*
+import androidx.compose.material3.Card
+import androidx.compose.material3.CardColors
+import androidx.compose.material3.CardDefaults
+import androidx.compose.material3.CircularProgressIndicator
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Scaffold
+import androidx.compose.material3.Text
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.mutableFloatStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.shadow
@@ -23,20 +42,25 @@ import androidx.navigation.NavController
 import coil.compose.ImagePainter
 import coil.compose.rememberImagePainter
 import com.android.navegacion.R
-import com.android.navegacion.components.*
+import com.universae.navegacion.components.PodcastsAsignaturasTemas
+import com.universae.navegacion.components.TituloGrande
+import com.universae.navegacion.components.TituloIzquierda
+import com.universae.navegacion.components.TituloMediano
+import com.universae.navegacion.components.TituloMedianoCentralLeft
+import com.universae.domain.entities.alumno.Alumno
 import com.universae.domain.entities.asignatura.Asignatura
+import com.universae.domain.entities.grado.Grado
+import com.universae.domain.usecases.AlumnoUseCasesImpl
+import com.universae.domain.usecases.AsignaturaUseCasesImpl
+import com.universae.domain.usecases.GradoUseCasesImpl
 import com.universae.navegacion.theme.AzulClaro
 import com.universae.navegacion.theme.AzulOscuro
-import com.universae.reproductor.domain.entities.alumno.Alumno
-import com.universae.reproductor.domain.entities.grado.Grado
-import com.universae.reproductor.domain.usecases.AlumnoUseCaseImpl
-import com.universae.reproductor.domain.usecases.AsignaturaUseCasesImpl
-import com.universae.reproductor.domain.usecases.GradoUseCaseImpl
 import com.universae.navegacion.theme.gradientBackground
 
 //TODO("implementar click en grado y muestra asignaturas del grado y sugeridos de las asignaturas del grado")
 /**
  * Vista principal de la aplicación, configurada para mostrar una barra superior, un botón flotante y un contenido dinámico.
+ *
  * @param navController Controlador de navegación para manejar transiciones de pantalla.
  * @param alumnoId Identificador del usuario.
  */
@@ -45,8 +69,8 @@ import com.universae.navegacion.theme.gradientBackground
 fun HomeView(navController: NavController, alumnoId: Int) {
 
     val alumno: Alumno =
-        AlumnoUseCaseImpl.getAlumnoById(alumnoId)!! // Si llegamos a esta view es porque el alumno existe y siempre retorna un alumno
-    val grados: List<Grado> = GradoUseCaseImpl.getGradosByAlumnoID(alumnoId)
+        AlumnoUseCasesImpl.getAlumnoById(alumnoId)!! // Si llegamos a esta view es porque el alumno existe y siempre retorna un alumno
+    val grados: List<Grado> = GradoUseCasesImpl.getGradosByAlumnoID(alumnoId)
     val nombreReal = alumno.nombreReal
 
     // TODO("comprobar si hay cola de reproducción")
@@ -59,7 +83,6 @@ fun HomeView(navController: NavController, alumnoId: Int) {
 
     // Estructura básica con barra superior y botón flotante
     Scaffold(
-        floatingActionButton = { ActionButton() }
     ) { innerPadding ->
         // Columna Lazy que se ajusta al padding proporcionado por el Scaffold
         LazyColumn(
@@ -103,7 +126,9 @@ fun HomeView(navController: NavController, alumnoId: Int) {
 }
 
 /**
- * Muestra una Card pequeña alineada a la izquierda con texto a su derecha, ambos centrados en el Row. TODO: revisar este composable
+ * Composable que muestra una fila con una tarjeta y texto alineado a la izquierda.
+ * La tarjeta y el texto están centrados verticalmente en la fila.
+ * Este composable se utiliza para mostrar información sobre la asignatura, el tema y el título en la vista de inicio.
  */
 @Composable
 fun FilaTituloCola() {
@@ -144,9 +169,11 @@ fun FilaTituloCola() {
 }
 
 /**
- * Muestra una Card pequeña alineada a la izquierda con texto a su derecha, ambos centrados en el Row.
- * */
-
+ * Composable que muestra una fila de tarjetas de grado en una vista de desplazamiento horizontal.
+ * Cada tarjeta representa un grado y se genera a partir de la lista de grados proporcionada.
+ *
+ * @param grados Lista de grados que se deben mostrar en la fila.
+ */
 @Composable
 fun FilaTituloNoCola(grados: List<Grado?>) {
     LazyRow(
@@ -162,6 +189,17 @@ fun FilaTituloNoCola(grados: List<Grado?>) {
     }
 }
 
+/**
+ * Composable que muestra una imagen con un marcador de posición coloreado.
+ * Si la imagen está cargando o la URL de la imagen es nula, se muestra el marcador de posición.
+ *
+ * @param imageUrl La URL de la imagen a mostrar.
+ * @param placeholderRes El recurso del marcador de posición a mostrar cuando la imagen está cargando o la URL es nula.
+ * @param placeholderColor El color del filtro de color para aplicar al marcador de posición.
+ * @param modifier El modificador a aplicar al Box que contiene la imagen y el marcador de posición.
+ * @param contentDescription La descripción del contenido de la imagen para la accesibilidad.
+ * @param padding El padding a aplicar a la imagen y al marcador de posición.
+ */
 @Composable
 fun ImageWithColoredPlaceholder(
     imageUrl: String,
@@ -196,14 +234,25 @@ fun ImageWithColoredPlaceholder(
     }
 }
 
+/**
+ * Composable que muestra una tarjeta de grado.
+ *
+ * @param grado El grado que se va a mostrar en la tarjeta. Puede ser nulo.
+ */
 @Composable
 fun GradoCard(grado: Grado?) {
+    // Crea una tarjeta con un tamaño y color de fondo específicos
     Card(
         modifier = Modifier
             .width(340.dp) // Define el ancho aquí
             .height(100.dp)
             .background(Color.Transparent),
-        colors = CardColors(Color.Transparent, Color.Transparent, Color.Transparent, Color.Transparent)
+        colors = CardColors(
+            Color.Transparent,
+            Color.Transparent,
+            Color.Transparent,
+            Color.Transparent
+        )
     ) {
         Row(
             modifier = Modifier.fillMaxSize(),
@@ -226,7 +275,9 @@ fun GradoCard(grado: Grado?) {
                     imageUrl = grado?.icoGrado ?: "",
                     placeholderRes = R.mipmap.escudo,
                     placeholderColor = AzulOscuro,
-                    modifier = Modifier.fillMaxSize().background(color = AzulClaro),
+                    modifier = Modifier
+                        .fillMaxSize()
+                        .background(color = AzulClaro),
                     contentDescription = "Icono del Grado"
                 )
             }
@@ -269,7 +320,8 @@ fun GradoCard(grado: Grado?) {
                     // Observa los cambios en porcentajeCompletadoGrado y actualiza progress
                     LaunchedEffect(key1 = grado) {
                         grado?.let {
-                            progress.value = GradoUseCaseImpl.porcentajeCompletadoGrado(grado.gradoId) / 100f
+                            progress.value =
+                                GradoUseCasesImpl.porcentajeCompletadoGrado(grado.gradoId) / 100f
                         }
                     }
                     Box(

@@ -1,32 +1,47 @@
 package com.universae.data.local.dataexample
 
-import com.universae.reproductor.domain.entities.alumno.Alumno
-import com.universae.reproductor.domain.entities.alumno.AlumnoId
+import com.universae.domain.entities.alumno.Alumno
+import com.universae.domain.entities.alumno.AlumnoId
 import com.universae.domain.entities.asignatura.Asignatura
 import com.universae.domain.entities.asignatura.AsignaturaId
-import com.universae.reproductor.domain.entities.grado.Grado
-import com.universae.reproductor.domain.entities.grado.GradoId
-import com.universae.reproductor.domain.entities.tema.Tema
-import com.universae.reproductor.domain.entities.tema.TemaId
+import com.universae.domain.entities.grado.Grado
+import com.universae.domain.entities.grado.GradoId
+import com.universae.domain.entities.tema.Tema
+import com.universae.domain.entities.tema.TemaId
 import kotlin.time.DurationUnit
 import kotlin.time.toDuration
 
-const val URL_AUDIO = "https://dl.dropboxusercontent.com/scl/fi/4notzhccgk05jkzcrsg2t/file_example_MP3_1MG.mp3?rlkey=hnvrs05q28fqa2k0wotqf5ph5&st=dg4e706q&dl=0"
+const val URL_AUDIO =
+    "https://dl.dropboxusercontent.com/scl/fi/4notzhccgk05jkzcrsg2t/file_example_MP3_1MG.mp3?rlkey=hnvrs05q28fqa2k0wotqf5ph5&st=dg4e706q&dl=0"
 
-const val COMUNICACION_ATENCION_CLIENTE: String = "https://dl.dropboxusercontent.com/scl/fi/qoiiantse3hgf91hs1gn6/Comunicacion_y_Atencion_Cliente.png?rlkey=qt6m38euc9gmmnvk5s9bfx1g0&st=n2vog98a&dl=0"
-const val GESTION_DOCUMENTACION_JURIDICA_EMPRESARIAL: String = "https://dl.dropboxusercontent.com/scl/fi/3hyxg32bl5fiolxe6w12y/Gesti-n-de-la-Documentaci-n-Jur-dica-y-Empresarial.png?rlkey=2kj6x6jca0usixgyfkdpsngoc&st=8p86txul&dl=0"
-const val OFIMATICA_PROCESO_INFORMACION: String = "https://dl.dropboxusercontent.com/scl/fi/1l1sapioe8575brar8ofh/Ofim-tica-y-Proceso-de-Informaci-n.png?rlkey=5fuvahrjhrbp24npob6oljx6y&st=lmtcktjw&dl=0"
-const val GESTION_ECON_FIN_EMPRESA: String = "https://dl.dropboxusercontent.com/scl/fi/abgz372dc5ir6g2iugyou/Gesti-n-Econ-mica-y-Financiera-de-la-Empresa.png?rlkey=o1q3gn5vqbj8etoz1tnpo6t4p&st=twlwlwct&dl=0"
-const val LOG_ALMACENAMIENTO: String = "https://dl.dropboxusercontent.com/scl/fi/m6xa8cqkh5wksangakh1v/Log-stica-de-Almacenamiento.png?rlkey=z33ox84s5oiy9m6505uga87h5&st=gwx93kf1&dl=0"
-const val GEST_ADMINISTRATIVA_COMERCIO_INTERNACIONAL: String = "https://dl.dropboxusercontent.com/scl/fi/zfdjq8aisafykpjmgp4x8/Gesti-n-Administrativa-del-comercio-internacional.png?rlkey=kulbmz6aznayc7rex0gtvc8al&st=ecu1cwct&dl=0"
-const val PROG_MULTI_DISPO_MOVILES: String = "https://dl.dropboxusercontent.com/scl/fi/xn0uk600bdhh9jaue1nmq/Programaci-n-Multimedia-y-Dispositivos-M-viles.png?rlkey=qtdfbupvy8wlfkxbs5tv9e0lo&st=l3c1aa5g&dl=0"
-const val PROG_SERVICIOS_PROCESOS: String = "https://dl.dropboxusercontent.com/scl/fi/08bco3lc31a9p1mux5g26/Programaci-n-de-Servicios-y-procesos.png?rlkey=2syi969179zgsta4xto2qdens&st=ls6an42e&dl=0"
-const val DESARROLLO_INTERFACES: String = "https://dl.dropboxusercontent.com/scl/fi/skaxdelc2y3mj0x455znq/Desarrollo-de-Interfaces.png?rlkey=80xx9upunkx9qy59llfacpcg1&st=94tsgay5&dl=0"
-const val DISPO_VENTA_PRODUCTOS: String = "https://dl.dropboxusercontent.com/scl/fi/sp16c4m7ypwvflc9irqn2/Disposici-n-y-Venta-de-Productos.png?rlkey=99ih0jd09n5iya17znyeqi6hp&st=7gvyxwtb&dl=0"
-const val DISP_PROD_FARMACEUTICOS: String = "https://dl.dropboxusercontent.com/scl/fi/68n0zh0u6i4r7svcjikgz/Dispensaci-n-de-productos-farmace-ticos.png?rlkey=xfy5nd0pnjnmekal6zmihxpeq&st=3dcegi3g&dl=0"
-const val ANATOMOFISIOLOGIA: String = "https://dl.dropboxusercontent.com/scl/fi/ctcmoe3spu7xpd2vt165u/Anatomofisiolog-a-y-Patolog-a-B-sicas.png?rlkey=7oxsa7jg60qh1rd9pn3x0tji0&st=aakwo3v4&dl=0"
-const val EMPRESA_INICIATIVA_EMPRENDEDORA: String = "https://dl.dropboxusercontent.com/scl/fi/jkkr7te0huynjt4hls859/Empresa-e-iniciativa-emprendedora_12.png?rlkey=jem388z4mkfkvibl9h5t3r7dd&st=0sers05q&dl=0"
-const val FOL:String = "https://dl.dropboxusercontent.com/scl/fi/blsxpoa2cy5jqpukyfmxe/Formaci-n-y-Orientaci-n-Laboral-_24.png?rlkey=wmbt3n838kz81mn05i70dym0j&st=2b3tq6e5&dl=0"
+const val COMUNICACION_ATENCION_CLIENTE: String =
+    "https://dl.dropboxusercontent.com/scl/fi/qoiiantse3hgf91hs1gn6/Comunicacion_y_Atencion_Cliente.png?rlkey=qt6m38euc9gmmnvk5s9bfx1g0&st=n2vog98a&dl=0"
+const val GESTION_DOCUMENTACION_JURIDICA_EMPRESARIAL: String =
+    "https://dl.dropboxusercontent.com/scl/fi/3hyxg32bl5fiolxe6w12y/Gesti-n-de-la-Documentaci-n-Jur-dica-y-Empresarial.png?rlkey=2kj6x6jca0usixgyfkdpsngoc&st=8p86txul&dl=0"
+const val OFIMATICA_PROCESO_INFORMACION: String =
+    "https://dl.dropboxusercontent.com/scl/fi/1l1sapioe8575brar8ofh/Ofim-tica-y-Proceso-de-Informaci-n.png?rlkey=5fuvahrjhrbp24npob6oljx6y&st=lmtcktjw&dl=0"
+const val GESTION_ECON_FIN_EMPRESA: String =
+    "https://dl.dropboxusercontent.com/scl/fi/abgz372dc5ir6g2iugyou/Gesti-n-Econ-mica-y-Financiera-de-la-Empresa.png?rlkey=o1q3gn5vqbj8etoz1tnpo6t4p&st=twlwlwct&dl=0"
+const val LOG_ALMACENAMIENTO: String =
+    "https://dl.dropboxusercontent.com/scl/fi/m6xa8cqkh5wksangakh1v/Log-stica-de-Almacenamiento.png?rlkey=z33ox84s5oiy9m6505uga87h5&st=gwx93kf1&dl=0"
+const val GEST_ADMINISTRATIVA_COMERCIO_INTERNACIONAL: String =
+    "https://dl.dropboxusercontent.com/scl/fi/zfdjq8aisafykpjmgp4x8/Gesti-n-Administrativa-del-comercio-internacional.png?rlkey=kulbmz6aznayc7rex0gtvc8al&st=ecu1cwct&dl=0"
+const val PROG_MULTI_DISPO_MOVILES: String =
+    "https://dl.dropboxusercontent.com/scl/fi/xn0uk600bdhh9jaue1nmq/Programaci-n-Multimedia-y-Dispositivos-M-viles.png?rlkey=qtdfbupvy8wlfkxbs5tv9e0lo&st=l3c1aa5g&dl=0"
+const val PROG_SERVICIOS_PROCESOS: String =
+    "https://dl.dropboxusercontent.com/scl/fi/08bco3lc31a9p1mux5g26/Programaci-n-de-Servicios-y-procesos.png?rlkey=2syi969179zgsta4xto2qdens&st=ls6an42e&dl=0"
+const val DESARROLLO_INTERFACES: String =
+    "https://dl.dropboxusercontent.com/scl/fi/skaxdelc2y3mj0x455znq/Desarrollo-de-Interfaces.png?rlkey=80xx9upunkx9qy59llfacpcg1&st=94tsgay5&dl=0"
+const val DISPO_VENTA_PRODUCTOS: String =
+    "https://dl.dropboxusercontent.com/scl/fi/sp16c4m7ypwvflc9irqn2/Disposici-n-y-Venta-de-Productos.png?rlkey=99ih0jd09n5iya17znyeqi6hp&st=7gvyxwtb&dl=0"
+const val DISP_PROD_FARMACEUTICOS: String =
+    "https://dl.dropboxusercontent.com/scl/fi/68n0zh0u6i4r7svcjikgz/Dispensaci-n-de-productos-farmace-ticos.png?rlkey=xfy5nd0pnjnmekal6zmihxpeq&st=3dcegi3g&dl=0"
+const val ANATOMOFISIOLOGIA: String =
+    "https://dl.dropboxusercontent.com/scl/fi/ctcmoe3spu7xpd2vt165u/Anatomofisiolog-a-y-Patolog-a-B-sicas.png?rlkey=7oxsa7jg60qh1rd9pn3x0tji0&st=aakwo3v4&dl=0"
+const val EMPRESA_INICIATIVA_EMPRENDEDORA: String =
+    "https://dl.dropboxusercontent.com/scl/fi/jkkr7te0huynjt4hls859/Empresa-e-iniciativa-emprendedora_12.png?rlkey=jem388z4mkfkvibl9h5t3r7dd&st=0sers05q&dl=0"
+const val FOL: String =
+    "https://dl.dropboxusercontent.com/scl/fi/blsxpoa2cy5jqpukyfmxe/Formaci-n-y-Orientaci-n-Laboral-_24.png?rlkey=wmbt3n838kz81mn05i70dym0j&st=2b3tq6e5&dl=0"
 
 val PreviewTemas = listOf(
     Tema(
@@ -301,27 +316,115 @@ val PreviewTemasFOL = listOf(
 )
 
 val PreviewAsignaturas = listOf(
-    Asignatura(AsignaturaId(1), "Comunicacion y Atencion al Cliente", PreviewTemas.filter{it.temaId.id <= 3}, COMUNICACION_ATENCION_CLIENTE),
-    Asignatura(AsignaturaId(2), "Gestion de la Documentacion Juridica y Empresarial", PreviewTemas.filter{it.temaId.id in 4..5}, GESTION_DOCUMENTACION_JURIDICA_EMPRESARIAL),
-    Asignatura(AsignaturaId(3), "Ofimática y Proceso de Información", PreviewTemas.filter{it.temaId.id in 6..8}, OFIMATICA_PROCESO_INFORMACION),
-    Asignatura(AsignaturaId(4), "Gestión Económica y Financiera de la Empresa", PreviewTemas.filter{it.temaId.id in 9..10}, GESTION_ECON_FIN_EMPRESA),
-    Asignatura(AsignaturaId(5), "Logística de Almacenamiento", PreviewTemas.filter{it.temaId.id in 11..11}, LOG_ALMACENAMIENTO),
-    Asignatura(AsignaturaId(6), "Gestión Administrativa del comercio internacional", PreviewTemas.filter{it.temaId.id in 12..12}, GEST_ADMINISTRATIVA_COMERCIO_INTERNACIONAL),
-    Asignatura(AsignaturaId(7), "Desarrollo de Interfaces", PreviewTemas.filter{it.temaId.id in 13..13}, DESARROLLO_INTERFACES),
-    Asignatura(AsignaturaId(8), "Programación Multimedia y Dispositivos Móviles", PreviewTemas.filter{it.temaId.id in 14..14}, PROG_MULTI_DISPO_MOVILES),
-    Asignatura(AsignaturaId(9), "Programación de Servicios y procesos", PreviewTemas.filter{it.temaId.id in 15..16}, PROG_SERVICIOS_PROCESOS),
-    Asignatura(AsignaturaId(10), "Anatomofisiología y Patología Básicas", PreviewTemas.filter{it.temaId.id in 17..17}, ANATOMOFISIOLOGIA),
-    Asignatura(AsignaturaId(11), "Dispensación de productos farmaceúticos", PreviewTemas.filter{it.temaId.id in 18..18}, DISP_PROD_FARMACEUTICOS),
-    Asignatura(AsignaturaId(12), "Disposición y Venta de Productos", PreviewTemas.filter{it.temaId.id in 19..20}, DISPO_VENTA_PRODUCTOS),
+    Asignatura(
+        AsignaturaId(1),
+        "Comunicacion y Atencion al Cliente",
+        PreviewTemas.filter { it.temaId.id <= 3 },
+        COMUNICACION_ATENCION_CLIENTE
+    ),
+    Asignatura(
+        AsignaturaId(2),
+        "Gestion de la Documentacion Juridica y Empresarial",
+        PreviewTemas.filter { it.temaId.id in 4..5 },
+        GESTION_DOCUMENTACION_JURIDICA_EMPRESARIAL
+    ),
+    Asignatura(
+        AsignaturaId(3),
+        "Ofimática y Proceso de Información",
+        PreviewTemas.filter { it.temaId.id in 6..8 },
+        OFIMATICA_PROCESO_INFORMACION
+    ),
+    Asignatura(
+        AsignaturaId(4),
+        "Gestión Económica y Financiera de la Empresa",
+        PreviewTemas.filter { it.temaId.id in 9..10 },
+        GESTION_ECON_FIN_EMPRESA
+    ),
+    Asignatura(
+        AsignaturaId(5),
+        "Logística de Almacenamiento",
+        PreviewTemas.filter { it.temaId.id in 11..11 },
+        LOG_ALMACENAMIENTO
+    ),
+    Asignatura(
+        AsignaturaId(6),
+        "Gestión Administrativa del comercio internacional",
+        PreviewTemas.filter { it.temaId.id in 12..12 },
+        GEST_ADMINISTRATIVA_COMERCIO_INTERNACIONAL
+    ),
+    Asignatura(
+        AsignaturaId(7),
+        "Desarrollo de Interfaces",
+        PreviewTemas.filter { it.temaId.id in 13..13 },
+        DESARROLLO_INTERFACES
+    ),
+    Asignatura(
+        AsignaturaId(8),
+        "Programación Multimedia y Dispositivos Móviles",
+        PreviewTemas.filter { it.temaId.id in 14..14 },
+        PROG_MULTI_DISPO_MOVILES
+    ),
+    Asignatura(
+        AsignaturaId(9),
+        "Programación de Servicios y procesos",
+        PreviewTemas.filter { it.temaId.id in 15..16 },
+        PROG_SERVICIOS_PROCESOS
+    ),
+    Asignatura(
+        AsignaturaId(10),
+        "Anatomofisiología y Patología Básicas",
+        PreviewTemas.filter { it.temaId.id in 17..17 },
+        ANATOMOFISIOLOGIA
+    ),
+    Asignatura(
+        AsignaturaId(11),
+        "Dispensación de productos farmaceúticos",
+        PreviewTemas.filter { it.temaId.id in 18..18 },
+        DISP_PROD_FARMACEUTICOS
+    ),
+    Asignatura(
+        AsignaturaId(12),
+        "Disposición y Venta de Productos",
+        PreviewTemas.filter { it.temaId.id in 19..20 },
+        DISPO_VENTA_PRODUCTOS
+    ),
     Asignatura(AsignaturaId(98), "Formación y Orientación Laboral", PreviewTemasFOL, FOL),
-    Asignatura(AsignaturaId(99), "Empresa e iniciativa emprendedora", PreviewTemas.filter{it.temaId.id in 31..34}, EMPRESA_INICIATIVA_EMPRENDEDORA),
+    Asignatura(
+        AsignaturaId(99),
+        "Empresa e iniciativa emprendedora",
+        PreviewTemas.filter { it.temaId.id in 31..34 },
+        EMPRESA_INICIATIVA_EMPRENDEDORA
+    ),
 )
 
 val PreviewGrados = listOf(
-    Grado(GradoId(1), "Administracion Y Finanzas", PreviewAsignaturas.map { it.asignaturaId }.filter { it.id in 1..3 || it.id == 98 || it.id == 99 }, "https://dl.dropboxusercontent.com/scl/fi/w64grl0dlwmarv2kk240x/Escudos_Adminsitracion.png?rlkey=rtpqrknxk1h3zmmf65ugvc8h6&st=0hlcrblf&dl=0"),
-    Grado(GradoId(2), "Comercio Internacional", PreviewAsignaturas.map { it.asignaturaId }.filter { it.id in 4..6 || it.id == 98 || it.id == 99}, "https://dl.dropboxusercontent.com/scl/fi/bjoq446e8ljf1qs2xl54f/Escudos_ComercioyMarketing.png?rlkey=k4jpt72nq1sf8unoyhvyn3jwe&st=e32rnj5r&dl=0"),
-    Grado(GradoId(3), "Desarrollo De Aplicaciones Multiplataforma", PreviewAsignaturas.map { it.asignaturaId }.filter { it.id in 7..9 || it.id == 98}, "https://dl.dropboxusercontent.com/scl/fi/ivc5xvtx5t9tso1d6uk44/Escudos_Informatica.png?rlkey=se3g490crwv6xeo216zquolg9&st=oiguiovv&dl=0"),
-    Grado(GradoId(4), "Farmacia Y Parafarmacia", PreviewAsignaturas.map { it.asignaturaId }.filter { it.id in 10..12 || it.id == 98 || it.id == 99}, "https://dl.dropboxusercontent.com/scl/fi/mvorog10plfjc74qtwogu/Escudos_Sanidad.png?rlkey=lbk250fva668rf0baf7c9soan&st=6urb11yy&dl=0"),
+    Grado(
+        GradoId(1),
+        "Administracion Y Finanzas",
+        PreviewAsignaturas.map { it.asignaturaId }
+            .filter { it.id in 1..3 || it.id == 98 || it.id == 99 },
+        "https://dl.dropboxusercontent.com/scl/fi/w64grl0dlwmarv2kk240x/Escudos_Adminsitracion.png?rlkey=rtpqrknxk1h3zmmf65ugvc8h6&st=0hlcrblf&dl=0"
+    ),
+    Grado(
+        GradoId(2),
+        "Comercio Internacional",
+        PreviewAsignaturas.map { it.asignaturaId }
+            .filter { it.id in 4..6 || it.id == 98 || it.id == 99 },
+        "https://dl.dropboxusercontent.com/scl/fi/bjoq446e8ljf1qs2xl54f/Escudos_ComercioyMarketing.png?rlkey=k4jpt72nq1sf8unoyhvyn3jwe&st=e32rnj5r&dl=0"
+    ),
+    Grado(
+        GradoId(3),
+        "Desarrollo De Aplicaciones Multiplataforma",
+        PreviewAsignaturas.map { it.asignaturaId }.filter { it.id in 7..9 || it.id == 98 },
+        "https://dl.dropboxusercontent.com/scl/fi/ivc5xvtx5t9tso1d6uk44/Escudos_Informatica.png?rlkey=se3g490crwv6xeo216zquolg9&st=oiguiovv&dl=0"
+    ),
+    Grado(
+        GradoId(4),
+        "Farmacia Y Parafarmacia",
+        PreviewAsignaturas.map { it.asignaturaId }
+            .filter { it.id in 10..12 || it.id == 98 || it.id == 99 },
+        "https://dl.dropboxusercontent.com/scl/fi/mvorog10plfjc74qtwogu/Escudos_Sanidad.png?rlkey=lbk250fva668rf0baf7c9soan&st=6urb11yy&dl=0"
+    ),
 )
 
 val PreviewAlumno = listOf(
@@ -329,7 +432,8 @@ val PreviewAlumno = listOf(
         "Alumno 1",
         "Steven",
         AlumnoId(1),
-        PreviewGrados.map { it.gradoId }.filter { it.id == 1 || it.id == 2 } //Alumno matriculado en el grado 1 y 2
+        PreviewGrados.map { it.gradoId }
+            .filter { it.id == 1 || it.id == 2 } //Alumno matriculado en el grado 1 y 2
     ),
     Alumno(
         "Prueba",
@@ -341,6 +445,7 @@ val PreviewAlumno = listOf(
         "Alumno 3",
         "Alberto",
         AlumnoId(3),
-        PreviewGrados.map { it.gradoId }.filter { it.id >= 3 } //Alumno matriculado en los grados desde el 3 al último (4, en este caso)
+        PreviewGrados.map { it.gradoId }
+            .filter { it.id >= 3 } //Alumno matriculado en los grados desde el 3 al último (4, en este caso)
     )
 )
