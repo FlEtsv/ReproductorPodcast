@@ -173,6 +173,7 @@ class BrowseTree(
 
 
 
+
     private fun buildMediaHierarchy(mediaItem: MediaItem) {
         val genre = mediaItem.mediaMetadata.genre.toString()
         val albumTitle = mediaItem.mediaMetadata.albumTitle.toString()
