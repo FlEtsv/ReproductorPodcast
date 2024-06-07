@@ -14,6 +14,7 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
@@ -90,52 +91,52 @@ fun ReproductorPodcast(navController: NavController, idTema: Int) {
     ) {
 
         // Interfaz de usuario del reproductor de podcast
-        Column(
+        LazyColumn(
             modifier = Modifier
                 .fillMaxWidth()
-                .padding(16.dp)
+                .padding(30.dp)
                 .padding(top = 30.dp),
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
-            Row(
-                modifier = Modifier.fillMaxWidth(),
-                horizontalArrangement = Arrangement.SpaceBetween
-            ) {
-                Column(
-                    modifier = Modifier.weight(1f), // Ocupa la mitad del ancho disponible
-                    horizontalAlignment = Alignment.Start,
-                    verticalArrangement = Arrangement.Center
+            item {
+                Row(
+                    modifier = Modifier.fillMaxWidth(),
+                    horizontalArrangement = Arrangement.SpaceBetween
                 ) {
-                    IconButton(
-                        onClick = { navController.popBackStack() },
-                        modifier = Modifier.padding(8.dp) // Ajusta el espaciado según sea necesario
+                    Column(
+                        modifier = Modifier.weight(1f), // Ocupa la mitad del ancho disponible
+                        horizontalAlignment = Alignment.Start,
+                        verticalArrangement = Arrangement.Center
                     ) {
-                        Icon(
-                            Icons.AutoMirrored.Filled.ArrowBack,
-                            contentDescription = "Back"
-                        ) // Ajusta el contenido de descripción según sea necesario
+                        IconButton(
+                            onClick = { navController.popBackStack() },
+                            modifier = Modifier.padding(8.dp) // Ajusta el espaciado según sea necesario
+                        ) {
+                            Icon(
+                                Icons.AutoMirrored.Filled.ArrowBack,
+                                contentDescription = "Back",
+                                tint = Blanco
+                            )
+                        }
+                    }
+
+                    Column(
+                        modifier = Modifier.weight(1f), // Ocupa la otra mitad del ancho disponible
+                        horizontalAlignment = Alignment.End,
+                        verticalArrangement = Arrangement.Center
+                    ) {
+                        BotonCompartir()
                     }
                 }
-
-                Column(
-                    modifier = Modifier.weight(1f), // Ocupa la otra mitad del ancho disponible
-                    horizontalAlignment = Alignment.End,
-                    verticalArrangement = Arrangement.Center
-                ) {
-                    BotonCompartir()
-                }
             }
-            Spacer(modifier = Modifier.height(100.dp))
-            PortadaPodcast(currentMediaItem.mediaMetadata.artworkUri.toString(), currentMediaItem.mediaMetadata.title.toString())
-            Spacer(modifier = Modifier.height(16.dp))
-            Text(
+            item {PortadaPodcast(currentMediaItem.mediaMetadata.artworkUri.toString(), currentMediaItem.mediaMetadata.title.toString()) }
+            //Spacer(modifier = Modifier.height(16.dp))
+            item{Text(
                 text = currentMediaItem.mediaMetadata.title?.toString() ?: tema.nombreTema,
                 style = MaterialTheme.typography.bodyLarge.copy(fontFamily = ralewayFamily, color = Blanco)
-            )
-            Spacer(modifier = Modifier.height(16.dp))
-            ProgressBarRow(progress = progress)
-            Spacer(modifier = Modifier.height(16.dp))
-            ControlesReproduccion(
+            )}
+            item{ ProgressBarRow(progress = progress) }
+            item{ ControlesReproduccion(
                 playbackState = playbackState,
                 musicServiceConnection = musicServiceConnection,
                 reproduciendo = reproduciendo,
@@ -150,10 +151,8 @@ fun ReproductorPodcast(navController: NavController, idTema: Int) {
                 onNextSong = { audioPlayer.siguienteTema() },
                 onAvanzarTenSecs = { audioPlayer.adelantarDiezSegundos() },
                 onPreviousSong = { audioPlayer.temaAnterior() }
-            )
-            Spacer(modifier = Modifier.height(16.dp))
+            )}
         }
-        Spacer(modifier = Modifier.height(16.dp))
     }
 }
 
@@ -175,7 +174,8 @@ fun PortadaPodcast(temaImagen: String, temaNombre: String) {
             modifier = Modifier
                 .size(diameter / 2 * sqrt(2f)) // Escala la imagen para que su diagonal sea igual al diámetro del círculo
                 .align(Alignment.Center),
-            contentDescription = "Icono de $temaNombre"
+            contentDescription = "Icono de $temaNombre",
+            padding = 16
         )
     }
 }
@@ -266,7 +266,7 @@ fun BotonCompartir() {
         Icon(
             imageVector = iconCast(),
             contentDescription = "Compartir",
-            tint = Color.White
+            tint = Blanco
         )
     }
 }
