@@ -13,12 +13,12 @@ A continuación se enumeran las características que aún están pendientes de i
 
 ## Características
 
+- Autenticación de alumnos: Los alumnos pueden autenticarse en la aplicación para acceder a contenido exclusivo. Si la aplicación no consigue una autenticación exitosa en 10 segundos, esta regresa a la vista del log in.
+- Temas sugeridos: Se muestra el primer tema no escuchado de cada una de las asignaturas a las que tiene acceso el alumno.
 - Reproducción de podcasts: Permite a los usuarios escuchar sus podcasts favoritos. Al reproducir un tema, este se carga como parte de una playlist correspondiente a todos los temas de la asignatura.
 - Avance y retroceso en la pista actual: Los usuarios pueden avanzar o retroceder 10 segundos en la pista que están escuchando.
 - Pasar a la siguiente pista: Los usuarios pueden saltar a la siguiente pista en la lista de reproducción.
 - Compartir (en desarrollo): Esta característica permitirá a los usuarios compartir con otros medios.
-- Autenticación de alumnos: Los alumnos pueden autenticarse en la aplicación para acceder a contenido exclusivo.
-- Temas sugeridos: Se muestra el primer tema no escuchado de cada una de las asignaturas a las que tiene acceso el alumno.
 
 ## Estructura del proyecto
 
