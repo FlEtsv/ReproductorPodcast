@@ -529,14 +529,28 @@ open class MusicService : MediaLibraryService(), SesionObserver {
                 Toast.LENGTH_LONG
             ).show()
         }
+        /**
+         * Checks if a media item exists by its ID.
+         *
+         * @param mediaId The ID of the media item to check.
+         * @return True if the media item exists, false otherwise.
+         */
+        fun mediaItemExists(mediaId: String): Boolean {
+            return browseTree.getMediaItemByMediaId(mediaId) != null
+        }
 
+        /**
+         * Handles changes in the playWhenReady state.
+         *
+         * @param playWhenReady True if playback should start, false otherwise.
+         * @param reason The reason for the change.
+         */
         override fun onPlayWhenReadyChanged(playWhenReady: Boolean, reason: Int) {
             super.onPlayWhenReadyChanged(playWhenReady, reason)
             if (playWhenReady) {
                 val selectedMediaItem: MediaItem? = replaceableForwardingPlayer.currentMediaItem
                 val recentMediaItem = storage.loadRecentSong()
 
-                // Si el MediaItem seleccionado está en recientes, lo carga directamente
                 if (selectedMediaItem == recentMediaItem) {
                     exoPlayer.setMediaItem(recentMediaItem!!)
                     exoPlayer.prepare()
@@ -544,18 +558,15 @@ open class MusicService : MediaLibraryService(), SesionObserver {
                 } else {
                     val albumMediaItems: List<MediaItem> = browseTree.getMediaItemsInAlbum(albumTitle = selectedMediaItem?.mediaMetadata?.albumTitle.toString())
 
-                    // Busca el índice del MediaItem seleccionado en la lista de reproducción del álbum
                     val selectedItemIndex: Int = albumMediaItems.indexOfFirst {
-                        it.mediaId == (selectedMediaItem?.mediaId ?: -1)
+                        it.mediaId == (selectedMediaItem?.mediaId ?: "")
                     }
 
-                    // Prepara el reproductor con la lista de reproducción del álbum y el MediaItem seleccionado
                     if (exoPlayer.mediaItemCount != albumMediaItems.size) {
                         exoPlayer.setMediaItems(albumMediaItems)
                         exoPlayer.prepare()
                     }
 
-                    // Si el MediaItem ha cambiado, comienza desde 0, de lo contrario, comienza desde la posición guardada
                     val position = when {
                         currentMediaItem != selectedMediaItem -> 0L
                         selectedMediaItem == recentMediaItem && recentMediaItem != null ->
@@ -563,7 +574,14 @@ open class MusicService : MediaLibraryService(), SesionObserver {
                         else -> playbackPosition
                     }
 
-                    exoPlayer.seekTo(selectedItemIndex, position)
+                    if (selectedItemIndex in 0 until exoPlayer.mediaItemCount && position >= 0) {
+                        try {
+                            exoPlayer.seekTo(selectedItemIndex, position)
+                        } catch (e: IllegalArgumentException) {
+                            exoPlayer.seekTo(0, 0L)
+                        }
+                    }
+
                     exoPlayer.playWhenReady = true
                     currentMediaItem = selectedMediaItem
                 }
