@@ -27,14 +27,21 @@ import java.io.File
 import java.io.FileNotFoundException
 import java.util.concurrent.TimeUnit
 
-// The amount of time to wait for the album art file to download before timing out.
+// El tiempo de espera para que se descargue el archivo de arte del álbum antes de que se agote el tiempo.
 const val DOWNLOAD_TIMEOUT_SECONDS = 30L
-
+/**
+ * Clase AlbumArtContentProvider.
+ * Esta clase es un proveedor de contenido que se utiliza para descargar y proporcionar arte de álbumes.
+ */
 internal class AlbumArtContentProvider : ContentProvider() {
-
+    /**
+     * Objeto complementario que contiene un mapa de URIs para mapear URIs remotas a URIs de contenido.
+     */
     companion object {
         private val uriMap = mutableMapOf<Uri, Uri>()
-
+        /**
+         * Función para mapear una URI a una URI de contenido.
+         */
         fun mapUri(uri: Uri): Uri {
             val path = uri.encodedPath?.substring(1)?.replace('/', ':') ?: return Uri.EMPTY
             val contentUri = Uri.Builder()
@@ -46,9 +53,13 @@ internal class AlbumArtContentProvider : ContentProvider() {
             return contentUri
         }
     }
-
+    /**
+     * Función onCreate que se llama cuando se crea el proveedor de contenido.
+     */
     override fun onCreate() = true
-
+    /**
+     * Función para abrir un archivo en el proveedor de contenido.
+     */
     override fun openFile(uri: Uri, mode: String): ParcelFileDescriptor? {
         val context = this.context ?: return null
 
@@ -69,9 +80,13 @@ internal class AlbumArtContentProvider : ContentProvider() {
         }
         return ParcelFileDescriptor.open(file, ParcelFileDescriptor.MODE_READ_ONLY)
     }
-
+    /**
+     * Función para insertar un valor en el proveedor de contenido.
+     */
     override fun insert(uri: Uri, values: ContentValues?): Uri? = null
-
+    /**
+     * Función para consultar el proveedor de contenido.
+     */
     override fun query(
         uri: Uri,
         projection: Array<String>?,
@@ -79,16 +94,22 @@ internal class AlbumArtContentProvider : ContentProvider() {
         selectionArgs: Array<String>?,
         sortOrder: String?
     ): Cursor? = null
-
+    /**
+     * Función para actualizar un valor en el proveedor de contenido.
+     */
     override fun update(
         uri: Uri,
         values: ContentValues?,
         selection: String?,
         selectionArgs: Array<String>?
     ) = 0
-
+    /**
+     * Función para eliminar un valor del proveedor de contenido.
+     */
     override fun delete(uri: Uri, selection: String?, selectionArgs: Array<String>?) = 0
-
+    /**
+     * Función para obtener el tipo de un valor en el proveedor de contenido.
+     */
     override fun getType(uri: Uri): String? = null
 
 }

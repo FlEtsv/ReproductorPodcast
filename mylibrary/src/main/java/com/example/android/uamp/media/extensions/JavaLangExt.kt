@@ -19,13 +19,12 @@ package com.example.android.uamp.media.extensions
 import java.net.URLEncoder
 import java.nio.charset.Charset
 import java.util.Locale
-
 /**
- * This file contains extension methods for the java.lang package.
+ * Este archivo contiene métodos de extensión para el paquete java.lang.
  */
 
 /**
- * Helper method to check if a [String] contains another in a case insensitive way.
+ * Método de ayuda para verificar si una [String] contiene otra de manera insensible a mayúsculas y minúsculas.
  */
 fun String?.containsCaseInsensitive(other: String?) =
     if (this != null && other != null) {
@@ -35,7 +34,7 @@ fun String?.containsCaseInsensitive(other: String?) =
     }
 
 /**
- * Helper extension to URL encode a [String]. Returns an empty string when called on null.
+ * Método de extensión de ayuda para codificar una [String] en formato URL. Devuelve una cadena vacía cuando se llama en null.
  */
 inline val String?.urlEncoded: String
     get() = if (Charset.isSupported("UTF-8")) {

@@ -24,11 +24,14 @@ import androidx.media3.common.MediaItem
 import androidx.media3.common.MediaMetadata
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
-
+/**
+ * Clase PersistentStorage.
+ * Esta clase se utiliza para almacenar datos que deben persistir entre reinicios, como la canción más recientemente reproducida.
+ */
 internal class PersistentStorage private constructor(val context: Context) {
 
     /**
-     * Store any data which must persist between restarts, such as the most recently played song.
+     * Almacena cualquier dato que deba persistir entre reinicios, como la canción más recientemente reproducida.
      */
     private var preferences: SharedPreferences = context.getSharedPreferences(
         PREFERENCES_NAME,
@@ -39,7 +42,9 @@ internal class PersistentStorage private constructor(val context: Context) {
 
         @Volatile
         private var instance: PersistentStorage? = null
-
+        /**
+         * Método para obtener la instancia de PersistentStorage.
+         */
         fun getInstance(context: Context) =
             instance ?: synchronized(this) {
                 instance ?: PersistentStorage(context).also { instance = it }
@@ -47,15 +52,17 @@ internal class PersistentStorage private constructor(val context: Context) {
         private const val PREFS_NAME = "com.example.app.PREFS"
         private const val RECENT_TRACKS_KEY = "RECENT_TRACKS"
     }
-
+    /**
+     * Método para guardar la canción reciente.
+     */
     suspend fun saveRecentSong(mediaItem:MediaItem, position: Long) {
 
         withContext(Dispatchers.IO) {
             /**
-             * After booting, Android will attempt to build static media controls for the most
-             * recently played song. Artwork for these media controls should not be loaded
-             * from the network as it may be too slow or unavailable immediately after boot. Instead
-             * we convert the iconUri to point to the Glide on-disk cache.
+             * Después del arranque, Android intentará construir controles de medios estáticos para la canción más
+             * recientemente reproducida. El arte para estos controles de medios no debe cargarse
+             * desde la red ya que puede ser demasiado lento o no estar disponible inmediatamente después del arranque. En su lugar,
+             * convertimos el iconUri para apuntar al caché en disco de Glide.
              */
             preferences.edit()
                 .putString(RECENT_SONG_MEDIA_ID_KEY, mediaItem.mediaId)
@@ -66,7 +73,9 @@ internal class PersistentStorage private constructor(val context: Context) {
                 .apply()
         }
     }
-
+    /**
+     * Método para cargar la canción reciente.
+     */
     fun loadRecentSong(): MediaItem? {
         val mediaId = preferences.getString(RECENT_SONG_MEDIA_ID_KEY, null)
         return if (mediaId == null) {
@@ -91,6 +100,9 @@ internal class PersistentStorage private constructor(val context: Context) {
             }
         }
     }
+    /**
+     * Método para borrar la canción reciente.
+     */
     fun clearRecentSong() {
         preferences.edit()
             .remove(RECENT_SONG_MEDIA_ID_KEY)

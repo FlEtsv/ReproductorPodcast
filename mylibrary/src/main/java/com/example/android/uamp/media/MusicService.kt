@@ -67,18 +67,17 @@ import kotlin.math.max
 import kotlin.math.min
 
 /**
- * Service for browsing the catalogue and and receiving a [MediaController] from the app's UI
- * and other apps that wish to play music via UAMP (for example, Android Auto or
- * the Google Assistant).
+ * Servicio para explorar el catálogo y recibir un [MediaController] desde la interfaz de usuario
+ * de la aplicación y otras aplicaciones que deseen reproducir música a través de UAMP (por ejemplo,
+ * Android Auto o Google Assistant).
  *
- * Browsing begins with the method [MusicService.MusicServiceCallback.onGetLibraryRoot], and
- * continues in the callback [MusicService.MusicServiceCallback.onGetChildren].
+ * La exploración comienza con el método [MusicService.MusicServiceCallback.onGetLibraryRoot], y
+ * continúa en el callback [MusicService.MusicServiceCallback.onGetChildren].
  *
- * This class also handles playback for Cast sessions. When a Cast session is active, playback
- * commands are passed to a [CastPlayer].
+ * Esta clase también maneja la reproducción para sesiones de Cast. Cuando una sesión de Cast está
+ * activa, los comandos de reproducción se pasan a un [CastPlayer].
  */
 @OptIn(UnstableApi::class)
-
 open class MusicService : MediaLibraryService(), SesionObserver {
 
     private val serviceJob = SupervisorJob()
@@ -92,8 +91,8 @@ open class MusicService : MediaLibraryService(), SesionObserver {
     private lateinit var storage: PersistentStorage
 
     /**
-     * This must be `by lazy` because the [musicSource] won't initially be ready. Use
-     * [callWhenMusicSourceReady] to be sure it is safely ready for usage.
+     * Esto debe ser `by lazy` porque el [musicSource] no estará inicialmente listo. Use
+     * [callWhenMusicSourceReady] para asegurarse de que esté listo de manera segura para su uso.
      */
     val browseTree: BrowseTree by lazy {
         BrowseTree(applicationContext, musicSource)
@@ -133,8 +132,8 @@ open class MusicService : MediaLibraryService(), SesionObserver {
     private val playerListener = PlayerEventListener()
 
     /**
-     * Configure ExoPlayer to handle audio focus for us. See [ExoPlayer.Builder.setAudioAttributes]
-     * for details.
+     * Configura ExoPlayer para manejar el enfoque de audio por nosotros. Consulte [ExoPlayer.Builder.setAudioAttributes]
+     * para obtener más detalles.
      */
     private val exoPlayer: Player by lazy {
         val player = ExoPlayer.Builder(this).build().apply {
@@ -147,7 +146,7 @@ open class MusicService : MediaLibraryService(), SesionObserver {
     }
 
     /**
-     * If Cast is available, create a CastPlayer to handle communication with a Cast session.
+     * Si Cast está disponible, crea un CastPlayer para manejar la comunicación con una sesión de Cast.
      */
     private val castPlayer: CastPlayer? by lazy {
         try {
@@ -157,13 +156,13 @@ open class MusicService : MediaLibraryService(), SesionObserver {
                 addListener(playerListener)
             }
         } catch (e: Exception) {
-            // We wouldn't normally catch the generic `Exception` however
-            // calling `CastContext.getSharedInstance` can throw various exceptions, all of which
-            // indicate that Cast is unavailable.
-            // Related internal bug b/68009560.
+            // Normalmente no atraparíamos la excepción genérica `Exception`, sin embargo,
+            // llamar a `CastContext.getSharedInstance` puede lanzar varias excepciones, todas
+            // las cuales indican que Cast no está disponible.
+            // Bug interno relacionado b/68009560.
             Log.i(
-                TAG, "Cast is not available on this device. " +
-                        "Exception thrown when attempting to obtain CastContext. " + e.message)
+                TAG, "Cast no está disponible en este dispositivo. " +
+                        "Excepción lanzada al intentar obtener CastContext. " + e.message)
             null
         }
     }
@@ -172,7 +171,9 @@ open class MusicService : MediaLibraryService(), SesionObserver {
         ReplaceableForwardingPlayer(exoPlayer)
     }
 
-    /** @return the {@link MediaLibrarySessionCallback} to be used to build the media session. */
+    /**
+     * @return el [MediaLibrarySessionCallback] que se usará para construir la sesión de medios.
+     */
     open fun getCallback(): MediaLibrarySession.Callback {
         return MusicServiceCallback()
     }
@@ -223,12 +224,12 @@ open class MusicService : MediaLibraryService(), SesionObserver {
         } else null
     }
 
-    /** Called when swiping the activity away from recents. */
+    /** Llamado al deslizar la actividad para eliminarla de recientes. */
     override fun onTaskRemoved(rootIntent: Intent) {
         saveRecentSongToStorage()
         super.onTaskRemoved(rootIntent)
-        // The choice what to do here is app specific. Some apps stop playback, while others allow
-        // playback to continue and allow users to stop it with the notification.
+        // La elección de qué hacer aquí es específica de la aplicación. Algunas aplicaciones detienen la reproducción,
+        // mientras que otras permiten que continúe la reproducción y permiten a los usuarios detenerla con la notificación.
         releaseMediaSession()
         stopSelf()
     }
@@ -246,13 +247,13 @@ open class MusicService : MediaLibraryService(), SesionObserver {
                 player.release()
             }
         }
-        // Cancel coroutines when the service is going away.
+        // Cancelar las corutinas cuando el servicio está desapareciendo.
         serviceJob.cancel()
     }
 
     private fun saveRecentSongToStorage() {
-        // Obtain the current song details *before* saving them on a separate thread, otherwise
-        // the current player may have been unloaded by the time the save routine runs.
+        // Obtener los detalles de la canción actual *antes* de guardarlos en un hilo separado, de lo contrario
+        // el reproductor actual puede haber sido descargado en el momento en que se ejecuta la rutina de guardado.
         val currentMediaItem = replaceableForwardingPlayer.currentMediaItem ?: return
         serviceScope.launch {
             val mediaItem =
@@ -290,7 +291,9 @@ open class MusicService : MediaLibraryService(), SesionObserver {
         }
     }
 
-    /** Returns a function that opens the condition variable when called. */
+    /**
+     * Devuelve una función que abre la variable de condición cuando se llama.
+     */
     private fun openWhenReady(conditionVariable: ConditionVariable): (Boolean) -> Unit = {
         val successfullyInitialized = it
         if (!successfullyInitialized) {
@@ -300,11 +303,11 @@ open class MusicService : MediaLibraryService(), SesionObserver {
     }
 
     /**
-     * Returns a future that executes the action when the music source is ready. This may be an
-     * immediate execution if the music source is ready, or a deferred asynchronous execution if the
-     * music source is still loading.
+     * Devuelve un futuro que ejecuta la acción cuando la fuente de música está lista. Esto puede ser una
+     * ejecución inmediata si la fuente de música está lista, o una ejecución asincrónica diferida si la
+     * fuente de música todavía se está cargando.
      *
-     * @param action The function to be called when the music source is ready.
+     * @param action La función que se llamará cuando la fuente de música esté lista.
      */
     private fun <T> callWhenMusicSourceReady(action: () -> T): ListenableFuture<T> {
         val conditionVariable = ConditionVariable()
@@ -312,13 +315,13 @@ open class MusicService : MediaLibraryService(), SesionObserver {
             Futures.immediateFuture(action())
         } else {
             executorService.submit<T> {
-                conditionVariable.block();
+                conditionVariable.block()
                 action()
             }
         }
     }
 
-    open inner class MusicServiceCallback: MediaLibrarySession.Callback {
+    open inner class MusicServiceCallback : MediaLibrarySession.Callback {
 
         override fun onGetLibraryRoot(
             session: MediaLibrarySession, browser: MediaSession.ControllerInfo, params: LibraryParams?
@@ -360,9 +363,7 @@ open class MusicService : MediaLibraryService(), SesionObserver {
             if (parentId == recentRootMediaItem.mediaId) {
                 return Futures.immediateFuture(
                     LibraryResult.ofItemList(
-                        storage.loadRecentSong()?.let {
-                                song -> listOf(song)
-                        }!!,
+                        storage.loadRecentSong()?.let { song -> listOf(song) }!!,
                         LibraryParams.Builder().build()
                     )
                 )
@@ -374,6 +375,7 @@ open class MusicService : MediaLibraryService(), SesionObserver {
                 )
             }
         }
+
         override fun onGetItem(
             session: MediaLibrarySession,
             browser: MediaSession.ControllerInfo,
@@ -390,12 +392,14 @@ open class MusicService : MediaLibraryService(), SesionObserver {
                     UAMP_BROWSABLE_ROOT -> {
                         LibraryResult.ofItem(
                             browseTree.getMediaItemByMediaId(UAMP_BROWSABLE_ROOT) ?: MediaItem.EMPTY,
-                            LibraryParams.Builder().build())
+                            LibraryParams.Builder().build()
+                        )
                     }
                     UAMP_RECENT_ROOT -> {
                         LibraryResult.ofItem(
                             browseTree.getMediaItemByMediaId(UAMP_RECENT_ROOT) ?: MediaItem.EMPTY,
-                            LibraryParams.Builder().build())
+                            LibraryParams.Builder().build()
+                        )
                     }
                     else -> {
                         val mediaItem = browseTree.getMediaItemByMediaId(mediaId)
@@ -462,22 +466,22 @@ open class MusicService : MediaLibraryService(), SesionObserver {
     private inner class UampCastSessionAvailabilityListener : SessionAvailabilityListener {
 
         /**
-         * Called when a Cast session has started and the user wishes to control playback on a
-         * remote Cast receiver rather than play audio locally.
+         * Llamado cuando se ha iniciado una sesión de Cast y el usuario desea controlar la reproducción en un
+         * receptor de Cast remoto en lugar de reproducir audio localmente.
          */
         override fun onCastSessionAvailable() {
             replaceableForwardingPlayer.setPlayer(castPlayer!!)
         }
 
         /**
-         * Called when a Cast session has ended and the user wishes to control playback locally.
+         * Llamado cuando ha finalizado una sesión de Cast y el usuario desea controlar la reproducción localmente.
          */
         override fun onCastSessionUnavailable() {
             replaceableForwardingPlayer.setPlayer(exoPlayer)
         }
     }
 
-    /** Listen for events from ExoPlayer. */
+    /** Escuchar eventos de ExoPlayer. */
     private var lastMediaItem: MediaItem? = null
 
     private inner class PlayerEventListener : Player.Listener {
@@ -569,21 +573,22 @@ open class MusicService : MediaLibraryService(), SesionObserver {
                 Toast.LENGTH_LONG
             ).show()
         }
+
         /**
-         * Checks if a media item exists by its ID.
+         * Verifica si un elemento de medios existe por su ID.
          *
-         * @param mediaId The ID of the media item to check.
-         * @return True if the media item exists, false otherwise.
+         * @param mediaId El ID del elemento de medios a verificar.
+         * @return Verdadero si el elemento de medios existe, falso en caso contrario.
          */
         fun mediaItemExists(mediaId: String): Boolean {
             return browseTree.getMediaItemByMediaId(mediaId) != null
         }
 
         /**
-         * Handles changes in the playWhenReady state.
+         * Maneja los cambios en el estado playWhenReady.
          *
-         * @param playWhenReady True if playback should start, false otherwise.
-         * @param reason The reason for the change.
+         * @param playWhenReady Verdadero si la reproducción debe comenzar, falso en caso contrario.
+         * @param reason La razón del cambio.
          */
         override fun onPlayWhenReadyChanged(playWhenReady: Boolean, reason: Int) {
             super.onPlayWhenReadyChanged(playWhenReady, reason)
@@ -597,16 +602,16 @@ open class MusicService : MediaLibraryService(), SesionObserver {
     }
 
     override fun onSesionUpdated() {
-        // Reload musicSource and BrowseTree
+        // Recargar musicSource y BrowseTree
         serviceScope.launch {
             musicSource.load()
-            // Reload BrowseTree
+            // Recargar BrowseTree
             browseTree.reload()
         }
     }
 }
 
-/** Content styling constants */
+/** Constantes de estilo de contenido */
 private const val CONTENT_STYLE_BROWSABLE_HINT = "android.media.browse.CONTENT_STYLE_BROWSABLE_HINT"
 private const val CONTENT_STYLE_PLAYABLE_HINT = "android.media.browse.CONTENT_STYLE_PLAYABLE_HINT"
 private const val CONTENT_STYLE_SUPPORTED = "android.media.browse.CONTENT_STYLE_SUPPORTED"

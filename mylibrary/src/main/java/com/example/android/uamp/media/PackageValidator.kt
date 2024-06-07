@@ -37,16 +37,16 @@ import java.security.NoSuchAlgorithmException
 import java.util.Locale
 
 /**
- * Validates that the calling package is authorized to browse a [MediaBrowserServiceCompat].
+ * Valida que el paquete que llama esté autorizado para navegar en un [MediaBrowserServiceCompat].
  *
- * The list of allowed signing certificates and their corresponding package names is defined in
+ * La lista de certificados de firma permitidos y sus nombres de paquete correspondientes se define en
  * res/xml/allowed_media_browser_callers.xml.
  *
- * If you want to add a new caller to allowed_media_browser_callers.xml and you don't know
- * its signature, this class will print to logcat (INFO level) a message with the proper
- * xml tags to add to allow the caller.
+ * Si deseas agregar un nuevo llamador a allowed_media_browser_callers.xml y no conoces
+ * su firma, esta clase imprimirá en logcat (nivel INFO) un mensaje con las etiquetas XML adecuadas
+ * para permitir al llamador.
  *
- * For more information, see res/xml/allowed_media_browser_callers.xml.
+ * Para más información, consulta res/xml/allowed_media_browser_callers.xml.
  */
 internal class PackageValidator(context: Context, @XmlRes xmlResId: Int) {
     private val context: Context
@@ -67,38 +67,25 @@ internal class PackageValidator(context: Context, @XmlRes xmlResId: Int) {
     }
 
     /**
-     * Checks whether the caller attempting to connect to a [MediaBrowserServiceCompat] is known.
-     * See [MusicService.onGetRoot] for where this is utilized.
+     * Verifica si el llamador que intenta conectarse a un [MediaBrowserServiceCompat] es conocido.
+     * Consulta [MusicService.onGetRoot] para ver dónde se utiliza esto.
      *
-     * @param callingPackage The package name of the caller.
-     * @param callingUid The user id of the caller.
-     * @return `true` if the caller is known, `false` otherwise.
+     * @param callingPackage El nombre del paquete del llamador.
+     * @param callingUid El ID de usuario del llamador.
+     * @return `true` si el llamador es conocido, `false` en caso contrario.
      */
     fun isKnownCaller(callingPackage: String, callingUid: Int): Boolean {
-        // If the caller has already been checked, return the previous result here.
+        // Si el llamador ya ha sido verificado, devuelve el resultado anterior aquí.
         val (checkedUid, checkResult) = callerChecked[callingPackage] ?: Pair(0, false)
         if (checkedUid == callingUid) {
             return checkResult
         }
 
-        /**
-         * Because some of these checks can be slow, we save the results in [callerChecked] after
-         * this code is run.
-         *
-         * In particular, there's little reason to recompute the calling package's certificate
-         * signature (SHA-256) each call.
-         *
-         * This is safe to do as we know the UID matches the package's UID (from the check above),
-         * and app UIDs are set at install time. Additionally, a package name + UID is guaranteed to
-         * be constant until a reboot. (After a reboot then a previously assigned UID could be
-         * reassigned.)
-         */
-
-        // Build the caller info for the rest of the checks here.
+        // Construir la información del llamador para el resto de las verificaciones aquí.
         val callerPackageInfo = buildCallerInfo(callingPackage)
             ?: throw IllegalStateException("Caller wasn't found in the system?")
 
-        // Verify that things aren't ... broken. (This test should always pass.)
+        // Verificar que las cosas no estén rotas. (Esta prueba siempre debe pasar).
         if (callerPackageInfo.uid != callingUid) {
             throw IllegalStateException("Caller's package UID doesn't match caller's actual UID?")
         }
@@ -109,33 +96,21 @@ internal class PackageValidator(context: Context, @XmlRes xmlResId: Int) {
         } != null
 
         val isCallerKnown = when {
-            // If it's our own app making the call, allow it.
+            // Si es nuestra propia aplicación haciendo la llamada, permítelo.
             callingUid == Process.myUid() -> true
-            // If it's one of the apps on the allow list, allow it.
+            // Si es una de las aplicaciones en la lista permitida, permítelo.
             isPackageInAllowList -> true
-            // If the system is making the call, allow it.
+            // Si el sistema está haciendo la llamada, permítelo.
             callingUid == Process.SYSTEM_UID -> true
-            // If the app was signed by the same certificate as the platform itself, also allow it.
+            // Si la aplicación fue firmada con el mismo certificado que la plataforma en sí, también permítelo.
             callerSignature == platformSignature -> true
-            /**
-             * [MEDIA_CONTENT_CONTROL] permission is only available to system applications, and
-             * while it isn't required to allow these apps to connect to a
-             * [MediaBrowserServiceCompat], allowing this ensures optimal compatability with apps
-             * such as Android TV and the Google Assistant.
-             */
+            // Permitir si la aplicación tiene el permiso MEDIA_CONTENT_CONTROL.
             callerPackageInfo.permissions.contains(MEDIA_CONTENT_CONTROL) -> true
-            /**
-             * If the calling app has a notification listener it is able to retrieve notifications
-             * and can connect to an active [MediaSessionCompat].
-             *
-             * It's not required to allow apps with a notification listener to
-             * connect to your [MediaBrowserServiceCompat], but it does allow easy compatibility
-             * with apps such as Wear OS.
-             */
+            // Permitir si la aplicación tiene un listener de notificaciones.
             NotificationManagerCompat.getEnabledListenerPackages(this.context)
                 .contains(callerPackageInfo.packageName) -> true
 
-            // If none of the previous checks succeeded, then the caller is unrecognized.
+            // Si ninguna de las verificaciones anteriores tuvo éxito, entonces el llamador no es reconocido.
             else -> false
         }
 
@@ -143,14 +118,14 @@ internal class PackageValidator(context: Context, @XmlRes xmlResId: Int) {
             logUnknownCaller(callerPackageInfo)
         }
 
-        // Save our work for next time.
+        // Guardar el resultado para la próxima vez.
         callerChecked[callingPackage] = Pair(callingUid, isCallerKnown)
         return isCallerKnown
     }
 
     /**
-     * Logs an info level message with details of how to add a caller to the allowed callers list
-     * when the app is debuggable.
+     * Registra un mensaje a nivel de información con detalles sobre cómo agregar un llamador a la lista de llamadores permitidos
+     * cuando la aplicación es depurable.
      */
     private fun logUnknownCaller(callerPackageInfo: CallerPackageInfo) {
         if (callerPackageInfo.signature != null) {
@@ -166,8 +141,8 @@ internal class PackageValidator(context: Context, @XmlRes xmlResId: Int) {
     }
 
     /**
-     * Builds a [CallerPackageInfo] for a given package that can be used for all the
-     * various checks that are performed before allowing an app to connect to a
+     * Construye un [CallerPackageInfo] para un paquete dado que puede ser usado para todas las
+     * varias verificaciones que se realizan antes de permitir que una aplicación se conecte a un
      * [MediaBrowserServiceCompat].
      */
     private fun buildCallerInfo(callingPackage: String): CallerPackageInfo? {
@@ -190,11 +165,11 @@ internal class PackageValidator(context: Context, @XmlRes xmlResId: Int) {
     }
 
     /**
-     * Looks up the [PackageInfo] for a package name.
-     * This requests both the signatures (for checking if an app is on the allow list) and
-     * the app's permissions, which allow for more flexibility in the allow list.
+     * Busca el [PackageInfo] para un nombre de paquete.
+     * Esto solicita tanto las firmas (para verificar si una aplicación está en la lista permitida) como
+     * los permisos de la aplicación, lo que permite más flexibilidad en la lista permitida.
      *
-     * @return [PackageInfo] for the package name or null if it's not found.
+     * @return [PackageInfo] para el nombre del paquete o null si no se encuentra.
      */
     @Suppress("deprecation")
     @SuppressLint("PackageManagerGetSignatures")
@@ -205,19 +180,19 @@ internal class PackageValidator(context: Context, @XmlRes xmlResId: Int) {
         )
 
     /**
-     * Gets the signature of a given package's [PackageInfo].
+     * Obtiene la firma del [PackageInfo] de un paquete dado.
      *
-     * The "signature" is a SHA-256 hash of the public key of the signing certificate used by
-     * the app.
+     * La "firma" es un hash SHA-256 de la clave pública del certificado de firma utilizado por
+     * la aplicación.
      *
-     * If the app is not found, or if the app does not have exactly one signature, this method
-     * returns `null` as the signature.
+     * Si la aplicación no se encuentra, o si la aplicación no tiene exactamente una firma, este método
+     * devuelve `null` como la firma.
      */
     @Suppress("deprecation")
     private fun getSignature(packageInfo: PackageInfo): String? =
         if (packageInfo.signatures == null || packageInfo.signatures.size != 1) {
-            // Security best practices dictate that an app should be signed with exactly one (1)
-            // signature. Because of this, if there are multiple signatures, reject it.
+            // Las mejores prácticas de seguridad dictan que una aplicación debe estar firmada con exactamente una (1)
+            // firma. Debido a esto, si hay múltiples firmas, recházalo.
             null
         } else {
             val certificate = packageInfo.signatures[0].toByteArray()
@@ -225,7 +200,6 @@ internal class PackageValidator(context: Context, @XmlRes xmlResId: Int) {
         }
 
     private fun buildCertificateAllowList(parser: XmlResourceParser): Map<String, KnownCallerInfo> {
-
         val certificateAllowList = LinkedHashMap<String, KnownCallerInfo>()
         try {
             var eventType = parser.next()
@@ -251,16 +225,16 @@ internal class PackageValidator(context: Context, @XmlRes xmlResId: Int) {
                 eventType = parser.next()
             }
         } catch (xmlException: XmlPullParserException) {
-            Log.e(TAG, "Could not read allowed callers from XML.", xmlException)
+            Log.e(TAG, "No se pudo leer los llamadores permitidos desde XML.", xmlException)
         } catch (ioException: IOException) {
-            Log.e(TAG, "Could not read allowed callers from XML.", ioException)
+            Log.e(TAG, "No se pudo leer los llamadores permitidos desde XML.", ioException)
         }
 
         return certificateAllowList
     }
 
     /**
-     * Parses a v1 format tag. See allowed_media_browser_callers.xml for more details.
+     * Analiza una etiqueta de formato v1. Consulta allowed_media_browser_callers.xml para más detalles.
      */
     private fun parseV1Tag(parser: XmlResourceParser): KnownCallerInfo {
         val name = parser.getAttributeValue(null, "name")
@@ -274,7 +248,7 @@ internal class PackageValidator(context: Context, @XmlRes xmlResId: Int) {
     }
 
     /**
-     * Parses a v2 format tag. See allowed_media_browser_callers.xml for more details.
+     * Analiza una etiqueta de formato v2. Consulta allowed_media_browser_callers.xml para más detalles.
      */
     private fun parseV2Tag(parser: XmlResourceParser): KnownCallerInfo {
         val name = parser.getAttributeValue(null, "name")
@@ -295,22 +269,22 @@ internal class PackageValidator(context: Context, @XmlRes xmlResId: Int) {
     }
 
     /**
-     * Finds the Android platform signing key signature. This key is never null.
+     * Encuentra la firma de la clave de firma de la plataforma Android. Esta clave nunca es nula.
      */
     private fun getSystemSignature(): String =
         getPackageInfo(ANDROID_PLATFORM)?.let { platformInfo ->
             getSignature(platformInfo)
-        } ?: throw IllegalStateException("Platform signature not found")
+        } ?: throw IllegalStateException("Firma de la plataforma no encontrada")
 
     /**
-     * Creates a SHA-256 signature given a Base64 encoded certificate.
+     * Crea una firma SHA-256 dada una certificación codificada en Base64.
      */
     private fun getSignatureSha256(certificate: String): String {
         return getSignatureSha256(Base64.decode(certificate, Base64.DEFAULT))
     }
 
     /**
-     * Creates a SHA-256 signature given a certificate byte array.
+     * Crea una firma SHA-256 dada una matriz de bytes de certificado.
      */
     private fun getSignatureSha256(certificate: ByteArray): String {
         val md: MessageDigest
@@ -318,14 +292,14 @@ internal class PackageValidator(context: Context, @XmlRes xmlResId: Int) {
             md = MessageDigest.getInstance("SHA256")
         } catch (noSuchAlgorithmException: NoSuchAlgorithmException) {
             Log.e(TAG, "No such algorithm: $noSuchAlgorithmException")
-            throw RuntimeException("Could not find SHA256 hash algorithm", noSuchAlgorithmException)
+            throw RuntimeException("No se pudo encontrar el algoritmo de hash SHA256", noSuchAlgorithmException)
         }
         md.update(certificate)
 
-        // This code takes the byte array generated by `md.digest()` and joins each of the bytes
-        // to a string, applying the string format `%02x` on each digit before it's appended, with
-        // a colon (':') between each of the items.
-        // For example: input=[0,2,4,6,8,10,12], output="00:02:04:06:08:0a:0c"
+        // Este código toma la matriz de bytes generada por `md.digest()` y une cada uno de los bytes
+        // a una cadena, aplicando el formato de cadena `%02x` en cada dígito antes de que se agregue, con
+        // dos puntos (':') entre cada uno de los elementos.
+        // Por ejemplo: input=[0,2,4,6,8,10,12], output="00:02:04:06:08:0a:0c"
         return md.digest().joinToString(":") { String.format("%02x", it) }
     }
 
@@ -341,8 +315,8 @@ internal class PackageValidator(context: Context, @XmlRes xmlResId: Int) {
     )
 
     /**
-     * Convenience class to hold all of the information about an app that's being checked
-     * to see if it's a known caller.
+     * Clase de conveniencia para mantener toda la información sobre una aplicación que se está verificando
+     * para ver si es un llamador conocido.
      */
     private data class CallerPackageInfo(
         internal val name: String,

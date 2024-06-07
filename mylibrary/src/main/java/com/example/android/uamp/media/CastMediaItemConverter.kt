@@ -15,26 +15,32 @@ import com.google.android.gms.cast.MediaQueueItem
 import com.google.android.gms.common.images.WebImage
 
 /**
- * A [MediaItemConverter] to convert from a [MediaItem] to a Cast [MediaQueueItem].
+ * Un [MediaItemConverter] para convertir de un [MediaItem] a un [MediaQueueItem] de Cast.
  *
- * It adds all audio specific metadata properties and creates a Cast metadata object of type
- * [MediaMetadata.MEDIA_TYPE_MUSIC_TRACK].
+ * Añade todas las propiedades específicas de metadatos de audio y crea un objeto de metadatos de Cast
+ * del tipo [MediaMetadata.MEDIA_TYPE_MUSIC_TRACK].
  *
- * To create an artwork for Cast we can't use the standard [MediaItem#mediaMetadata#artworkUri]
- * because UAMP uses a content provider to serve cached bitmaps. The URIs starting with `content://`
- * are useless on a Cast device, so we need to use the original HTTP URI that the [DomainMediaSource]
- * stores in the metadata extra with key `JsonSource.ORIGINAL_ARTWORK_URI_KEY`.
+ * Para crear una imagen de portada para Cast, no podemos usar el estándar [MediaItem#mediaMetadata#artworkUri]
+ * porque UAMP usa un content provider para servir bitmaps en caché. Los URI que comienzan con `content://`
+ * son inútiles en un dispositivo Cast, por lo que necesitamos usar el URI HTTP original que el [DomainMediaSource]
+ * almacena en el extra de metadatos con la clave `JsonSource.ORIGINAL_ARTWORK_URI_KEY`.
  */
 @OptIn(UnstableApi::class)
 internal class CastMediaItemConverter : MediaItemConverter {
 
     private val defaultMediaItemConverter = DefaultMediaItemConverter()
 
+    /**
+     * Convierte un [MediaItem] en un [MediaQueueItem] de Cast.
+     *
+     * @param mediaItem El elemento de medios a convertir.
+     * @return El elemento de cola de medios de Cast.
+     */
     override fun toMediaQueueItem(mediaItem: MediaItem): MediaQueueItem {
         val castMediaMetadata = MediaMetadata(MediaMetadata.MEDIA_TYPE_MUSIC_TRACK)
         castMediaMetadata.putString("uamp.mediaid", mediaItem.mediaId)
         mediaItem.mediaMetadata.title?.let {
-            castMediaMetadata.putString(MediaMetadata.KEY_TITLE, it.toString() )
+            castMediaMetadata.putString(MediaMetadata.KEY_TITLE, it.toString())
         }
         mediaItem.mediaMetadata.subtitle?.let {
             castMediaMetadata.putString(MediaMetadata.KEY_SUBTITLE, it.toString())
@@ -51,7 +57,7 @@ internal class CastMediaItemConverter : MediaItemConverter {
         mediaItem.mediaMetadata.composer?.let {
             castMediaMetadata.putString(MediaMetadata.KEY_COMPOSER, it.toString())
         }
-        mediaItem.mediaMetadata.trackNumber?.let{
+        mediaItem.mediaMetadata.trackNumber?.let {
             castMediaMetadata.putInt(MediaMetadata.KEY_TRACK_NUMBER, it)
         }
         mediaItem.mediaMetadata.discNumber?.let {
@@ -64,11 +70,11 @@ internal class CastMediaItemConverter : MediaItemConverter {
             mediaInfo.setContentUrl(it.uri.toString())
         }
         mediaItem.mediaMetadata.extras?.let { bundle ->
-            // Use the original artwork URI for Cast.
+            // Usar el URI de la obra original para Cast.
             bundle.getString(DomainMediaSource.ORIGINAL_ARTWORK_URI_KEY)?.let {
                 castMediaMetadata.addImage(WebImage(Uri.parse(it)))
             }
-            mediaInfo.setStreamDuration(bundle.getLong(MediaMetadataCompat.METADATA_KEY_DURATION,0))
+            mediaInfo.setStreamDuration(bundle.getLong(MediaMetadataCompat.METADATA_KEY_DURATION, 0))
         }
         mediaInfo.setMetadata(castMediaMetadata)
         val mediaQueueItem = defaultMediaItemConverter.toMediaQueueItem(mediaItem)
@@ -78,6 +84,12 @@ internal class CastMediaItemConverter : MediaItemConverter {
         return MediaQueueItem.Builder(mediaInfo.build()).build()
     }
 
+    /**
+     * Convierte un [MediaQueueItem] de Cast en un [MediaItem].
+     *
+     * @param mediaQueueItem El elemento de cola de medios de Cast a convertir.
+     * @return El elemento de medios convertido.
+     */
     override fun toMediaItem(mediaQueueItem: MediaQueueItem): MediaItem {
         return defaultMediaItemConverter.toMediaItem(mediaQueueItem)
     }

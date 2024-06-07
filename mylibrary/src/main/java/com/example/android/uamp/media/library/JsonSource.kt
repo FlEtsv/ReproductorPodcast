@@ -34,10 +34,11 @@ import java.net.URL
 import java.util.concurrent.TimeUnit
 
 /**
- * Source of [MediaMetadataCompat] objects created from a basic JSON stream.
+ * Clase JsonSource.
+ * Esta clase es una fuente de objetos [MediaMetadataCompat] creados a partir de un flujo JSON básico.
  *
- * The definition of the JSON is specified in the docs of [JsonMusic] in this file,
- * which is the object representation of it.
+ * La definición del JSON se especifica en los documentos de [JsonMusic] en este archivo,
+ * que es la representación del objeto de la misma.
  */
 internal class JsonSource(private val source: Uri) : AbstractMusicSource() {
 
@@ -52,7 +53,9 @@ internal class JsonSource(private val source: Uri) : AbstractMusicSource() {
     }
 
     override fun iterator(): Iterator<MediaItem> = catalog.iterator()
-
+    /**
+     * Carga el catálogo desde la fuente.
+     */
     @OptIn(UnstableApi::class) override suspend fun load() {
         Log.d("JsonSource", "Starting to load catalog")
         updateCatalog(source)?.let { updatedCatalog ->
@@ -68,8 +71,8 @@ internal class JsonSource(private val source: Uri) : AbstractMusicSource() {
 
 
     /**
-     * Function to connect to a remote URI and download/process the JSON file that corresponds to
-     * [MediaMetadataCompat] objects.
+     * Función para conectar a una URI remota y descargar/procesar el archivo JSON que corresponde a
+     * objetos [MediaMetadataCompat].
      */
     @OptIn(UnstableApi::class) private suspend fun updateCatalog(catalogUri: Uri): List<MediaItem>? {
         return withContext(Dispatchers.IO) {
@@ -117,10 +120,10 @@ internal class JsonSource(private val source: Uri) : AbstractMusicSource() {
 
 
     /**
-     * Attempts to download a catalog from a given Uri.
+     * Intenta descargar un catálogo desde una Uri dada.
      *
-     * @param catalogUri URI to attempt to download the catalog form.
-     * @return The catalog downloaded, or an empty catalog if an error occurred.
+     * @param catalogUri URI para intentar descargar el catálogo.
+     * @return El catálogo descargado, o un catálogo vacío si ocurrió un error.
      */
     @Throws(IOException::class)
     private fun downloadJson(catalogUri: Uri): JsonCatalog {
@@ -131,8 +134,8 @@ internal class JsonSource(private val source: Uri) : AbstractMusicSource() {
 }
 
 /**
- * Extension method for [MediaMetadataCompat.Builder] to set the fields from
- * our JSON constructed object (to make the code a bit easier to see).
+ * Método de extensión para [MediaMetadataCompat.Builder] para establecer los campos desde
+ * nuestro objeto construido JSON (para hacer que el código sea un poco más fácil de ver).
  */
 fun MediaMetadata.Builder.from(jsonMusic: JsonMusic): MediaMetadata.Builder {
     setTitle(jsonMusic.title)
@@ -154,15 +157,15 @@ fun MediaMetadata.Builder.from(jsonMusic: JsonMusic): MediaMetadata.Builder {
 }
 
 /**
- * Wrapper object for our JSON in order to be processed easily by GSON.
+ * Objeto contenedor para nuestro JSON para ser procesado fácilmente por GSON.
  */
 class JsonCatalog {
     var music: List<JsonMusic> = ArrayList()
 }
 
 /**
- * An individual piece of music included in our JSON catalog.
- * The format from the server is as specified:
+ * A single piece of music included in our JSON catalog.
+ * The server format is specified as follows:
  * ```
  *     { "music" : [
  *     { "title" : // Title of the piece of music
@@ -191,6 +194,7 @@ class JsonCatalog {
  * that if the JSON was at "https://www.example.com/json/music.json" then the image would be found
  * at "https://www.example.com/json/ode_to_joy.jpg".
  */
+
 @Suppress("unused")
 class JsonMusic {
     var id: String = ""

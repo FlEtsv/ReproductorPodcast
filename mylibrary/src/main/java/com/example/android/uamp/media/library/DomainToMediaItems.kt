@@ -9,7 +9,10 @@ import androidx.media3.common.MimeTypes
 import androidx.media3.common.util.Log
 import androidx.media3.common.util.UnstableApi
 import com.universae.domain.Sesion
-
+/**
+ * Clase DomainMediaSource.
+ * Esta clase es una fuente de medios que se utiliza para cargar los medios de una sesión.
+ */
 internal class DomainMediaSource(private val source: Sesion): AbstractMusicSource() {
 
     companion object {
@@ -24,7 +27,9 @@ internal class DomainMediaSource(private val source: Sesion): AbstractMusicSourc
     }
 
     override fun iterator(): Iterator<MediaItem> = mediaItems.iterator()
-
+    /**
+     * Carga los medios de la fuente.
+     */
     @OptIn(UnstableApi::class) override suspend fun load() {
         Log.d("DomainToMediaItems", "Starting to load catalog")
         updateCatalog(source)?.let { updatedCatalog ->
@@ -38,22 +43,31 @@ internal class DomainMediaSource(private val source: Sesion): AbstractMusicSourc
         }
     }
 
+    /**
+     * Actualiza el catálogo de medios.
+     */
     private suspend fun updateCatalog(sesion: Sesion): List<MediaItem>? {
         return sesionToMediaItems(sesion)
 
     }
-
+    /**
+     * Carga los medios de una sesión.
+     */
     fun loadFromSession(sesion: Sesion) {
         mediaItems = sesionToMediaItems(sesion)
     }
-
+    /**
+     * Obtiene los elementos de medios.
+     */
     fun getMediaItems(): List<MediaItem> = mediaItems
 }
 
 private const val TEMA_COMPLETADO = 1
 
 const val TEMA_NO_COMPLETADO = 0
-
+/**
+ * Convierte una sesión en una lista de elementos de medios.
+ */
 private fun sesionToMediaItems(sesion: Sesion): List<MediaItem> {
     val mediaItems = mutableListOf<MediaItem>()
 

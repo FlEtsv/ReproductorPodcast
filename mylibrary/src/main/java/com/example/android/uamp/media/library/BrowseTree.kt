@@ -26,21 +26,21 @@ import com.example.android.uamp.media.R
 import com.example.android.uamp.media.extensions.urlEncoded
 
 /**
- * Represents a tree of media that's used by [MusicService.onLoadChildren].
+ * Representa un árbol de medios que se utiliza en [MusicService.onLoadChildren].
  *
- * [BrowseTree] maps a media id (see: [MediaMetadataCompat.METADATA_KEY_MEDIA_ID]) to one (or
- * more) [MediaMetadataCompat] objects, which are children of that media id.
+ * [BrowseTree] mapea un id de medios (ver: [MediaMetadataCompat.METADATA_KEY_MEDIA_ID]) a uno (o
+ * más) objetos [MediaMetadataCompat], que son hijos de ese id de medios.
  *
- * For example, given the following conceptual tree:
- * root
- *  +-- Albums
- *  |    +-- Album_A
- *  |    |    +-- Song_1
- *  |    |    +-- Song_2
+ * Por ejemplo, dado el siguiente árbol conceptual:
+ * raíz
+ *  +-- Álbumes
+ *  |    +-- Álbum_A
+ *  |    |    +-- Canción_1
+ *  |    |    +-- Canción_2
  *  ...
- *  +-- Artists
+ *  +-- Artistas
  *  ...
- * root
+ * raíz
  * +-- Recomendados
  * |    +-- Tema_1
  * |    +-- Tema_2
@@ -49,20 +49,20 @@ import com.example.android.uamp.media.extensions.urlEncoded
  * /    +-- Grado_1
  * /    |    +-- Asignatura_1
  * /    |    |    +-- Tema_1
- * /    |    |    |     Song_1
+ * /    |    |    |     Canción_1
  * /    |    |    +-- Tema_2
- * /    |    |    |     Song_2
+ * /    |    |    |     Canción_2
  * /    |    +-- Asignatura_2
  * ...
- * +-- Albums
- * |    +-- Album_A
- * |    |    +-- Song_1
+ * +-- Álbumes
+ * |    +-- Álbum_A
+ * |    |    +-- Canción_1
  * ...
- *  Requesting `browseTree["root"]` would return a list that included "Albums", "Artists", and
- *  any other direct children. Taking the media ID of "Albums" ("Albums" in this example),
- *  `browseTree["Albums"]` would return a single item list "Album_A", and, finally,
- *  `browseTree["Album_A"]` would return "Song_1" and "Song_2". Since those are leaf nodes,
- *  requesting `browseTree["Song_1"]` would return null (there aren't any children of it).
+ *  Solicitar `browseTree["raíz"]` devolvería una lista que incluiría "Álbumes", "Artistas", y
+ *  cualquier otro hijo directo. Tomando el id de medios de "Álbumes" ("Álbumes" en este ejemplo),
+ *  `browseTree["Álbumes"]` devolvería una lista de un solo elemento "Álbum_A", y, finalmente,
+ *  `browseTree["Álbum_A"]` devolvería "Canción_1" y "Canción_2". Dado que esos son nodos hoja,
+ *  solicitar `browseTree["Canción_1"]` devolvería null (no hay ningún hijo de él).
  */
 class BrowseTree(
     val context: Context,
@@ -74,12 +74,14 @@ class BrowseTree(
     private val storage = PersistentStorage.getInstance(context)
 
     /**
-     * Whether to allow clients which are unknown (not on the allowed list) to use search on this
+     * Indica si se permite a los clientes que son desconocidos (no están en la lista permitida) usar la búsqueda en este
      * [BrowseTree].
      */
     val searchableByUnknownCaller = true
 
     init {
+        // Aquí se construye el árbol de medios, agrupando los medios por categorías y subcategorías.
+        // Se crean las categorías principales y se añaden los medios a cada una de ellas.
         val rootList = mediaIdToChildren[UAMP_BROWSABLE_ROOT] ?: mutableListOf()
 
         val recommendedCategory = MediaMetadata.Builder().apply {
@@ -165,6 +167,8 @@ class BrowseTree(
             mediaIdToMediaItem[mediaItem.mediaId] = mediaItem
         }
     }
+    // Aquí se definen varios métodos para interactuar con el árbol de medios, como obtener los hijos de un nodo,
+    // actualizar la pista reciente, construir la jerarquía de medios, obtener elementos de medios por id de medios, etc.
 
     fun updateRecentTrack(mediaItem: MediaItem) {
         val recentTracksList = mutableListOf(mediaItem)
@@ -275,15 +279,16 @@ class BrowseTree(
 
 
     /**
-     * Provides access to the list of children with the `get` operator.
-     * i.e.: `browseTree\[UAMP_BROWSABLE_ROOT\]`
+     * Proporciona acceso a la lista de hijos con el operador `get`.
+     * es decir: `browseTree\[UAMP_BROWSABLE_ROOT\]`
      */
     operator fun get(mediaId: String) = mediaIdToChildren[mediaId]
 
-    /** Provides access to the media items by media id. */
+    /** Proporciona acceso a los elementos de medios por id de medios. */
     fun getMediaItemByMediaId(mediaId: String) = mediaIdToMediaItem[mediaId]
 
-
+    // Aquí se definen varias constantes utilizadas en la clase, como los ids de medios para las categorías principales,
+    // la URI de la raíz del recurso, etc.
     fun reload() {
         mediaIdToChildren.clear()
         mediaIdToMediaItem.clear()

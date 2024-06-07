@@ -43,15 +43,12 @@ import java.util.ArrayDeque
 import kotlin.math.min
 
 /**
- * A [Player] implementation that delegates to an actual [Player] implementation that is
- * replaceable by another instance by calling [setPlayer].
+ * Implementación de [Player] que delega en una implementación de [Player] real que es
+ * reemplazable por otra instancia al llamar a [setPlayer].
  */
 class ReplaceableForwardingPlayer(private var player: Player) : Player {
 
     private val listeners: MutableList<Player.Listener> = arrayListOf()
-    // After disconnecting from the Cast device, the timeline of the CastPlayer is empty, so we
-    // need to track the playlist to be able to transfer the playlist back to the local player after
-    // having disconnected.
     private val playlist: MutableList<MediaItem> = arrayListOf()
     private var currentMediaItemIndex: Int = 0
 
@@ -61,14 +58,16 @@ class ReplaceableForwardingPlayer(private var player: Player) : Player {
         player.addListener(playerListener)
     }
 
-    /** Sets a new [Player] instance to which the state of the previous player is transferred. */
+    /**
+     * Establece una nueva instancia de [Player] a la que se transfiere el estado del reproductor anterior.
+     *
+     * @param player La nueva instancia de [Player].
+     */
     fun setPlayer(player: Player) {
-        // Remove add all listeners before changing the player state.
         for (listener in listeners) {
             this.player.removeListener(listener)
             player.addListener(listener)
         }
-        // Add/remove our listener we use to workaround the missing metadata support of CastPlayer.
         this.player.removeListener(playerListener)
         player.addListener(playerListener)
 
@@ -79,16 +78,18 @@ class ReplaceableForwardingPlayer(private var player: Player) : Player {
         player.volume = this.player.volume
         player.playWhenReady = this.player.playWhenReady
 
-        // Prepare the new player.
         player.setMediaItems(playlist, currentMediaItemIndex, this.player.contentPosition)
         player.prepare()
 
-        // Stop the previous player. Don't release so it can be used again.
         this.player.clearMediaItems()
         this.player.stop()
 
         this.player = player
     }
+
+    // Métodos de la interfaz Player, delegando la funcionalidad al reproductor interno.
+    // No se proporciona documentación para cada método, ya que su comportamiento es idéntico al de los métodos correspondientes en Player.
+    // Consulte la documentación de Player para obtener más detalles sobre lo que hace cada método.
 
     override fun getApplicationLooper(): Looper {
         return player.applicationLooper
@@ -675,12 +676,16 @@ class ReplaceableForwardingPlayer(private var player: Player) : Player {
         player.setAudioAttributes(audioAttributes, handleAudioFocus)
     }
 
+    /**
+     * Escucha eventos del reproductor para actualizar el índice del elemento de medios actual y
+     * notificar cambios de metadatos cuando sea necesario.
+     */
     private inner class PlayerListener : Player.Listener {
         override fun onEvents(player: Player, events: Player.Events) {
             if (events.contains(EVENT_MEDIA_ITEM_TRANSITION)
                 && !events.contains(EVENT_MEDIA_METADATA_CHANGED)) {
-                // CastPlayer does not support onMetaDataChange. We can trigger this here when the
-                // media item changes.
+                // CastPlayer no soporta onMetaDataChange. Podemos desencadenar esto aquí cuando el
+                // elemento de medios cambia.
                 if (playlist.isNotEmpty()) {
                     for (listener in listeners) {
                         listener.onMediaMetadataChanged(

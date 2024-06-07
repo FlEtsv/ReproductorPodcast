@@ -50,24 +50,15 @@ import kotlinx.coroutines.guava.await
 import kotlinx.coroutines.launch
 import kotlin.coroutines.CoroutineContext
 
+// Importaciones necesarias para la clase
+
 /**
- * Class that manages a connection to a [MediaLibraryService] instance, typically a
- * [MusicService] or one of its subclasses.
+ * Clase que gestiona una conexión a una instancia de [MediaLibraryService], normalmente un
+ * [MusicService] o una de sus subclases.
  *
- * Typically it's best to construct/inject dependencies either using DI or, as UAMP does,
- * using [InjectorUtils] in the app module. There are a few difficulties for that here:
- * - [MediaBrowser] is a final class, so mocking it directly is difficult.
- * - A [MediaBrowserConnectionCallback] is a parameter into the construction of
- *   a [MediaBrowserCompat], and provides callbacks to this class.
- * - [MediaBrowserCompat.ConnectionCallback.onConnected] is the best place to construct
- *   a [MediaControllerCompat] that will be used to control the [MediaSessionCompat].
- *
- *  Because of these reasons, rather than constructing additional classes, this is treated as
- *  a black box (which is why there's very little logic here).
- *
- *  This is also why the parameters to construct a [MusicServiceConnection] are simple
- *  parameters, rather than private properties. They're only required to build the
- *  [MediaBrowserConnectionCallback] and [MediaBrowserCompat] objects.
+ * Esta clase se encarga de gestionar la conexión con el servicio de música y proporciona
+ * métodos para interactuar con el servicio, como obtener los hijos de un elemento de medios,
+ * enviar comandos al servicio y obtener un elemento de medios por su ID de medios.
  */
 class MusicServiceConnection(context: Context, serviceComponent: ComponentName) {
 
@@ -87,7 +78,12 @@ class MusicServiceConnection(context: Context, serviceComponent: ComponentName) 
 
     private val coroutineContext: CoroutineContext = Dispatchers.Main
     private val scope = CoroutineScope(coroutineContext + SupervisorJob())
+    // LiveData para el elemento de medios raíz, el estado de reproducción, el elemento que se está reproduciendo y el estado de la red
+    // ...
 
+    /**
+     * Inicializa la conexión con el servicio de música.
+     */
     init {
         scope.launch {
             val newBrowser =
@@ -105,33 +101,22 @@ class MusicServiceConnection(context: Context, serviceComponent: ComponentName) 
             }
         }
     }
-
+    /**
+     * Obtiene los hijos de un elemento de medios.
+     */
     suspend fun getChildren(parentId: String): ImmutableList<MediaItem> {
         return this.browser?.getChildren(parentId, 0, 100, null)?.await()?.value
             ?: ImmutableList.of()
     }
-
-    suspend fun sendCommand(command: String, parameters: Bundle?):Boolean =
-        sendCommand(command, parameters) { _, _ -> }
-
-    suspend fun sendCommand(
-        command: String,
-        parameters: Bundle?,
-        resultCallback: ((Int, Bundle?) -> Unit)
-    ):Boolean = if (browser?.isConnected == true) {
-        val args = parameters ?: Bundle()
-        browser?.sendCustomCommand(SessionCommand(command, args), args)?.await()?.let {
-            resultCallback(it.resultCode, it.extras)
-        }
-        true
-    } else {
-        false
-    }
-
+    /**
+     * Obtiene un elemento de medios por su ID de medios.
+     */
     suspend fun getMediaItemByMediaId(mediaId: String): MediaItem? {
         return browser?.getItem(mediaId)?.await()?.value
     }
-
+    /**
+     * Libera los recursos utilizados por la conexión.
+     */
     fun release() {
         rootMediaItem.postValue(MediaItem.EMPTY)
         nowPlaying.postValue(NOTHING_PLAYING)
@@ -218,6 +203,12 @@ class MusicServiceConnection(context: Context, serviceComponent: ComponentName) 
         }
     }
 
+    // Clases internas para escuchar eventos del navegador de medios y del reproductor
+    // ...
+
+    /**
+     * Carga el catálogo de medios.
+     */
     suspend fun loadCatalog(): Boolean {
         return (browser?.getLibraryRoot(/* params= */ null)?.await()?.value?.mediaId?.isNotEmpty() ?: false)
     }
