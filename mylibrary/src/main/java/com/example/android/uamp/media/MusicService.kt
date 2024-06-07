@@ -485,6 +485,46 @@ open class MusicService : MediaLibraryService(), SesionObserver {
         private var playbackPosition: Long = 0
 
         override fun onEvents(player: Player, events: Player.Events) {
+            if (events.contains(EVENT_MEDIA_ITEM_TRANSITION)) {
+                val selectedMediaItem: MediaItem? = replaceableForwardingPlayer.currentMediaItem
+                val recentMediaItem = storage.loadRecentSong()
+
+                if (selectedMediaItem == recentMediaItem) {
+                    exoPlayer.setMediaItem(recentMediaItem!!)
+                    exoPlayer.prepare()
+                    exoPlayer.playWhenReady = true
+                } else {
+                    val albumMediaItems: List<MediaItem> = browseTree.getMediaItemsInAlbum(albumTitle = selectedMediaItem?.mediaMetadata?.albumTitle.toString())
+
+                    val selectedItemIndex: Int = albumMediaItems.indexOfFirst {
+                        it.mediaId == (selectedMediaItem?.mediaId ?: "")
+                    }
+
+                    if (exoPlayer.mediaItemCount != albumMediaItems.size) {
+                        exoPlayer.setMediaItems(albumMediaItems)
+                        exoPlayer.prepare()
+                    }
+
+                    val position = when {
+                        (currentMediaItem?.mediaId ?: -2) != (selectedMediaItem?.mediaId ?: -1) -> 0L
+                        selectedMediaItem == recentMediaItem && recentMediaItem != null ->
+                            recentMediaItem.mediaMetadata.extras?.getLong(MEDIA_DESCRIPTION_EXTRAS_START_PLAYBACK_POSITION_MS, 0L) ?: 0L
+                        else -> playbackPosition
+                    }
+
+                    if (selectedItemIndex in 0 until exoPlayer.mediaItemCount && position >= 0) {
+                        try {
+                            exoPlayer.seekTo(selectedItemIndex, position)
+                        } catch (e: IllegalArgumentException) {
+                            exoPlayer.seekTo(0, 0L)
+                        }
+                    }
+
+                    exoPlayer.playWhenReady = true
+                    currentMediaItem = selectedMediaItem
+                }
+            }
+
             if (events.contains(EVENT_MEDIA_ITEM_TRANSITION) || events.contains(EVENT_POSITION_DISCONTINUITY) || events.contains(EVENT_PLAY_WHEN_READY_CHANGED)) {
 
                 // Guardar el último MediaItem
@@ -547,52 +587,13 @@ open class MusicService : MediaLibraryService(), SesionObserver {
          */
         override fun onPlayWhenReadyChanged(playWhenReady: Boolean, reason: Int) {
             super.onPlayWhenReadyChanged(playWhenReady, reason)
-            if (playWhenReady) {
-                val selectedMediaItem: MediaItem? = replaceableForwardingPlayer.currentMediaItem
-                val recentMediaItem = storage.loadRecentSong()
-
-                if (selectedMediaItem == recentMediaItem) {
-                    exoPlayer.setMediaItem(recentMediaItem!!)
-                    exoPlayer.prepare()
-                    exoPlayer.playWhenReady = true
-                } else {
-                    val albumMediaItems: List<MediaItem> = browseTree.getMediaItemsInAlbum(albumTitle = selectedMediaItem?.mediaMetadata?.albumTitle.toString())
-
-                    val selectedItemIndex: Int = albumMediaItems.indexOfFirst {
-                        it.mediaId == (selectedMediaItem?.mediaId ?: "")
-                    }
-
-                    if (exoPlayer.mediaItemCount != albumMediaItems.size) {
-                        exoPlayer.setMediaItems(albumMediaItems)
-                        exoPlayer.prepare()
-                    }
-
-                    val position = when {
-                        currentMediaItem != selectedMediaItem -> 0L
-                        selectedMediaItem == recentMediaItem && recentMediaItem != null ->
-                            recentMediaItem.mediaMetadata.extras?.getLong(MEDIA_DESCRIPTION_EXTRAS_START_PLAYBACK_POSITION_MS, 0L) ?: 0L
-                        else -> playbackPosition
-                    }
-
-                    if (selectedItemIndex in 0 until exoPlayer.mediaItemCount && position >= 0) {
-                        try {
-                            exoPlayer.seekTo(selectedItemIndex, position)
-                        } catch (e: IllegalArgumentException) {
-                            exoPlayer.seekTo(0, 0L)
-                        }
-                    }
-
-                    exoPlayer.playWhenReady = true
-                    currentMediaItem = selectedMediaItem
-                }
-            } else {
+            if (!playWhenReady) {
                 playbackPosition = exoPlayer.currentPosition
                 serviceScope.launch {
                     storage.saveRecentSong(currentMediaItem!!, playbackPosition)
                 }
             }
         }
-
     }
 
     override fun onSesionUpdated() {
