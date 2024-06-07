@@ -74,7 +74,12 @@ internal class CastMediaItemConverter : MediaItemConverter {
             bundle.getString(DomainMediaSource.ORIGINAL_ARTWORK_URI_KEY)?.let {
                 castMediaMetadata.addImage(WebImage(Uri.parse(it)))
             }
-            mediaInfo.setStreamDuration(bundle.getLong(MediaMetadataCompat.METADATA_KEY_DURATION, 0))
+            mediaInfo.setStreamDuration(
+                bundle.getLong(
+                    MediaMetadataCompat.METADATA_KEY_DURATION,
+                    0
+                )
+            )
         }
         mediaInfo.setMetadata(castMediaMetadata)
         val mediaQueueItem = defaultMediaItemConverter.toMediaQueueItem(mediaItem)

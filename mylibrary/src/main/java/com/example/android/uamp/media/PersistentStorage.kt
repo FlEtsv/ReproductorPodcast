@@ -24,6 +24,7 @@ import androidx.media3.common.MediaItem
 import androidx.media3.common.MediaMetadata
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
+
 /**
  * Clase PersistentStorage.
  * Esta clase se utiliza para almacenar datos que deben persistir entre reinicios, como la canción más recientemente reproducida.
@@ -42,6 +43,7 @@ internal class PersistentStorage private constructor(val context: Context) {
 
         @Volatile
         private var instance: PersistentStorage? = null
+
         /**
          * Método para obtener la instancia de PersistentStorage.
          */
@@ -49,13 +51,15 @@ internal class PersistentStorage private constructor(val context: Context) {
             instance ?: synchronized(this) {
                 instance ?: PersistentStorage(context).also { instance = it }
             }
+
         private const val PREFS_NAME = "com.example.app.PREFS"
         private const val RECENT_TRACKS_KEY = "RECENT_TRACKS"
     }
+
     /**
      * Método para guardar la canción reciente.
      */
-    suspend fun saveRecentSong(mediaItem:MediaItem, position: Long) {
+    suspend fun saveRecentSong(mediaItem: MediaItem, position: Long) {
 
         withContext(Dispatchers.IO) {
             /**
@@ -73,6 +77,7 @@ internal class PersistentStorage private constructor(val context: Context) {
                 .apply()
         }
     }
+
     /**
      * Método para cargar la canción reciente.
      */
@@ -100,6 +105,7 @@ internal class PersistentStorage private constructor(val context: Context) {
             }
         }
     }
+
     /**
      * Método para borrar la canción reciente.
      */

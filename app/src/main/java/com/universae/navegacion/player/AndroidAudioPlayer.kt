@@ -15,6 +15,7 @@ import com.universae.domain.usecases.AudioPlayerUseCases
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
+
 /**
  * Clase AndroidAudioPlayer que implementa la interfaz AudioPlayerUseCases.
  * Esta clase se encarga de la reproducción de audio en la aplicación.
@@ -64,7 +65,8 @@ class AndroidAudioPlayer(private val context: Context) : AudioPlayerUseCases {
         } else {
             CoroutineScope(Dispatchers.Main).launch {
 
-                val mediaItem: MediaItem = musicServiceConnection.getMediaItemByMediaId(tema.temaId.id.toString())!!
+                val mediaItem: MediaItem =
+                    musicServiceConnection.getMediaItemByMediaId(tema.temaId.id.toString())!!
 
                 var playlist: MutableList<MediaItem> = arrayListOf()
                 // load the children of the parent if requested

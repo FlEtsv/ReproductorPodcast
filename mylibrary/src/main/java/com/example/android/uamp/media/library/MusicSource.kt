@@ -3,7 +3,6 @@ package com.example.android.uamp.media.library
 import android.os.Build
 import android.os.Bundle
 import android.provider.MediaStore
-import android.util.Log
 import androidx.annotation.IntDef
 import androidx.media3.common.MediaItem
 import com.example.android.uamp.media.extensions.containsCaseInsensitive
@@ -81,6 +80,7 @@ abstract class AbstractMusicSource : MusicSource {
                 onReadyListeners += performAction
                 false
             }
+
             else -> {
                 performAction(state != STATE_ERROR)
                 true
@@ -95,12 +95,14 @@ abstract class AbstractMusicSource : MusicSource {
                     song.mediaMetadata.genre?.toString() == genre
                 }
             }
+
             MediaStore.Audio.Artists.ENTRY_CONTENT_TYPE -> {
                 val artist = extras[MediaStore.EXTRA_MEDIA_ARTIST]
                 filter { song ->
                     isArtist(song, artist)
                 }
             }
+
             MediaStore.Audio.Albums.ENTRY_CONTENT_TYPE -> {
                 val artist = extras[MediaStore.EXTRA_MEDIA_ARTIST]
                 val album = extras[MediaStore.EXTRA_MEDIA_ALBUM]
@@ -108,6 +110,7 @@ abstract class AbstractMusicSource : MusicSource {
                     (isArtist(song, artist) && song.mediaMetadata.albumTitle?.toString() == album)
                 }
             }
+
             MediaStore.Audio.Media.ENTRY_CONTENT_TYPE -> {
                 val title = extras[MediaStore.EXTRA_MEDIA_TITLE]
                 val album = extras[MediaStore.EXTRA_MEDIA_ALBUM]
@@ -118,6 +121,7 @@ abstract class AbstractMusicSource : MusicSource {
                             && song.mediaMetadata.title?.toString() == title
                 }
             }
+
             else -> {
                 emptyList()
             }
@@ -128,7 +132,8 @@ abstract class AbstractMusicSource : MusicSource {
                 filter { song ->
                     song.mediaMetadata.title?.toString().containsCaseInsensitive(query)
                             || song.mediaMetadata.genre?.toString().containsCaseInsensitive(query)
-                            || song.mediaMetadata.albumTitle?.toString().containsCaseInsensitive(query)
+                            || song.mediaMetadata.albumTitle?.toString()
+                        .containsCaseInsensitive(query)
                 }
             } else {
                 return shuffled()

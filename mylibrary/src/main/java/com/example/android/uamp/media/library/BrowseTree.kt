@@ -154,7 +154,9 @@ class BrowseTree(
 
             Log.d("BrowseTree", "loading catalogue for " + mediaItem.mediaId)
             if (mediaItem.mediaMetadata.extras?.getInt("Completion State") == TEMA_NO_COMPLETADO &&
-                (mediaIdToChildren[UAMP_RECOMMENDED_ROOT]?.none { it.mediaMetadata.albumTitle == mediaItem.mediaMetadata.albumTitle } ?: true)) {
+                (mediaIdToChildren[UAMP_RECOMMENDED_ROOT]?.none { it.mediaMetadata.albumTitle == mediaItem.mediaMetadata.albumTitle }
+                    ?: true)
+            ) {
                 val recommendedChildren = mediaIdToChildren[UAMP_RECOMMENDED_ROOT]
                     ?: mutableListOf()
                 recommendedChildren += mediaItem
@@ -174,8 +176,6 @@ class BrowseTree(
         val recentTracksList = mutableListOf(mediaItem)
         mediaIdToChildren[UAMP_RECENT_TRACKS_ROOT] = recentTracksList
     }
-
-
 
 
     private fun buildMediaHierarchy(mediaItem: MediaItem) {
@@ -364,7 +364,9 @@ class BrowseTree(
 
             Log.d("BrowseTree", "loading catalogue for " + mediaItem.mediaId)
             if (mediaItem.mediaMetadata.extras?.getInt("Completion State") == TEMA_NO_COMPLETADO &&
-                (mediaIdToChildren[UAMP_RECOMMENDED_ROOT]?.none { it.mediaMetadata.albumTitle == mediaItem.mediaMetadata.albumTitle } ?: true)) {
+                (mediaIdToChildren[UAMP_RECOMMENDED_ROOT]?.none { it.mediaMetadata.albumTitle == mediaItem.mediaMetadata.albumTitle }
+                    ?: true)
+            ) {
                 val recommendedChildren = mediaIdToChildren[UAMP_RECOMMENDED_ROOT]
                     ?: mutableListOf()
                 recommendedChildren += mediaItem

@@ -17,6 +17,7 @@
 package com.example.android.uamp.media.extensions
 
 import androidx.media3.common.Player
+
 /**
  * Esta extensión de la clase Player proporciona una propiedad que indica si el comando de reproducción está habilitado.
  * Devuelve verdadero si el comando de reproducción está disponible y el reproductor no está actualmente en reproducción.
@@ -24,6 +25,7 @@ import androidx.media3.common.Player
 inline val Player.isPlayEnabled
     get() = (availableCommands.contains(Player.COMMAND_PLAY_PAUSE)) &&
             (!playWhenReady)
+
 /**
  * Esta extensión de la clase Player proporciona una propiedad que indica si la reproducción ha terminado.
  * Devuelve verdadero si el estado de reproducción es igual a STATE_ENDED.

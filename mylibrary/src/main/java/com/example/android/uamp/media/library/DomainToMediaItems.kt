@@ -9,11 +9,12 @@ import androidx.media3.common.MimeTypes
 import androidx.media3.common.util.Log
 import androidx.media3.common.util.UnstableApi
 import com.universae.domain.Sesion
+
 /**
  * Clase DomainMediaSource.
  * Esta clase es una fuente de medios que se utiliza para cargar los medios de una sesión.
  */
-internal class DomainMediaSource(private val source: Sesion): AbstractMusicSource() {
+internal class DomainMediaSource(private val source: Sesion) : AbstractMusicSource() {
 
     companion object {
         //const val ORIGINAL_ARTWORK_URI_KEY = "com.universae.navegacion.JSON_ARTWORK_URI"
@@ -27,10 +28,12 @@ internal class DomainMediaSource(private val source: Sesion): AbstractMusicSourc
     }
 
     override fun iterator(): Iterator<MediaItem> = mediaItems.iterator()
+
     /**
      * Carga los medios de la fuente.
      */
-    @OptIn(UnstableApi::class) override suspend fun load() {
+    @OptIn(UnstableApi::class)
+    override suspend fun load() {
         Log.d("DomainToMediaItems", "Starting to load catalog")
         updateCatalog(source)?.let { updatedCatalog ->
             mediaItems = updatedCatalog
@@ -50,12 +53,14 @@ internal class DomainMediaSource(private val source: Sesion): AbstractMusicSourc
         return sesionToMediaItems(sesion)
 
     }
+
     /**
      * Carga los medios de una sesión.
      */
     fun loadFromSession(sesion: Sesion) {
         mediaItems = sesionToMediaItems(sesion)
     }
+
     /**
      * Obtiene los elementos de medios.
      */
@@ -65,6 +70,7 @@ internal class DomainMediaSource(private val source: Sesion): AbstractMusicSourc
 private const val TEMA_COMPLETADO = 1
 
 const val TEMA_NO_COMPLETADO = 0
+
 /**
  * Convierte una sesión en una lista de elementos de medios.
  */
@@ -82,7 +88,10 @@ private fun sesionToMediaItems(sesion: Sesion): List<MediaItem> {
                 extras.putString(DomainMediaSource.ORIGINAL_ARTWORK_URI_KEY, tema.imagenUrl)
                 extras.putString("artworkGrado", grado.icoGrado)
                 extras.putString("artworkAsignatura", asignatura.icoAsignatura)
-                extras.putInt("Completion State", if (tema.terminado) TEMA_COMPLETADO else TEMA_NO_COMPLETADO)
+                extras.putInt(
+                    "Completion State",
+                    if (tema.terminado) TEMA_COMPLETADO else TEMA_NO_COMPLETADO
+                )
                 val mediaMetadata = MediaMetadata.Builder()
                     .setTitle(tema.nombreTema)
                     .setDisplayTitle(tema.nombreTema)
@@ -103,7 +112,8 @@ private fun sesionToMediaItems(sesion: Sesion): List<MediaItem> {
                     .setMediaId(tema.temaId.id.toString())
                     .setUri(tema.audioUrl)
                     .setMimeType(
-                        MimeTypes.AUDIO_MPEG)
+                        MimeTypes.AUDIO_MPEG
+                    )
                     .setMediaMetadata(mediaMetadata)
                     .build()
 

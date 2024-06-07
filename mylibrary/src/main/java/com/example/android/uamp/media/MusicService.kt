@@ -105,7 +105,8 @@ open class MusicService : MediaLibraryService(), SesionObserver {
                 MediaMetadata.Builder()
                     .setFolderType(MediaMetadata.FOLDER_TYPE_ALBUMS)
                     .setIsPlayable(false)
-                    .build())
+                    .build()
+            )
             .build()
     }
 
@@ -116,7 +117,8 @@ open class MusicService : MediaLibraryService(), SesionObserver {
                 MediaMetadata.Builder()
                     .setFolderType(MediaMetadata.FOLDER_TYPE_ALBUMS)
                     .setIsPlayable(false)
-                    .build())
+                    .build()
+            )
             .build()
     }
 
@@ -162,7 +164,8 @@ open class MusicService : MediaLibraryService(), SesionObserver {
             // Bug interno relacionado b/68009560.
             Log.i(
                 TAG, "Cast no está disponible en este dispositivo. " +
-                        "Excepción lanzada al intentar obtener CastContext. " + e.message)
+                        "Excepción lanzada al intentar obtener CastContext. " + e.message
+            )
             null
         }
     }
@@ -185,8 +188,11 @@ open class MusicService : MediaLibraryService(), SesionObserver {
             replaceableForwardingPlayer.setPlayer(castPlayer!!)
         }
 
-        mediaSession = with(MediaLibrarySession.Builder(
-            this, replaceableForwardingPlayer, getCallback())) {
+        mediaSession = with(
+            MediaLibrarySession.Builder(
+                this, replaceableForwardingPlayer, getCallback()
+            )
+        ) {
             setId(packageName)
             packageManager?.getLaunchIntentForPackage(packageName)?.let { sessionIntent ->
                 setSessionActivity(
@@ -219,7 +225,8 @@ open class MusicService : MediaLibraryService(), SesionObserver {
 
     override fun onGetSession(controllerInfo: MediaSession.ControllerInfo): MediaLibrarySession? {
         return if ("android.media.session.MediaController" == controllerInfo.packageName
-            || packageValidator.isKnownCaller(controllerInfo.packageName, controllerInfo.uid)) {
+            || packageValidator.isKnownCaller(controllerInfo.packageName, controllerInfo.uid)
+        ) {
             mediaSession
         } else null
     }
@@ -324,7 +331,9 @@ open class MusicService : MediaLibraryService(), SesionObserver {
     open inner class MusicServiceCallback : MediaLibrarySession.Callback {
 
         override fun onGetLibraryRoot(
-            session: MediaLibrarySession, browser: MediaSession.ControllerInfo, params: LibraryParams?
+            session: MediaLibrarySession,
+            browser: MediaSession.ControllerInfo,
+            params: LibraryParams?
         ): ListenableFuture<LibraryResult<MediaItem>> {
             val isKnownCaller = packageValidator.isKnownCaller(browser.packageName, browser.uid)
             val rootExtras = Bundle().apply {
@@ -386,21 +395,29 @@ open class MusicService : MediaLibraryService(), SesionObserver {
                     recentRootMediaItem.mediaId -> {
                         LibraryResult.ofItem(recentRootMediaItem, LibraryParams.Builder().build())
                     }
+
                     catalogueRootMediaItem.mediaId -> {
-                        LibraryResult.ofItem(catalogueRootMediaItem, LibraryParams.Builder().build())
-                    }
-                    UAMP_BROWSABLE_ROOT -> {
                         LibraryResult.ofItem(
-                            browseTree.getMediaItemByMediaId(UAMP_BROWSABLE_ROOT) ?: MediaItem.EMPTY,
+                            catalogueRootMediaItem,
                             LibraryParams.Builder().build()
                         )
                     }
+
+                    UAMP_BROWSABLE_ROOT -> {
+                        LibraryResult.ofItem(
+                            browseTree.getMediaItemByMediaId(UAMP_BROWSABLE_ROOT)
+                                ?: MediaItem.EMPTY,
+                            LibraryParams.Builder().build()
+                        )
+                    }
+
                     UAMP_RECENT_ROOT -> {
                         LibraryResult.ofItem(
                             browseTree.getMediaItemByMediaId(UAMP_RECENT_ROOT) ?: MediaItem.EMPTY,
                             LibraryParams.Builder().build()
                         )
                     }
+
                     else -> {
                         val mediaItem = browseTree.getMediaItemByMediaId(mediaId)
                         if (mediaItem != null) {
@@ -449,7 +466,8 @@ open class MusicService : MediaLibraryService(), SesionObserver {
             mediaItems: MutableList<MediaItem>
         ): ListenableFuture<MutableList<MediaItem>> {
             return callWhenMusicSourceReady {
-                mediaItems.mapNotNull { browseTree.getMediaItemByMediaId(it.mediaId) }.toMutableList()
+                mediaItems.mapNotNull { browseTree.getMediaItemByMediaId(it.mediaId) }
+                    .toMutableList()
             }
         }
 
@@ -498,7 +516,8 @@ open class MusicService : MediaLibraryService(), SesionObserver {
                     exoPlayer.prepare()
                     exoPlayer.playWhenReady = true
                 } else {
-                    val albumMediaItems: List<MediaItem> = browseTree.getMediaItemsInAlbum(albumTitle = selectedMediaItem?.mediaMetadata?.albumTitle.toString())
+                    val albumMediaItems: List<MediaItem> =
+                        browseTree.getMediaItemsInAlbum(albumTitle = selectedMediaItem?.mediaMetadata?.albumTitle.toString())
 
                     val selectedItemIndex: Int = albumMediaItems.indexOfFirst {
                         it.mediaId == (selectedMediaItem?.mediaId ?: "")
@@ -510,9 +529,15 @@ open class MusicService : MediaLibraryService(), SesionObserver {
                     }
 
                     val position = when {
-                        (currentMediaItem?.mediaId ?: -2) != (selectedMediaItem?.mediaId ?: -1) -> 0L
+                        (currentMediaItem?.mediaId ?: -2) != (selectedMediaItem?.mediaId
+                            ?: -1) -> 0L
+
                         selectedMediaItem == recentMediaItem && recentMediaItem != null ->
-                            recentMediaItem.mediaMetadata.extras?.getLong(MEDIA_DESCRIPTION_EXTRAS_START_PLAYBACK_POSITION_MS, 0L) ?: 0L
+                            recentMediaItem.mediaMetadata.extras?.getLong(
+                                MEDIA_DESCRIPTION_EXTRAS_START_PLAYBACK_POSITION_MS,
+                                0L
+                            ) ?: 0L
+
                         else -> playbackPosition
                     }
 
@@ -529,7 +554,10 @@ open class MusicService : MediaLibraryService(), SesionObserver {
                 }
             }
 
-            if (events.contains(EVENT_MEDIA_ITEM_TRANSITION) || events.contains(EVENT_POSITION_DISCONTINUITY) || events.contains(EVENT_PLAY_WHEN_READY_CHANGED)) {
+            if (events.contains(EVENT_MEDIA_ITEM_TRANSITION) || events.contains(
+                    EVENT_POSITION_DISCONTINUITY
+                ) || events.contains(EVENT_PLAY_WHEN_READY_CHANGED)
+            ) {
 
                 // Guardar el último MediaItem
                 lastMediaItem?.let {

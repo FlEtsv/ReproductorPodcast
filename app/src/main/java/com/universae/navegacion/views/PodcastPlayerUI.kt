@@ -40,13 +40,6 @@ import androidx.media3.common.Player
 import androidx.media3.common.util.UnstableApi
 import androidx.navigation.NavController
 import com.android.navegacion.R
-import com.universae.navegacion.components.arrowForwardTenSec
-import com.universae.navegacion.components.iconBackwardTenSec
-import com.universae.navegacion.components.iconCast
-import com.universae.navegacion.components.iconFastForward
-import com.universae.navegacion.components.iconFastReward
-import com.universae.navegacion.components.iconPause
-import com.universae.navegacion.components.iconPlay
 import com.example.android.uamp.common.EMPTY_PLAYBACK_STATE
 import com.example.android.uamp.common.MusicServiceConnection
 import com.example.android.uamp.common.PlaybackState
@@ -54,6 +47,13 @@ import com.example.android.uamp.media.MusicService
 import com.example.android.uamp.media.extensions.isEnded
 import com.example.android.uamp.media.extensions.isPlayEnabled
 import com.universae.domain.usecases.TemaUseCasesImpl
+import com.universae.navegacion.components.arrowForwardTenSec
+import com.universae.navegacion.components.iconBackwardTenSec
+import com.universae.navegacion.components.iconCast
+import com.universae.navegacion.components.iconFastForward
+import com.universae.navegacion.components.iconFastReward
+import com.universae.navegacion.components.iconPause
+import com.universae.navegacion.components.iconPlay
 import com.universae.navegacion.player.AndroidAudioPlayer
 import com.universae.navegacion.theme.AzulClaro
 import com.universae.navegacion.theme.AzulOscuro

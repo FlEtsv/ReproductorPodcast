@@ -18,10 +18,6 @@ package com.example.android.uamp.common
 
 import android.content.ComponentName
 import android.content.Context
-import android.os.Bundle
-import android.support.v4.media.MediaBrowserCompat
-import android.support.v4.media.session.MediaControllerCompat
-import android.support.v4.media.session.MediaSessionCompat
 import androidx.lifecycle.MutableLiveData
 import androidx.media3.common.C
 import androidx.media3.common.MediaItem
@@ -38,7 +34,6 @@ import androidx.media3.common.Player.EVENT_PLAYBACK_STATE_CHANGED
 import androidx.media3.common.Player.EVENT_PLAY_WHEN_READY_CHANGED
 import androidx.media3.session.MediaBrowser
 import androidx.media3.session.MediaController
-import androidx.media3.session.SessionCommand
 import androidx.media3.session.SessionToken
 import com.example.android.uamp.media.MusicService
 import com.google.common.collect.ImmutableList
@@ -101,6 +96,7 @@ class MusicServiceConnection(context: Context, serviceComponent: ComponentName) 
             }
         }
     }
+
     /**
      * Obtiene los hijos de un elemento de medios.
      */
@@ -108,12 +104,14 @@ class MusicServiceConnection(context: Context, serviceComponent: ComponentName) 
         return this.browser?.getChildren(parentId, 0, 100, null)?.await()?.value
             ?: ImmutableList.of()
     }
+
     /**
      * Obtiene un elemento de medios por su ID de medios.
      */
     suspend fun getMediaItemByMediaId(mediaId: String): MediaItem? {
         return browser?.getItem(mediaId)?.await()?.value
     }
+
     /**
      * Libera los recursos utilizados por la conexión.
      */
@@ -177,7 +175,8 @@ class MusicServiceConnection(context: Context, serviceComponent: ComponentName) 
         override fun onEvents(player: Player, events: Player.Events) {
             if (events.contains(EVENT_PLAY_WHEN_READY_CHANGED)
                 || events.contains(EVENT_PLAYBACK_STATE_CHANGED)
-                || events.contains(EVENT_MEDIA_ITEM_TRANSITION)) {
+                || events.contains(EVENT_MEDIA_ITEM_TRANSITION)
+            ) {
                 updatePlaybackState(player)
                 if (player.playbackState != Player.STATE_IDLE) {
                     networkFailure.postValue(false)
@@ -185,13 +184,14 @@ class MusicServiceConnection(context: Context, serviceComponent: ComponentName) 
             }
             if (events.contains(EVENT_MEDIA_METADATA_CHANGED)
                 || events.contains(EVENT_MEDIA_ITEM_TRANSITION)
-                || events.contains(EVENT_PLAY_WHEN_READY_CHANGED)) {
+                || events.contains(EVENT_PLAY_WHEN_READY_CHANGED)
+            ) {
                 updateNowPlaying(player)
             }
         }
 
         override fun onPlayerErrorChanged(error: PlaybackException?) {
-            when(error?.errorCode) {
+            when (error?.errorCode) {
                 ERROR_CODE_IO_BAD_HTTP_STATUS,
                 ERROR_CODE_IO_INVALID_HTTP_CONTENT_TYPE,
                 ERROR_CODE_IO_CLEARTEXT_NOT_PERMITTED,
@@ -210,14 +210,16 @@ class MusicServiceConnection(context: Context, serviceComponent: ComponentName) 
      * Carga el catálogo de medios.
      */
     suspend fun loadCatalog(): Boolean {
-        return (browser?.getLibraryRoot(/* params= */ null)?.await()?.value?.mediaId?.isNotEmpty() ?: false)
+        return (browser?.getLibraryRoot(/* params= */ null)?.await()?.value?.mediaId?.isNotEmpty()
+            ?: false)
     }
 }
 
 class PlaybackState(
     val playbackState: Int = Player.STATE_IDLE,
     private val playWhenReady: Boolean = false,
-    val duration: Long = C.TIME_UNSET) {
+    val duration: Long = C.TIME_UNSET
+) {
     val isPlaying: Boolean
         get() {
             return (playbackState == Player.STATE_BUFFERING

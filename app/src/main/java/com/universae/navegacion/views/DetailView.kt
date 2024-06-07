@@ -21,7 +21,6 @@ import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.PlayArrow
-import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
@@ -44,12 +43,12 @@ import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import com.android.navegacion.R
-import com.universae.navegacion.components.AsignaturaCard
-import com.universae.navegacion.components.iconArrowBack
 import com.universae.domain.entities.asignatura.Asignatura
 import com.universae.domain.entities.asignatura.AsignaturaId
 import com.universae.domain.entities.tema.Tema
 import com.universae.domain.usecases.AsignaturaUseCasesImpl
+import com.universae.navegacion.components.AsignaturaCard
+import com.universae.navegacion.components.iconArrowBack
 import com.universae.navegacion.player.AndroidAudioPlayer
 import com.universae.navegacion.theme.Azul
 import com.universae.navegacion.theme.AzulClaro

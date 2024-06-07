@@ -24,7 +24,6 @@ import android.content.pm.PackageInfo.REQUESTED_PERMISSION_GRANTED
 import android.content.pm.PackageManager
 import android.content.res.XmlResourceParser
 import android.os.Process
-import android.support.v4.media.session.MediaSessionCompat
 import android.util.Base64
 import android.util.Log
 import androidx.annotation.XmlRes
@@ -292,7 +291,10 @@ internal class PackageValidator(context: Context, @XmlRes xmlResId: Int) {
             md = MessageDigest.getInstance("SHA256")
         } catch (noSuchAlgorithmException: NoSuchAlgorithmException) {
             Log.e(TAG, "No such algorithm: $noSuchAlgorithmException")
-            throw RuntimeException("No se pudo encontrar el algoritmo de hash SHA256", noSuchAlgorithmException)
+            throw RuntimeException(
+                "No se pudo encontrar el algoritmo de hash SHA256",
+                noSuchAlgorithmException
+            )
         }
         md.update(certificate)
 

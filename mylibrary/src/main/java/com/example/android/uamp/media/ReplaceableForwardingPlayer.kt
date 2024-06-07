@@ -683,7 +683,8 @@ class ReplaceableForwardingPlayer(private var player: Player) : Player {
     private inner class PlayerListener : Player.Listener {
         override fun onEvents(player: Player, events: Player.Events) {
             if (events.contains(EVENT_MEDIA_ITEM_TRANSITION)
-                && !events.contains(EVENT_MEDIA_METADATA_CHANGED)) {
+                && !events.contains(EVENT_MEDIA_METADATA_CHANGED)
+            ) {
                 // CastPlayer no soporta onMetaDataChange. Podemos desencadenar esto aquí cuando el
                 // elemento de medios cambia.
                 if (playlist.isNotEmpty()) {
@@ -696,7 +697,8 @@ class ReplaceableForwardingPlayer(private var player: Player) : Player {
             }
             if (events.contains(EVENT_POSITION_DISCONTINUITY)
                 || events.contains(EVENT_MEDIA_ITEM_TRANSITION)
-                || events.contains(EVENT_TIMELINE_CHANGED)) {
+                || events.contains(EVENT_TIMELINE_CHANGED)
+            ) {
                 if (!player.currentTimeline.isEmpty) {
                     currentMediaItemIndex = player.currentMediaItemIndex
                 }

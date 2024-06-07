@@ -19,6 +19,7 @@ package com.example.android.uamp.media.extensions
 import java.net.URLEncoder
 import java.nio.charset.Charset
 import java.util.Locale
+
 /**
  * Este archivo contiene métodos de extensión para el paquete java.lang.
  */

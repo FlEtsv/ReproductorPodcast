@@ -53,10 +53,12 @@ internal class JsonSource(private val source: Uri) : AbstractMusicSource() {
     }
 
     override fun iterator(): Iterator<MediaItem> = catalog.iterator()
+
     /**
      * Carga el catálogo desde la fuente.
      */
-    @OptIn(UnstableApi::class) override suspend fun load() {
+    @OptIn(UnstableApi::class)
+    override suspend fun load() {
         Log.d("JsonSource", "Starting to load catalog")
         updateCatalog(source)?.let { updatedCatalog ->
             catalog = updatedCatalog
@@ -74,7 +76,8 @@ internal class JsonSource(private val source: Uri) : AbstractMusicSource() {
      * Función para conectar a una URI remota y descargar/procesar el archivo JSON que corresponde a
      * objetos [MediaMetadataCompat].
      */
-    @OptIn(UnstableApi::class) private suspend fun updateCatalog(catalogUri: Uri): List<MediaItem>? {
+    @OptIn(UnstableApi::class)
+    private suspend fun updateCatalog(catalogUri: Uri): List<MediaItem>? {
         return withContext(Dispatchers.IO) {
             val musicCat = try {
                 downloadJson(catalogUri)
@@ -116,7 +119,6 @@ internal class JsonSource(private val source: Uri) : AbstractMusicSource() {
             }.toList()
         }
     }
-
 
 
     /**

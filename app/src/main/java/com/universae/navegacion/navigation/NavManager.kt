@@ -7,10 +7,10 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
 import com.android.navegacion.views.DetailView
-import com.universae.navegacion.views.Login
-import com.universae.navegacion.views.SplashScreen
 import com.universae.navegacion.views.HomeView
+import com.universae.navegacion.views.Login
 import com.universae.navegacion.views.ReproductorPodcast
+import com.universae.navegacion.views.SplashScreen
 
 /**
  * Este es un componente Composable que maneja la navegación en la aplicación.
