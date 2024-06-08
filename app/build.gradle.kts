@@ -1,6 +1,8 @@
 plugins {
     alias(libs.plugins.android.application)
     alias(libs.plugins.jetbrains.kotlin.android)
+    id("com.google.devtools.ksp")
+    kotlin("kapt")
 }
 
 android {
@@ -8,7 +10,7 @@ android {
     compileSdk = 34
 
     defaultConfig {
-        applicationId = "com.android.navegacion"
+        applicationId = "com.universae.navegacion"
         minSdk = 24
         targetSdk = 34
         versionCode = 1
@@ -38,6 +40,7 @@ android {
     }
     buildFeatures {
         compose = true
+        dataBinding = true
     }
     composeOptions {
         kotlinCompilerExtensionVersion = "1.5.1"
@@ -50,33 +53,36 @@ android {
 }
 
 dependencies {
-    implementation("androidx.navigation:navigation-compose:2.7.7")
-    implementation("androidx.core:core-ktx:1.13.1")
-    implementation("androidx.compose.ui:ui:1.6.7")
-    implementation("androidx.compose.ui:ui-tooling-preview:1.6.7")
-    implementation("androidx.lifecycle:lifecycle-runtime-ktx:2.7.0")
-    implementation("androidx.activity:activity-compose:1.9.0")
-    implementation("androidx.activity:activity:1.9.0")
+    implementation(project(":comun"))
+    //implementation(project(":audioPlayerLibrary")) //TODO: Uncomment this line to use the audioPlayerLibrary module
+    implementation(project(":mylibrary"))
 
-    // media3 para reproducir audio
-    val media3_version = "1.3.1"
-    // For media playback using ExoPlayer
-    implementation("androidx.media3:media3-exoplayer:$media3_version")
-    // For exposing and controlling media sessions
-    implementation("androidx.media3:media3-session:$media3_version")
+    implementation(libs.kotlinx.coroutines.guava)
+    implementation(libs.androidx.compose.livedata)
 
-    implementation ("androidx.car.app:app:1.1.0")
+    implementation(libs.androidx.navigation.compose)
+    implementation(libs.androidx.core.ktx)
+    implementation(libs.androidx.ui)
+    implementation(libs.androidx.compose.ui)
+    implementation(libs.androidx.ui.tooling.preview)
+    implementation(libs.androidx.lifecycle.runtime.ktx)
+    implementation(libs.androidx.activity.compose)
+    implementation(libs.androidx.activity)
+    implementation(libs.coil.compose)
 
-    // add JDBC driver for MySQL
-    //implementation("mysql:mysql-connector-java:5.1.49")
+    // media3 for audio playback
+    implementation(libs.androidx.media3.exoplayer)
+    implementation(libs.androidx.media3.session)
 
-    // Opcional: si decides usar Material 3
-    implementation("androidx.compose.material3:material3:1.2.1")
+    // Optional: if you decide to use Material 3
+    implementation(libs.material3)
 
-    // Herramientas de desarrollo y pruebas
-    debugImplementation("androidx.compose.ui:ui-tooling:1.6.7")
-    androidTestImplementation("androidx.compose.ui:ui-test-junit4:1.6.7")
-    androidTestImplementation("androidx.test.ext:junit:1.1.5")
-    androidTestImplementation("androidx.test.espresso:espresso-core:3.5.1")
-    testImplementation("junit:junit:4.13.2")
+    // Development and testing tools
+    debugImplementation(libs.androidx.ui.tooling)
+    androidTestImplementation(libs.androidx.ui.test.junit4)
+    androidTestImplementation(libs.androidx.junit)
+    androidTestImplementation(libs.androidx.espresso.core)
+    testImplementation(libs.junit)
+
 }
+

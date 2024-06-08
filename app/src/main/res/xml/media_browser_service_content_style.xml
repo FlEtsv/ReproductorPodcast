@@ -1,7 +1,16 @@
 <?xml version="1.0" encoding="utf-8"?>
-<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
-    <resources>
-        <integer name="android.media.browse.CONTENT_STYLE_PLAYABLE_HINT">1</integer>
-        <integer name="android.media.browse.CONTENT_STYLE_BROWSABLE_HINT">1</integer>
-    </resources>
-</PreferenceScreen>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical">
+
+    <TextView
+        android:id="@android:id/title"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="60dp"
+        android:layout_marginTop="25dp"
+        android:layout_marginBottom="25dp"
+        android:textSize="26sp" />
+
+</LinearLayout>

@@ -13,13 +13,13 @@
         android:fullBackupContent="@xml/backup_rules"
         android:icon="@mipmap/ic_launcher"
         android:label="@string/app_name"
-        android:roundIcon="@mipmap/ic_launcher_round"
+        android:roundIcon="@mipmap/ic_launcher"
         android:supportsRtl="true"
         android:theme="@style/Theme.Reproductor"
         tools:targetApi="31">
 
         <activity
-            android:name=".MainActivity"
+            android:name="com.universae.navegacion.MainActivity"
             android:exported="true"
             android:label="@string/app_name"
             android:theme="@style/Theme.Reproductor">
@@ -30,19 +30,31 @@
         </activity>
 
         <service
-            android:name=".ui.player.MyMediaSessionService"
-            android:foregroundServiceType="mediaPlayback"
+            android:name="com.example.android.uamp.media.MusicService"
+            android:enabled="true"
             android:exported="true"
+            android:foregroundServiceType="mediaPlayback"
+            android:theme="@style/CustomTheme"
             tools:ignore="ForegroundServicePermission">
+
+            <!--
+                Este es un filtro de intención que especifica el tipo de intenciones que el servicio puede recibir.
+                En este caso, el servicio puede recibir intenciones con la acción androidx.media3.session.MediaSessionService.
+            -->
             <intent-filter>
+                <action android:name="androidx.media3.session.MediaLibraryService" />
                 <action android:name="android.media.browse.MediaBrowserService" />
             </intent-filter>
+
             <meta-data
                 android:name="android.media.browse.CONTENT_STYLE_PLAYABLE_HINT"
-                android:resource="@xml/media_browser_service_content_style" />
+                android:resource="@xml/automotive_app_desc" />
             <meta-data
                 android:name="androidx.car.app.minCarApiLevel"
                 android:value="1" />
+            <meta-data
+                android:name="androidx.car.app.TintableAttributionIcon"
+                android:resource="@mipmap/escudo" />
         </service>
 
         <meta-data
