@@ -14,11 +14,13 @@ A continuación se enumeran las características que aún están pendientes de i
 ## Características
 
 - Autenticación de alumnos: Los alumnos pueden autenticarse en la aplicación para acceder a contenido exclusivo. Si la aplicación no consigue una autenticación exitosa en 10 segundos, esta regresa a la vista del log in.
+
 - Temas sugeridos: Se muestra el primer tema no escuchado de cada una de las asignaturas a las que tiene acceso el alumno.
 - Reproducción de podcasts: Permite a los usuarios escuchar sus podcasts favoritos. Al reproducir un tema, este se carga como parte de una playlist correspondiente a todos los temas de la asignatura.
 - Avance y retroceso en la pista actual: Los usuarios pueden avanzar o retroceder 10 segundos en la pista que están escuchando.
 - Pasar a la siguiente pista: Los usuarios pueden saltar a la siguiente pista en la lista de reproducción.
 - Compartir (en desarrollo): Esta característica permitirá a los usuarios compartir con otros medios.
+- Control de reproducción en Android Auto: Para que la reproducción de música pueda ser controlada desde Android Auto, es necesario implementar el servicio `MediaBrowserService` o `MediaLibraryService`. Si se crea un reproductor de música sin implementar estos servicios, no será posible controlar la reproducción desde Android Auto.
 
 ## Estructura del proyecto
 
@@ -26,7 +28,7 @@ El proyecto está dividido en varios módulos:
 
 - `app`: Contiene la lógica de la interfaz de usuario y la navegación. Este módulo es responsable de la interacción del usuario con la aplicación. La interfaz de usuario se presenta utilizando Jetpack Compose.
 - `comun`: Contiene la implementación del repositorio de alumnos. Este módulo gestiona la autenticación y el acceso a los datos de los alumnos. Actualmente, el proyecto simula todo el acceso a datos a partir de un archivo Kotlin llamado `PreviewData`. Además, tanto las imágenes como los archivos mp3 que se reproducen en la aplicación se encuentran almacenados en Dropbox.
-- `mylibrary`: Este módulo implementa el servicio `MusicService` utilizando Media3. Este servicio es responsable de la reproducción de música en la aplicación. Gestiona la reproducción de pistas, el avance rápido, el retroceso y el salto a la siguiente pista. Además, gestiona el árbol de elementos (BrowseTree) para la representación y navegación de los mismos en Android Auto.
+- `mylibrary`: Este módulo implementa el servicio `MusicService` utilizando Media3. Este servicio es responsable de la reproducción de música en la aplicación. Gestiona la reproducción de pistas, el avance rápido, el retroceso y el salto a la siguiente pista. Además, gestiona el árbol de elementos (BrowseTree) para la representación y navegación de los mismos en Android Auto. La implementación de este servicio se ha realizado con referencias del proyecto [UAMP por Android](https://github.com/android/uamp).
 
 ## Cómo ejecutar el proyecto
 
